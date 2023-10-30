@@ -1,0 +1,30 @@
+.Toastify__toast-body {
+	align-items: flex-start;
+}
+
+.Toastify__toast-icon {
+	position: relative;
+	top: 2px;
+}
+
+.Toastify__progress-bar {
+	background: var(--accent-pink);
+}
+.Toastify__progress-bar-theme--light {
+	background: var(--accent-pink);
+}
+.Toastify__progress-bar-theme--dark {
+	background: var(--accent-pink);
+}
+.Toastify__progress-bar--info {
+	background: var(--accent-pink);
+}
+.Toastify__progress-bar--success {
+	background: var(--status-positive);
+}
+.Toastify__progress-bar--warning {
+	background: var(--accent-pink);
+}
+.Toastify__progress-bar--error {
+	background: var(--status-negative);
+}

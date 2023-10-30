@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	/* --app-gradient: theme('backgroundImage.light-app-gradient');
+	--app-gradient-rotate: theme('backgroundImage.light-app-gradient-rotate'); */
+	--body-bg: theme('colors.neutrals.90');
+
+	--container-bg: theme('colors.neutrals.100');
+	--container-bg-selected: theme('colors.neutrals.90');
+	--container-border: theme('colors.black');
+
+	--tooltip-bg: theme('colors.neutrals.100');
+
+	--accent-pink: theme('colors.pink.80');
+
+	--button-border: theme('colors.black');
+
+	--tab-bg: theme('colors.white');
+	--tab-bg-selected: theme('colors.pink.90');
+	--tab-bg-success: theme('colors.green.80');
+
+	--text-main: theme('colors.neutrals.0');
+	--text-default: theme('colors.neutrals.0');
+	--text-header: theme('colors.neutrals.10');
+	--text-label: theme('colors.neutrals.20');
+	--text-disabled: theme('colors.neutrals.70');
+	--text-positive-green: theme('colors.green.50');
+	--text-negative-red: theme('colors.red.50');
+	--text-link: theme('colors.pink.60');
+
+	/* For rpc status etc. */
+	--status-neutral: theme('colors.neutrals.70');
+	--status-positive: theme('colors.green.30');
+	--status-negative: theme('colors.red.50');
+}
+
+* {
+	box-sizing: border-box;
+}
+
+/* Gradients */
+
+.gradient-body-bg {
+	background: radial-gradient(
+			circle at 10% -10%,
+			rgba(255, 224, 206, 1) 20%,
+			rgba(255, 224, 206, 0) 60%
+		),
+		radial-gradient(
+			circle at 100% 80%,
+			rgba(255, 224, 206, 1) 0%,
+			rgba(255, 224, 206, 0) 30%
+		),
+		radial-gradient(
+			circle at 90% -20%,
+			rgba(255, 82, 165, 1) 20%,
+			rgba(255, 82, 165, 0) 70%
+		),
+		radial-gradient(
+			circle at 0% 100%,
+			rgba(235, 111, 255, 1) 30%,
+			rgb(235, 111, 255, 0) 80%
+		),
+		#fafafa;
+}
+
+.gradient-border-tooltip {
+	position: relative;
+}
+
+.gradient-border-tooltip::before {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	box-sizing: content-box;
+	padding: 2px;
+	top: -2px;
+	left: -2px;
+	background: linear-gradient(
+		90deg,
+		rgba(255, 0, 117, 1) -20%,
+		rgba(255, 201, 172, 1) 50%,
+		rgba(255, 0, 117, 1) 120%
+	);
+}
+
+.gradient-slider-bg,
+.rc-slider-track {
+	background: linear-gradient(90deg, #ffe1d1 0%, #ff73b3 153.91%);
+}
+
+.skeleton-value-placeholder-animate {
+	background: linear-gradient(
+		90deg,
+		#fafafa 0%,
+		#eee 33.33%,
+		#fafafa 66.66%,
+		#eee 100%
+	);
+	animation: skeleton 1s infinite linear reverse;
+	background-size: 300%;
+	background-position: 0% 0%;
+}
+
+@keyframes skeleton {
+	0% {
+		background-position: 0% 0%;
+	}
+	100% {
+		background-position: 100% 0%;
+	}
+}
+
+input {
+	outline: none;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* This has to be done as a class because I don't think tailwind lets you do a media query and first-child / last-child together with just the built-in classnames */
+@media (min-width: 1024px) {
+	.vault-content-panel:first-child {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+	.vault-content-panel:last-child {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		border-left: 0;
+	}
+}
+
+/* Override rc-slider classes */
+.rc-slider-custom .rc-slider-rail {
+	height: 16px;
+	border: 2px solid var(--container-border);
+	background-color: var(--container-bg);
+	border-radius: 8px;
+}
+.rc-slider-custom .rc-slider-track {
+	height: 16px;
+	border: 2px solid var(--container-border);
+	border-radius: 8px;
+}
+.rc-slider-custom .rc-slider-handle,
+.rc-slider-custom .rc-slider-handle:hover,
+.rc-slider-custom .rc-slider-handle-dragging {
+	width: 28px;
+	height: 30px;
+	border: var(--container-border) 2px solid !important;
+	border-radius: 16px;
+	box-shadow: inset 0 -2px 0 var(--container-border) !important;
+	outline: none !important;
+	background-color: var(--container-bg);
+	opacity: 1;
+	margin-top: -8px;
+}
+
+.rc-slider-disabled {
+	background-color: transparent !important;
+}
+
+.rc-slider-disabled .rc-slider-track {
+	opacity: 40% !important;
+}

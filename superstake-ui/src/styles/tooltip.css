@@ -1,0 +1,11 @@
+.tippy-box {
+	background-color: transparent !important;
+}
+
+.tippy-content {
+	padding: 0 !important;
+}
+
+.tippy-arrow {
+	color: var(--tooltip-bg) !important;
+}
