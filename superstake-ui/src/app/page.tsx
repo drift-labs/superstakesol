@@ -7,6 +7,7 @@ import StyledToastContainer from "../components/StyledToastContainer";
 import VaultPageContent from "../components/VaultPage/VaultPageContent";
 
 export default function Home() {
+  console.log("Welcome to superstakesol");
   return (
     <>
       <HeaderSection />
