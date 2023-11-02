@@ -2,16 +2,22 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+Run `sh ./build_all_sm.sh` to
 
-Build all the required dependencies with the build_all script
+- fetch the git submodules
+- build the submodule dependencies
+- link submodules to the project
+- build the project
+
+To start development, run the development server:
+
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or 
+# or
 bun dev
 ```
 

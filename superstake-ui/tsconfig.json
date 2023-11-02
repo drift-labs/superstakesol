@@ -1,10 +1,6 @@
 {
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -20,15 +16,14 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@drift-labs/sdk": ["../drift-common/protocol/sdk"],
+      "@drift-labs/icons": ["../drift-common/icons"],
+      "@drift/common": ["../drift-common/common-ts"],
+      "@drift-labs/react": ["../drift-common/react"]
+    }
   },
-  "include": [
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
