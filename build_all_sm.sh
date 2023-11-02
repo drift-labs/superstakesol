@@ -33,8 +33,18 @@ function handle_directory() {
   cd - &> /dev/null
 }
 
+function get_submodules() {
+  git submodule update --init
+}
+
 # Capture the start time
 start_time=$(date +%s)
+
+# Get all submodules - will skip if already present
+get_submodules # current directory submodules
+cd drift-common
+get_submodules # Drift SDK submodule
+cd ..
 
 # Call the function with directory name, build and link flags
 handle_directory "drift-common" false "" false
