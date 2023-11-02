@@ -13,7 +13,7 @@ function handle_directory() {
 
   print_message_local "build_all_sm.sh" "Installing $dir"
 
-  cd $dir && rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && bun install
+  cd $dir && rm -rf node_modules && bun install
 
   if [ "$build" = true ] ; then
     yarn build
