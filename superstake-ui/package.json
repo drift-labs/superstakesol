@@ -69,5 +69,8 @@
   },
   "engines": {
     "node": ">=14 <19"
+  },
+  "devDependencies": {
+    "encoding": "^0.1.13"
   }
 }

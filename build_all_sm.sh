@@ -1,35 +1,48 @@
 # Capture the start time
 start_time=$(date +%s)
 
-echo ""
-echo "# REMOVING ROOT MODULES AND LOCKS"
-echo ""
-rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && yarn
-echo ""
-echo "# INSTALLING drift-common"
-echo ""
-cd drift-common && rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && yarn && cd ..
-echo ""
-echo "# INSTALLING drift-common/protocol/sdk"
-echo ""
-cd drift-common/protocol/sdk && rm -rf node_modules && yarn && yarn build && yarn link && cd ../../..
-echo ""
-echo "# INSTALLING drift-common/common-ts"
-echo ""
-cd drift-common/common-ts && rm -rf package-lock.json && rm -rf node_modules && yarn && yarn link @drift-labs/sdk && yarn build && yarn link && cd ../..
-echo ""
-echo "# INSTALLING drift-common/icons"
-echo ""
-cd drift-common/icons && rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && yarn && yarn build && yarn link && cd ../..
-echo ""
-echo "# INSTALLING drift-common/react"
-echo ""
-cd drift-common/react && rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && yarn && yarn build && yarn link @drift-labs/sdk && yarn link @drift/common && yarn link @drift-labs/icons && yarn link && cd ../..
-echo ""
-echo "# INSTALLING superstake-ui"
-echo ""
-cd superstake-ui && rm -rf node_modules && yarn && yarn link @drift/common && yarn link @drift-labs/sdk && yarn link @drift-labs/icons && cd ..
-echo ""
+# Source the utils script
+source ./superstake-ui/scripts/utils.sh
+
+# Function to handle repetitive tasks
+function handle_directory() {
+  dir=$1
+  build=$2
+  link_packages=$3
+  link=$4
+
+  print_message_local "build_all_sm.sh" "Installing $dir"
+
+  cd $dir && rm -rf package-lock.json && rm -rf yarn.lock && rm -rf node_modules && bun install
+
+  if [ "$build" = true ] ; then
+    yarn build
+  fi
+
+  for link_package in ${link_packages[@]}
+  do
+      print_message_local "build_all_sm.sh" "bun link for ${folder} -> ${link_package}"
+      bun link ${link_package}
+  done
+
+
+  if [ "$link" = true ] ; then
+    bun link
+  fi
+
+  cd - &> /dev/null
+}
+
+# Capture the start time
+start_time=$(date +%s)
+
+# Call the function with directory name, build and link flags
+handle_directory "drift-common" false "" false
+handle_directory "drift-common/protocol/sdk" true "" true
+handle_directory "drift-common/common-ts" true "@drift-labs/sdk" true
+handle_directory "drift-common/icons" true "" true
+handle_directory "drift-common/react" true "@drift-labs/sdk @drift/common @drift-labs/icons" true
+handle_directory "superstake-ui" true "@drift-labs/sdk @drift/common @drift-labs/icons @drift-labs/react"  false
 
 # Capture the end time
 end_time=$(date +%s)
