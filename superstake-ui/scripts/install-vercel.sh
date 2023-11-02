@@ -40,9 +40,9 @@ bun_install_and_link() {
 # Install vercel workarounds
 run_submodule_workaround "common-submodule-workaround.sh"
 
-# Install root modules
+# Move to root directory
+print_message "install-vercel.sh" "Moving to root directory"
 cd ..
-bun_install_and_link "." "" ""
 
 # Install Drift SDK
 bun_install_and_link "drift-common/protocol" "" ""
