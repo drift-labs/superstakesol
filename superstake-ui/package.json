@@ -8,8 +8,8 @@
     "clean": "rm -rf .next",
     "start": "next start",
     "lint": "next lint",
-    "install-vercel": "sh ../scripts/install-vercel.sh",
-    "build-vercel": "sh ../scripts/build-vercel.sh"
+    "install-vercel": "sh ./scripts/install-vercel.sh",
+    "build-vercel": "sh ./scripts/build-vercel.sh"
   },
   "browser": {
     "fs": false,
