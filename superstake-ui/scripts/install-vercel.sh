@@ -12,6 +12,13 @@ function print() {
   print_message "install-vercel.sh" "${message}"
 }
 
+function print_exec_command() {
+    local command=$1
+    
+    print_message "install-vercel.sh" "${command}"
+    ${command}
+}
+
 # Function to pull public submodule
 function handle_public_submodule() {
     local parent_path=$1
@@ -56,7 +63,7 @@ handle_public_submodule "../drift-common" "protocol"
 
 # Move to root directory
 print "Moving to root directory"
-cd ..
+print_exec_command "cd .."
 
 # Install Drift SDK
 bun_install_and_link "drift-common/protocol" "" ""
