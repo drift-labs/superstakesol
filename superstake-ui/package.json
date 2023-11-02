@@ -8,8 +8,8 @@
     "clean": "rm -rf .next",
     "start": "next start",
     "lint": "next lint",
-    "build-vercel": "node -v && cd ../drift-common/protocol/sdk && yarn add @project-serum/borsh && yarn build && cd ../../common-ts && yarn build && cd ../icons && yarn build && cd ../react && yarn build && cd ../../superstake-ui && yarn build",
-    "install-vercel": "sh ../common-submodule-workaround.sh && sh ../install-vercel.sh"
+    "install-vercel": "sh ../scripts/install-vercel.sh",
+    "build-vercel": "sh ../scripts/build-vercel.sh"
   },
   "browser": {
     "fs": false,
