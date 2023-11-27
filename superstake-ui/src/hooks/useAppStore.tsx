@@ -88,7 +88,7 @@ export interface AppStoreState {
   getActiveLst: () => LST;
 }
 
-const defaultState = {
+export const DEFAULT_STORE_STATE = {
   currentUserAccount: DEFAULT_USER_DATA,
   activeLst: M_SOL.symbol,
   modals: {
@@ -120,7 +120,7 @@ const defaultState = {
 const useAppStore = create<AppStoreState>()((set, get) => {
   const setProducerFn = (fn: (s: AppStoreState) => void) => set(produce(fn));
   return {
-    ...defaultState,
+    ...DEFAULT_STORE_STATE,
     set: setProducerFn,
     get: () => get(),
     clearUserData: () => {

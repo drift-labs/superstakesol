@@ -4,7 +4,7 @@ import VaultInfoPanel from "./VaultInfoPanel";
 import { ALL_LST } from "../../constants/lst";
 import Button from "../Button";
 import { twMerge } from "tailwind-merge";
-import useAppStore from "../../hooks/useAppStore";
+import useAppStore, { DEFAULT_STORE_STATE } from "../../hooks/useAppStore";
 import useFirstLstWithPosition from "../../hooks/useFirstLstWithPosition";
 
 const VaultContentPanel = (props: PropsWithChildren) => {
@@ -26,8 +26,15 @@ const VaultPageContent = () => {
   }, [firstLstWithPosition]);
 
   const setActiveLst = (activeLstSymbol: string) => {
+    const lstData = ALL_LST.find(lst => lst.symbol === activeLstSymbol);
+
     setAppStore((state) => {
       state.activeLst = activeLstSymbol;
+      state.stakeUnstakeForm = {
+        ...DEFAULT_STORE_STATE.stakeUnstakeForm,
+        leverageToUse: lstData?.defaultLeverage ?? 2,
+        unstakeLeverage: 0
+      }
     });
   };
 

@@ -53,8 +53,9 @@ const TextWithSkeleton = ({
 };
 
 const VaultOverviewPanel = () => {
+  const activeLst = useAppStore(s => s.getActiveLst());
   const lstAmount = 100;
-  const leverage = 3;
+  const leverage = activeLst.maxLeverage ?? 3;
   const solAmount = useBorrowAmountForStake({
     lstAmount,
     leverage,
@@ -69,8 +70,6 @@ const VaultOverviewPanel = () => {
   });
 
   const maxAprPercentage = Math.max(projectedApr, unleveragedApr);
-
-  const activeLst = useAppStore((s) => s.activeLst);
 
   const {
     tvl,
@@ -94,8 +93,8 @@ const VaultOverviewPanel = () => {
                   content={
                     <>
                       <div>
-                        Based on staking 100 {activeLst} at{" "}
-                        {projectedApr > unleveragedApr ? "3x" : "1x"} leverage
+                        Based on staking 100 {activeLst.symbol} at{" "}
+                        {projectedApr > unleveragedApr ? `${leverage}x` : "1x"} leverage
                       </div>
                     </>
                   }
@@ -115,13 +114,13 @@ const VaultOverviewPanel = () => {
 
       <div className="mt-8">
         <Text.BODY3>Max. leverage</Text.BODY3>
-        <Text.H4>3x</Text.H4>
+        <Text.H4>{leverage}x</Text.H4>
       </div>
 
       <div className="mt-8">
         <Text.BODY3>Total staked</Text.BODY3>
         <TextWithSkeleton
-          value={`${tvl[activeLst].prettyPrint(true)} ${activeLst}`}
+          value={`${tvl[activeLst.symbol].prettyPrint(true)} ${activeLst.symbol}`}
           loading={!tvlLoaded}
         />
       </div>

@@ -21,26 +21,41 @@ import { useWallet } from "@drift-labs/react";
 import useCurrentLstMetrics from "./useCurrentLstMetrics";
 
 const useCurrentUserData = () => {
-  const driftClientIsReady = useCustomDriftClientIsReady();
-  const driftClient = useCommonDriftStore((s) => s.driftClient.client);
-  const setCommonStore = useCommonDriftStore((s) => s.set);
-  const walletAuthority = useWallet().wallet?.adapter.publicKey;
-  const appAuthority = useCommonDriftStore((s) => s.authority);
-  const subscribedToSubaccounts = useCommonDriftStore(
-    (s) => s.subscribedToSubaccounts
-  );
-  const connected = useWallet().connected;
   const setStore = useAppStore((s) => s.set);
+  const setCommonStore = useCommonDriftStore(s => s.set);
+  const driftClient = useCommonDriftStore((s) => s.driftClient.client);
+  const driftClientIsReady = useCustomDriftClientIsReady();
+  const { connected } = useWallet();
+  const appAuthority = useCommonDriftStore((s) => s.authority);
   const lstMetrics = useCurrentLstMetrics();
   const activeLst = useAppStore((s) => s.getActiveLst());
 
   const [superStakeUser, setSuperStakeUser] = useState<User>();
 
+  const resetCurrentUserData = (loaded?: boolean) => {
+    console.log('resetCurrentUserData');
+    setStore((s) => {
+      s.currentUserAccount = { ...DEFAULT_USER_DATA, loaded: !!loaded };
+      s.eventRecords = {
+        depositRecords: [],
+        swapRecords: [],
+        mostRecentTx: undefined,
+        loaded: !!loaded,
+      };
+    });
+    setCommonStore((s) => {
+      s.userAccounts = [];
+    });
+  };
+
   const getAndSetCurrentUserData = async (authority: PublicKey) => {
     if (driftClient) {
+      console.log('getAndSetCurrentUserData');
       const userAccounts = await driftClient.getUserAccountsForAuthority(
         authority
       );
+
+      console.log('userAccounts', userAccounts);
 
       const superStakeAccount = userAccounts.find((account) => {
         return decodeName(account.name) === activeLst.driftAccountName;
@@ -54,7 +69,7 @@ const useCurrentUserData = () => {
 
       if (superStakeAccount && authority) {
         console.log("switching to sss account");
-        driftClient.switchActiveUser(
+        await driftClient.switchActiveUser(
           superStakeAccount?.subAccountId,
           authority
         );
@@ -62,11 +77,15 @@ const useCurrentUserData = () => {
 
       let driftUser: User | undefined;
       try {
+        await driftClient.addUser(superStakeAccount?.subAccountId, authority);
+
         driftUser = driftClient.getUser(
           superStakeAccount?.subAccountId,
           authority
         );
-        setSuperStakeUser(driftUser);
+
+
+        setSuperStakeUser(superStakeUser);
       } catch (err) {
         console.log(err);
       }
@@ -100,44 +119,20 @@ const useCurrentUserData = () => {
           loaded: true,
         };
       });
+
       setCommonStore((s) => {
         s.userAccounts = userAccounts;
       });
     }
   };
 
-  const resetCurrentUserData = (loaded?: boolean) => {
-    setStore((s) => {
-      s.currentUserAccount = { ...DEFAULT_USER_DATA, loaded: !!loaded };
-      s.eventRecords = {
-        depositRecords: [],
-        swapRecords: [],
-        mostRecentTx: undefined,
-        loaded: !!loaded,
-      };
-    });
-    setCommonStore((s) => {
-      s.userAccounts = [];
-    });
-  };
-
   useEffect(() => {
-    if (driftClientIsReady && appAuthority && subscribedToSubaccounts) {
-      resetCurrentUserData();
+    if (connected && driftClientIsReady && appAuthority) {
       getAndSetCurrentUserData(appAuthority);
-    } else if (!appAuthority || !connected) {
+    }  else if (!connected || !appAuthority) {
       resetCurrentUserData();
     }
-  }, [
-    appAuthority,
-    walletAuthority,
-    driftClientIsReady,
-    connected,
-    subscribedToSubaccounts,
-    driftClient?.users?.size,
-    driftClient?.activeSubAccountId,
-    activeLst,
-  ]);
+  }, [connected, driftClientIsReady, appAuthority, activeLst]);
 
   useEffect(() => {
     if (!superStakeUser) {
@@ -165,15 +160,6 @@ const useCurrentUserData = () => {
 
     return listenerClosingCallback();
   }, [superStakeUser]);
-
-  // TODO: maybe we try to make these all singleton hooks and return the store state here too... that would be pretty dope because then hooks like this would only keep their data up-to-date when it's actually being used somewhere, but not duplicate it when it's being used more than once
-
-  // For now just use the store hook to get these values
-
-  // return {
-  // 	spotPositions: currentUserSpotPositions,
-  // 	currentLeverage: currentUserLeverage,
-  // };
 };
 
 export default useCurrentUserData;

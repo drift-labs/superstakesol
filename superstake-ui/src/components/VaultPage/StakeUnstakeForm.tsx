@@ -196,7 +196,7 @@ const StakeUnstakeForm = () => {
   });
 
   const { maxSolSwap, maxLstSwap } =
-    useMaxSwapAmount(amountToStakeNum) ?? solBorrowAmount;
+    useMaxSwapAmount(amountToStakeNum);
 
   solBorrowAmount = Math.min(
     solBorrowAmount,
@@ -552,7 +552,7 @@ const StakeUnstakeForm = () => {
                 value={leverageToUse}
                 step={0.1}
                 min={1}
-                max={3}
+                max={activeLst.maxLeverage}
               />
             </div>
 
@@ -660,7 +660,7 @@ const StakeUnstakeForm = () => {
                   }
                   step={0.1}
                   min={1}
-                  max={3}
+                  max={activeLst.maxLeverage}
                 />
               </div>
             </div>

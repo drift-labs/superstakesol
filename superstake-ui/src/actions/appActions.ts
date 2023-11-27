@@ -367,6 +367,8 @@ const createAppActions = (
     solWithdrawalAmount: BN;
     subAccountId: number;
   }) => {
+    console.log(subAccountId);
+    
     try {
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
