@@ -1,6 +1,6 @@
 import { SLIPPAGE_TOLERANCE_DEFAULT } from "../constants";
-import { AppStoreState } from "../hooks/useAppStore";
-import { decodeName } from "../utils/uiUtils";
+import { AppStoreState, DEFAULT_STORE_STATE, DEFAULT_USER_DATA } from "../hooks/useAppStore";
+import { SOL_SPOT_MARKET_INDEX, decodeName } from "../utils/uiUtils";
 import {
   BN,
   BigNum,
@@ -12,6 +12,9 @@ import {
   findBestSuperStakeIxs,
   SwapReduceOnly,
   getUserAccountPublicKeySync,
+  TEN_THOUSAND,
+  LAMPORTS_PRECISION,
+  FOUR,
 } from "@drift-labs/sdk";
 import { COMMON_UI_UTILS } from "@drift/common";
 import {
@@ -20,6 +23,7 @@ import {
 } from "@solana/spl-token";
 import {
   AddressLookupTableAccount,
+  LAMPORTS_PER_SOL,
   Signer,
   TransactionInstruction,
 } from "@solana/web3.js";
@@ -27,7 +31,7 @@ import { StoreApi } from "zustand";
 import NOTIFICATION_UTILS from "../utils/notify";
 import { CommonDriftStore } from "@drift-labs/react";
 import invariant from "tiny-invariant";
-import { LST } from "../constants/lst";
+import { ALL_LST, LST } from "../constants/lst";
 
 const DEPOSIT_TOAST_ID = "deposit_toast";
 
@@ -60,9 +64,9 @@ type DepositProps = {
 
 const createAppActions = (
   get: StoreApi<AppStoreState>["getState"],
-  _set: (x: (s: AppStoreState) => void) => void,
+  set: (x: (s: AppStoreState) => void) => void,
   getCommon: StoreApi<CommonDriftStore>["getState"],
-  _setCommon: (x: (s: CommonDriftStore) => void) => void
+  setCommon: (x: (s: CommonDriftStore) => void) => void
 ) => {
   /**
    * Returns the ID of the current super stake account or the id for tne new super stake account to create if it doesn't exist
@@ -367,8 +371,6 @@ const createAppActions = (
     solWithdrawalAmount: BN;
     subAccountId: number;
   }) => {
-    console.log(subAccountId);
-    
     try {
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
@@ -510,6 +512,7 @@ const createAppActions = (
     slippageBps?: number;
   }) => {
     try {
+      console.log('handle super stake repay borrow?');
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
       const activeLst = get().getActiveLst();
@@ -525,7 +528,11 @@ const createAppActions = (
       invariant(commonState.authority, "Authority is undefined");
       invariant(commonState.connection, "Connection is undefined");
 
+      console.log('switching active user', subAccountId);
+
       driftClient.switchActiveUser(subAccountId);
+
+      console.log('switched active user');
 
       const jupiterClient = new JupiterClient({
         connection: commonState.connection,
@@ -535,6 +542,8 @@ const createAppActions = (
         slippageBps && !isNaN(slippageBps) && slippageBps > 0
           ? Math.floor(slippageBps)
           : SLIPPAGE_TOLERANCE_DEFAULT * 100;
+
+      console.log('jupiterClient created', !!jupiterClient);
 
       const { ixs: swapInstructions, lookupTables } =
         await driftClient.getJupiterSwapIx({
@@ -571,10 +580,164 @@ const createAppActions = (
     }
   };
 
+  // Switches active LST. Does NOT switch the subaccount automatically
+  const switchActiveLst = (newLstSymbol: string) => {
+    const lstData = ALL_LST.find(lst => lst.symbol === newLstSymbol);
+
+    if (!lstData) {
+      throw new Error(`"No LST exists with symbol ${newLstSymbol}`);
+    }
+
+    set((state) => {
+      state.activeLst = newLstSymbol;
+      state.stakeUnstakeForm = {
+        ...DEFAULT_STORE_STATE.stakeUnstakeForm,
+        leverageToUse: lstData?.defaultLeverage ?? 2,
+        unstakeLeverage: 0
+      }
+    });
+  }
+
+  // Resets the current subaccount / user data
+  const resetCurrentUserData = (loaded?: boolean) => {
+    console.log('reset current user data');
+    set((s) => {
+      s.superStakeUser = undefined;
+      s.currentUserAccount = { ...DEFAULT_USER_DATA, loaded: !!loaded };
+      s.eventRecords = {
+        depositRecords: [],
+        swapRecords: [],
+        mostRecentTx: undefined,
+        loaded: !!loaded,
+      };
+    });
+    setCommon((s) => {
+      s.userAccounts = [];
+    });
+  };
+
+  const switchSubaccountToActiveLst = async (currentLstPrice?: number, authorityParam?: PublicKey) => {
+    console.log('switchSubaccountToActiveLst');
+    let authority = authorityParam;
+    if (!authority) {
+      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+    }
+    const activeLst = get().getActiveLst();
+    const driftClient = getCommon().driftClient?.client;
+
+    if (!driftClient) {
+      console.log('switchSubaccountToActiveLst drift client not exist ');
+      return;
+    }
+
+    if (!authority) {
+      console.log('switchSubaccountToActiveLst authority not exist ');
+      return;
+    }
+
+    const userAccounts = await driftClient.getUserAccountsForAuthority(
+      authority
+    );
+
+    const superStakeAccount = userAccounts.find((account) => {
+      return decodeName(account.name) === activeLst.driftAccountName;
+    });
+
+    if (!superStakeAccount) {
+      console.log("no super stake account found");
+      resetCurrentUserData(true);
+      return;
+    }
+
+    resetCurrentUserData(false);  
+    await switchActiveSubaccount(superStakeAccount.subAccountId, authority);
+    await updateCurrentUserData(currentLstPrice);
+  }
+
+  // Updates current user lst subaccount data in the store w/ latest data stored in memory by driftClient
+  const updateCurrentUserData = async (currentLstPrice?: number) => {
+    const superStakeUser = get().superStakeUser;
+    if (superStakeUser) {
+      const superStakeAccount = get().superStakeUser.getUserAccount();
+      const activeLst = get().getActiveLst();
+      const superStakeUser = get().superStakeUser
+
+      let leverage = new BN(0);
+      if (superStakeUser && currentLstPrice) {
+        const lstTokenAmount = superStakeUser.getTokenAmount(
+          activeLst.spotMarket.marketIndex
+        );
+        const solTokenAmount = superStakeUser.getTokenAmount(SOL_SPOT_MARKET_INDEX);
+        if (solTokenAmount.lt(ZERO)) {
+          const lstRatioBN = new BN(currentLstPrice * LAMPORTS_PER_SOL);
+          // lst deposit / (lst deposit - abs(sol borrow) / lst ratio)
+          leverage = lstTokenAmount
+            .mul(TEN_THOUSAND)
+            .div(
+              lstTokenAmount.sub(
+                solTokenAmount.abs().mul(LAMPORTS_PRECISION).div(lstRatioBN)
+              )
+            );
+        }
+      }
+
+      set((s) => {
+        s.currentUserAccount = {
+          user: superStakeUser,
+          userAccount: superStakeAccount,
+          leverage: BigNum.from(leverage ?? 0, FOUR).toNum(),
+          spotPositions: superStakeAccount?.spotPositions || [],
+          accountId: superStakeAccount?.subAccountId,
+          loaded: true,
+        };
+      });
+    } else {
+      console.log('updateCurrentUserData', superStakeUser);
+    }
+  }
+
+  // Switch active subaccount in drift client without updating the store state for it
+  const switchActiveSubaccount = async (subAccountId: number, authorityParam?: PublicKey) => {
+    console.log('switchActiveSubaccount');
+    let authority = authorityParam;
+    if (!authority) {
+      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+    }
+
+    if (!authority) {
+      console.log('authority not set');
+      return;
+    }
+
+    const driftClient = getCommon().driftClient?.client;
+
+    if (!driftClient) {
+      console.log('driftClient not exist')
+      return;
+    }
+
+    await driftClient.switchActiveUser(
+      subAccountId,
+      authority
+    );
+
+    await driftClient.addUser(subAccountId, authority);
+
+    set(s => {
+      s.superStakeUser = driftClient.getUser();
+    });
+  }
+
+
   return {
     handleSuperStakeDeposit,
     handleSuperStakeWithdrawal,
     handleSuperStakeRepayBorrow,
+    resetCurrentUserData,
+    switchActiveLst,
+    switchActiveSubaccount,
+    switchSubaccountToActiveLst,
+    updateCurrentUserData
   };
 };
 

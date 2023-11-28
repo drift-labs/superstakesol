@@ -82,6 +82,7 @@ export interface AppStoreState {
     swapRecords: Event<SwapRecord>[];
     loaded: boolean;
   };
+  superStakeUser: User;
   set: (x: (s: AppStoreState) => void) => void;
   get: () => AppStoreState;
   clearUserData: () => void;
@@ -115,6 +116,7 @@ export const DEFAULT_STORE_STATE = {
     swapRecords: [],
     loaded: false,
   },
+  superStakeUser: undefined
 };
 
 const useAppStore = create<AppStoreState>()((set, get) => {
