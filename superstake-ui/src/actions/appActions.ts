@@ -723,11 +723,20 @@ const createAppActions = (
 
     await driftClient.addUser(subAccountId, authority);
 
+    // setTimeout(() => {
+    //   console.log(driftClient.isSubscribed);
+    //   console.log('has user?', driftClient.getUser());
+    // }, 1000);
+
+    const driftUser = driftClient.getUser()
+
+    console.log(driftClient.isSubscribed);
+    console.log('has user?', driftUser);
+
     set(s => {
-      s.superStakeUser = driftClient.getUser();
+      s.superStakeUser = driftUser;
     });
   }
-
 
   return {
     handleSuperStakeDeposit,

@@ -36,56 +36,53 @@ const useCurrentUserData = () => {
   }, [appAuthority]);
 
   // Initially switch to superstake user account when drift client is ready and metrics are loaded
+  // Sometimes this randomly triggers even though none of the values have changed and I don't know why.
   useEffect(() => {
     if (connected && driftClientIsReady && appAuthorityString && lstMetrics.loaded) {
-      console.log({
-        connected,
-        driftClientIsReady,
-        appAuthorityString,
-        'lstMetrics.loaded': lstMetrics.loaded,
-        activeLst
-      })
-      console.log('useCurrentUserData switching to active lst');
+      // console.log({
+      //   connected,
+      //   driftClientIsReady,
+      //   appAuthorityString,
+      //   'lstMetrics.loaded': lstMetrics.loaded,
+      //   activeLst
+      // })
+      // console.log('useCurrentUserData switching to active lst');
       actions.switchSubaccountToActiveLst(lstMetrics.priceInSol);
     }  else if ((!connected || !appAuthority) && superStakeUser) {
-      console.log('useCurrentUserData resetting user data on disconnect');
+      // console.log('useCurrentUserData resetting user data on disconnect');
       actions.resetCurrentUserData();
     }
   }, [connected, driftClientIsReady, appAuthorityString, lstMetrics.loaded, activeLst]);
 
-  // useEffect(() => {
-  //   if (lstMetrics.loaded && ) {
-  //   }
-  // }, [lstMetrics.loaded]);
+  // Listen for user account updates, we also want this in a hook so we have access to lstMetrics.priceInSol
+  useEffect(() => {
+    if (!superStakeUser) {
+      return;
+    }
 
-  // useEffect(() => {
-  //   if (!superStakeUser) {
-  //     return;
-  //   }
+    const listenerClosingCallback = () => {
+      if (!superStakeUser) {
+        actions.resetCurrentUserData(true);
+        return;
+      }
 
-  //   const listenerClosingCallback = () => {
-  //     if (!superStakeUser) {
-  //       actions.resetCurrentUserData(true);
-  //       return;
-  //     }
+      const updateHandler = () => {
+        actions.updateCurrentUserData(lstMetrics.priceInSol);
+      }
 
-  //     const updateHandler = () => {
-  //       console.log('superstake user update handler?');
-  //       actions.updateCurrentUserData(lstMetrics.priceInSol);
-  //     }
+      superStakeUser.eventEmitter.on("userAccountUpdate", updateHandler);
+      console.log('apply update handler');
 
-  //     superStakeUser.eventEmitter.on("userAccountUpdate", updateHandler);
+      return () => {
+        superStakeUser.eventEmitter.removeListener(
+          "userAccountUpdate",
+          updateHandler
+        );
+      };
+    };
 
-  //     return () => {
-  //       superStakeUser.eventEmitter.removeListener(
-  //         "userAccountUpdate",
-  //         updateHandler
-  //       );
-  //     };
-  //   };
-
-  //   return listenerClosingCallback();
-  // }, [superStakeUser]);
+    return listenerClosingCallback();
+  }, [superStakeUser]);
 };
 
 export default useCurrentUserData;
