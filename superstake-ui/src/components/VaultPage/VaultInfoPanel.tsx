@@ -53,7 +53,7 @@ const TextWithSkeleton = ({
 };
 
 const VaultOverviewPanel = () => {
-  const activeLst = useAppStore(s => s.getActiveLst());
+  const activeLst = useAppStore(s => s.activeLst);
   const lstAmount = 100;
   const leverage = activeLst.maxLeverage ?? 3;
   const solAmount = useBorrowAmountForStake({
@@ -181,7 +181,7 @@ const YourStakePanel = () => {
         <div className="flex-grow w-full md:w-[50%] pr-4">
           <Text.BODY3>Your stake</Text.BODY3>
           <TextWithSkeleton
-            value={`${userLstEquity.value?.toFixed(3)} ${activeLst}`}
+            value={`${userLstEquity.value?.toFixed(3)} ${activeLst.symbol}`}
             loading={getLoadingState(!userLstEquity.loaded)}
             isAuthorityValue
           />
@@ -190,7 +190,7 @@ const YourStakePanel = () => {
         <div className="flex-grow w-full md:w-[50%]">
           <Text.BODY3>Your position</Text.BODY3>
           <TextWithSkeleton
-            value={`${userLstDeposits.toFixed(3)} ${activeLst}`}
+            value={`${userLstDeposits.toFixed(3)} ${activeLst.symbol}`}
             loading={getLoadingState(!isPositionLoaded)}
             isAuthorityValue
           />
@@ -219,7 +219,7 @@ const YourStakePanel = () => {
               <>
                 <div>
                   <Text.BODY1 className="font-normal">
-                    Rewards are compounded into the value of {activeLst} and
+                    Rewards are compounded into the value of {activeLst.symbol} and
                     update at the end of each epoch. As a result, new positions
                     may show negative earnings as the SOL borrow rate is paid
                     continuously.
@@ -262,7 +262,7 @@ const YourStakePanel = () => {
           />
         </div>
         <div className="flex-grow w-full md:w-[50%]">
-          <Text.BODY3>{activeLst}/SOL ratio</Text.BODY3>
+          <Text.BODY3>{activeLst.symbol}/SOL ratio</Text.BODY3>
           <TextWithSkeleton
             value={`${lstMetrics?.priceInSol?.toFixed(4) ?? 0}`}
             loading={!lstMetrics.loaded}
@@ -274,7 +274,7 @@ const YourStakePanel = () => {
         <TextWithSkeleton
           value={`${
             isNaN(estLiquidationRatio) ? 0 : estLiquidationRatio.toFixed(4)
-          } ${activeLst}/SOL`}
+          } ${activeLst.symbol}/SOL`}
           loading={getLoadingState(
             !isAprLoaded || !isPositionLoaded || !userLstEquity.loaded
           )}
@@ -445,7 +445,7 @@ const VaultInfoPanel = () => {
 
   return (
     <div>
-      <Text.H2>{activeLst} Super Staking</Text.H2>
+      <Text.H2>{activeLst.symbol} Super Staking</Text.H2>
       <div className="mt-2 bg-accent-pink w-20 h-1.5 rounded" />
 
       {/* Carousel section */}

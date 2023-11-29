@@ -37,7 +37,7 @@ const useSuperStakeSolBorrow = ({
 	const driftClientisReady = useCustomDriftClientIsReady();
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
 	const lstMetrics = useCurrentLstMetrics();
-	const activeLst = useAppStore((s) => s.getActiveLst());
+	const activeLst = useAppStore((s) => s.activeLst);
 
 	const lstSpotMarket = activeLst.spotMarket;
 	const solSpotMarket = (

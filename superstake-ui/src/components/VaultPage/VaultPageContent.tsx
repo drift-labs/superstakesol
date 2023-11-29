@@ -7,7 +7,6 @@ import { twMerge } from "tailwind-merge";
 import useAppStore, { DEFAULT_STORE_STATE } from "../../hooks/useAppStore";
 import useFirstLstWithPosition from "../../hooks/useFirstLstWithPosition";
 import { useAppActions } from "../../hooks/useAppActions";
-import useCurrentLstMetrics from "../../hooks/useCurrentLstMetrics";
 
 const VaultContentPanel = (props: PropsWithChildren) => {
   return (
@@ -19,9 +18,8 @@ const VaultContentPanel = (props: PropsWithChildren) => {
 
 const VaultPageContent = () => {
   const actions = useAppActions();
-  const currentActiveLst = useAppStore((s) => s.activeLst);
+  const activeLst = useAppStore((s) => s.activeLst);
   const firstLstWithPosition = useFirstLstWithPosition();
-  const lstMetrics = useCurrentLstMetrics();
 
   useEffect(() => {
     setActiveLst(firstLstWithPosition.symbol);
@@ -52,7 +50,7 @@ const VaultPageContent = () => {
                 isFirst && "rounded rounded-r-none",
                 isLast && "rounded rounded-l-none"
               )}
-              selected={currentActiveLst === lst.symbol}
+              selected={activeLst.symbol === lst.symbol}
               onClick={() => setActiveLst(lst.symbol)}
             >
               <img src={lst.logoUrl} className="w-6 h-6" />

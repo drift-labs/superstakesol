@@ -75,8 +75,8 @@ const StakeUnstakeForm = () => {
   const connected = useWallet().connected;
   const setStoreState = useAppStore((s) => s.set);
   const accountExists = useAccountExists();
-  const activeLst = useAppStore((s) => s.getActiveLst());
-
+  const activeLst = useAppStore((s) => s.activeLst);
+  const currentUserAccountLoaded = useAppStore(s => s.currentUserAccount.loaded);
   const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
   const lstSpotMarket = activeLst.spotMarket;
   const solSpotMarket = (
@@ -726,7 +726,8 @@ const StakeUnstakeForm = () => {
                 isNaN(amountToStakeNum) ||
                 submitting ||
                 exceedsMax ||
-                exceedsMaxBorrow
+                exceedsMaxBorrow ||
+                !currentUserAccountLoaded
               }
             >
               {submitting ? (
