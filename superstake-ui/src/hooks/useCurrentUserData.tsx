@@ -50,7 +50,6 @@ const useCurrentUserData = () => {
       }
 
       superStakeUser.eventEmitter.on("userAccountUpdate", updateHandler);
-      console.log('apply update handler');
 
       return () => {
         superStakeUser.eventEmitter.removeListener(

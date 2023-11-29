@@ -37,7 +37,6 @@ export const useSyncWalletToStore = () => {
 		});
 
 		walletContextState?.wallet?.adapter?.on('disconnect', () => {
-			console.log('disconnecting');
 			set((s) => {
 				s.currentSolBalance = {
 					value: new BigNum(0, BASE_PRECISION_EXP),
@@ -49,11 +48,9 @@ export const useSyncWalletToStore = () => {
 
 			actions.handleWalletDisconnect();
 			clearUserData();
-			console.log('disconnecting finish');
 		});
 
 		return () => {
-			console.log('adapter changed, firing off');
 			walletContextState?.wallet?.adapter.off('connect');
 			walletContextState?.wallet?.adapter.off('disconnect');
 		};

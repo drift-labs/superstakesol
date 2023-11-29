@@ -82,17 +82,10 @@ const createAppActions = (
     invariant(commonState.connection, "Connection is undefined");
 
     try {
-      const users = driftClient.getUsers();
-      const userAccounts = users.map((u, i) => {
-        try {
-          return u.getUserAccount();
-        } catch (err) {
-          return undefined;
-        }
-      });
+      const subaccounts = await driftClient.getUserAccountsForAuthority(commonState.authority);
 
       // If drift account exists, either find superstake subaccount, or create new one
-      const superStakeAccount = userAccounts.find((account) => {
+      const superStakeAccount = subaccounts.find((account) => {
         return account && decodeName(account.name) === activeLst.driftAccountName;
       });
 
@@ -186,18 +179,8 @@ const createAppActions = (
       );
       instructions.push(lstDepositIx);
     } else {
-      let userAccounts: UserAccount[];
-      try {
-        // This will throw an error if the user doesn't have an sss account
-        const userAccounts = driftClient
-          .getUsers()
-          .map((u) => u.getUserAccount());
-      } catch (err) {
-        userAccounts = [];
-      }
-
       // If drift account exists, either find superstake  subaccount, or create new one
-      const superStakeAccount = userAccounts.find((account) => {
+      const superStakeAccount = subAccounts.find((account) => {
         return decodeName(account.name) === props.lst.driftAccountName;
       });
 

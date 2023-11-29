@@ -759,7 +759,7 @@ const StakeUnstakeForm = () => {
                   <Button
                     className="w-full"
                     onClick={handleSuperStakeWithdrawal}
-                    disabled={!amountToWithdrawWithoutRepay || submitting}
+                    disabled={!amountToWithdrawWithoutRepay || submitting || !currentUserAccountLoaded}
                   >
                     {submitting ? (
                       "Approving Transaction..."
@@ -780,7 +780,7 @@ const StakeUnstakeForm = () => {
                   <Button
                     className="w-full"
                     onClick={handleSuperStakeRepayBorrow}
-                    disabled={!amountToUnstakeNum || submitting}
+                    disabled={!amountToUnstakeNum || submitting || !currentUserAccountLoaded}
                   >
                     {submitting ? (
                       "Approving Transaction..."
@@ -802,7 +802,7 @@ const StakeUnstakeForm = () => {
                 <Button
                   className="w-full"
                   onClick={handleSuperStakeWithdrawal}
-                  disabled={!userLstDeposits?.toNum() || submitting}
+                  disabled={!userLstDeposits?.toNum() || submitting || !currentUserAccountLoaded}
                 >
                   {submitting ? (
                     "Approving Transaction..."

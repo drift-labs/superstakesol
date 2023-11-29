@@ -96,21 +96,6 @@ const useSuperStakeSolBorrow = ({
 		solInFromStaking / (lstAmount * lstMetrics.priceInSol);
 	const solOut = solBorrowAmount * solBorrowRate.toNum();
 	const solRewardsPerYear = solInFromStaking + solInFromDeposit - solOut;
-
-	// Something about these numbers seem not quite right still? I don't know what it is, but gonna leave it like this because whatever it is, it's pretty close.
-	// console.log({
-	// 	leveragedStakingAPR,
-	// 	mSolDepositRate: mSolDepositRate.toNum() * 100,
-	// 	solBorrowRate: solBorrowRate.toNum() * 100,
-	// 	mSolAprFromApy: mSolAprFromApy * 100,
-	// 	solInFromStaking,
-	// 	solInFromDeposit,
-	// 	solOut,
-	// 	solRewardsPerYear,
-	// 	solAmountEquiv: mSolAmount * mSolMetrics.m_sol_price,
-	// 	superStakeMsolDeposit,
-	// });
-
 	const projectedApr = solRewardsPerYear / (lstAmount * lstMetrics.priceInSol);
 
 	const projectedLiqRatio = calculateEstimatedSuperStakeLiquidationPrice(
