@@ -11,7 +11,7 @@ const useUserSolEarned = () => {
   const driftClientIsReady = useCustomDriftClientIsReady();
   const [solEarned, setSolEarned] = useState(BigNum.zero(SOL_PRECISION_EXP));
   const [loaded, setLoaded] = useState(false);
-  const activeLst = useAppStore((s) => s.getActiveLst());
+  const activeLst = useAppStore((s) => s.activeLst);
 
   useEffect(() => {
     (async () => {

@@ -75,8 +75,8 @@ const StakeUnstakeForm = () => {
   const connected = useWallet().connected;
   const setStoreState = useAppStore((s) => s.set);
   const accountExists = useAccountExists();
-  const activeLst = useAppStore((s) => s.getActiveLst());
-
+  const activeLst = useAppStore((s) => s.activeLst);
+  const currentUserAccountLoaded = useAppStore(s => s.currentUserAccount.loaded);
   const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
   const lstSpotMarket = activeLst.spotMarket;
   const solSpotMarket = (
@@ -196,7 +196,7 @@ const StakeUnstakeForm = () => {
   });
 
   const { maxSolSwap, maxLstSwap } =
-    useMaxSwapAmount(amountToStakeNum) ?? solBorrowAmount;
+    useMaxSwapAmount(amountToStakeNum);
 
   solBorrowAmount = Math.min(
     solBorrowAmount,
@@ -552,7 +552,7 @@ const StakeUnstakeForm = () => {
                 value={leverageToUse}
                 step={0.1}
                 min={1}
-                max={3}
+                max={activeLst.maxLeverage}
               />
             </div>
 
@@ -660,7 +660,7 @@ const StakeUnstakeForm = () => {
                   }
                   step={0.1}
                   min={1}
-                  max={3}
+                  max={activeLst.maxLeverage}
                 />
               </div>
             </div>
@@ -726,7 +726,8 @@ const StakeUnstakeForm = () => {
                 isNaN(amountToStakeNum) ||
                 submitting ||
                 exceedsMax ||
-                exceedsMaxBorrow
+                exceedsMaxBorrow ||
+                !currentUserAccountLoaded
               }
             >
               {submitting ? (
@@ -758,7 +759,7 @@ const StakeUnstakeForm = () => {
                   <Button
                     className="w-full"
                     onClick={handleSuperStakeWithdrawal}
-                    disabled={!amountToWithdrawWithoutRepay || submitting}
+                    disabled={!amountToWithdrawWithoutRepay || submitting || !currentUserAccountLoaded}
                   >
                     {submitting ? (
                       "Approving Transaction..."
@@ -779,7 +780,7 @@ const StakeUnstakeForm = () => {
                   <Button
                     className="w-full"
                     onClick={handleSuperStakeRepayBorrow}
-                    disabled={!amountToUnstakeNum || submitting}
+                    disabled={!amountToUnstakeNum || submitting || !currentUserAccountLoaded}
                   >
                     {submitting ? (
                       "Approving Transaction..."
@@ -801,7 +802,7 @@ const StakeUnstakeForm = () => {
                 <Button
                   className="w-full"
                   onClick={handleSuperStakeWithdrawal}
-                  disabled={!userLstDeposits?.toNum() || submitting}
+                  disabled={!userLstDeposits?.toNum() || submitting || !currentUserAccountLoaded}
                 >
                   {submitting ? (
                     "Approving Transaction..."
