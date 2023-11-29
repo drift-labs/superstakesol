@@ -28,7 +28,7 @@ export const JITO_SOL: LST = {
 	spotMarket: MainnetSpotMarkets[6],
 	logoUrl: '/jitoSol.svg',
 	maxLeverage: 1.8,
-	defaultLeverage: 1.5
+	defaultLeverage: 1.4
 };
 
 // export const B_SOL: LST = {

@@ -179,10 +179,16 @@ const createAppActions = (
       );
       instructions.push(lstDepositIx);
     } else {
+      const userAccounts = driftClient
+        .getUsers()
+        .map((u) => u.getUserAccount());
+        
       // If drift account exists, either find superstake  subaccount, or create new one
-      const superStakeAccount = commonState.userAccounts.find((account) => {
+      const superStakeAccount = userAccounts.find((account) => {
         return decodeName(account.name) === props.lst.driftAccountName;
       });
+
+      console.log(superStakeAccount)
 
       if (superStakeAccount) {
         console.log("found super stake account");
@@ -198,6 +204,7 @@ const createAppActions = (
 
         instructions.push(lstDepositIx);
       } else {
+        console.log('creating new super stake account');
         if (superstakeSubAccountId === 0) {
           // We should never get here - where driftAccountExists is true but we're trying to create a new account with ID=0.
           //// Attempt to give a friendly error back to the user
@@ -314,6 +321,7 @@ const createAppActions = (
    */
   const handleSuperStakeDeposit = async (props: DepositProps) => {
     try {
+      const state = get();
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
 
@@ -321,31 +329,38 @@ const createAppActions = (
 
       const superStakeAccountId = await getSubaccountIdForSuperStakeAccount();
 
-      // TODO : This logically does the correct thing but I think that I've misnamed / badly constructed this .. it's confusing being called initializeAndSubscribeToNewUserAccount when it doesn't necessarily initialize an account => Luke to refactor
-      await COMMON_UI_UTILS.initializeAndSubscribeToNewUserAccount(
-        // @ts-ignore
-        driftClient,
-        superStakeAccountId,
-        commonState.authority as PublicKey,
-        {
-          initializationStep: async () => {
-            await doDepositTx(props, superStakeAccountId);
-            return true;
-          },
-          //@ts-ignore
-          handleSuccessStep: async () => {
-            NOTIFICATION_UTILS.toast.success(
-              `Super Staked ${BigNum.from(
-                props.lstDepositAmount,
-                props.lst.spotMarket.precisionExp
-              ).prettyPrint(true)} ${props.lst.symbol} Successfully`,
-              {
-                toastId: DEPOSIT_TOAST_ID,
-              }
-            );
-          },
-        }
-      );
+      console.log("superStakeAccountId", superStakeAccountId);
+
+      // if superStakeUser exists, the superstake account already exists
+
+      if (state.superStakeUser) {
+        await doDepositTx(props, superStakeAccountId);
+      } else {
+        await COMMON_UI_UTILS.initializeAndSubscribeToNewUserAccount(
+          // @ts-ignore
+          driftClient,
+          superStakeAccountId,
+          commonState.authority as PublicKey,
+          {
+            initializationStep: async () => {
+              await doDepositTx(props, superStakeAccountId);
+              return true;
+            },
+            //@ts-ignore
+            handleSuccessStep: async () => {
+              NOTIFICATION_UTILS.toast.success(
+                `Super Staked ${BigNum.from(
+                  props.lstDepositAmount,
+                  props.lst.spotMarket.precisionExp
+                ).prettyPrint(true)} ${props.lst.symbol} Successfully`,
+                {
+                  toastId: DEPOSIT_TOAST_ID,
+                }
+              );
+            },
+          }
+        );
+      }
     } catch (err) {
       console.log(err);
       if ((err as any)?.logs) {
@@ -371,6 +386,13 @@ const createAppActions = (
     solWithdrawalAmount: BN;
     subAccountId: number;
   }) => {
+    console.log('handling unstake');
+    console.log({
+      lstWithdrawalAmount: lstWithdrawalAmount.toNumber(),
+      solWithdrawalAmount: solWithdrawalAmount.toNumber(),
+      subAccountId
+    });
+
     try {
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
@@ -406,6 +428,8 @@ const createAppActions = (
       } catch (e) {
         ataExists = false;
       }
+
+      console.log('ataExists', ataExists);
 
       if (!ataExists) {
         const createAssociatedTokenAccountIx =

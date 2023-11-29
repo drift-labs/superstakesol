@@ -1,21 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import useCustomDriftClientIsReady from "./useCustomDriftClientIsReady";
-import useAppStore, { DEFAULT_USER_DATA } from "./useAppStore";
-import { decodeName } from "../utils/uiUtils";
-import {
-  BigNum,
-  BN,
-  FOUR,
-  LAMPORTS_PRECISION,
-  PublicKey,
-  TEN_THOUSAND,
-  User,
-  ZERO,
-} from "@drift-labs/sdk";
-import { SOL_SPOT_MARKET_INDEX } from "../utils/uiUtils";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import useAppStore from "./useAppStore";
 import { useCommonDriftStore } from "@drift-labs/react";
 import { useWallet } from "@drift-labs/react";
 import useCurrentLstMetrics from "./useCurrentLstMetrics";
@@ -39,14 +26,6 @@ const useCurrentUserData = () => {
   // Sometimes this randomly triggers even though none of the values have changed and I don't know why.
   useEffect(() => {
     if (connected && driftClientIsReady && appAuthorityString && lstMetrics.loaded) {
-      // console.log({
-      //   connected,
-      //   driftClientIsReady,
-      //   appAuthorityString,
-      //   'lstMetrics.loaded': lstMetrics.loaded,
-      //   activeLst
-      // })
-      // console.log('useCurrentUserData switching to active lst');
       actions.switchSubaccountToActiveLst(lstMetrics.priceInSol);
     }  else if ((!connected || !appAuthority) && superStakeUser) {
       // console.log('useCurrentUserData resetting user data on disconnect');
