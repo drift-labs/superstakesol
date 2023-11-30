@@ -31,19 +31,19 @@ export const JITO_SOL: LST = {
 	defaultLeverage: 1.4
 };
 
-// export const B_SOL: LST = {
-// 	symbol: 'bSOL',
-// 	driftAccountName: 'Super Stake bSOL',
-// 	spotMarket: MainnetSpotMarkets[8],
-// 	logoUrl: '/bSol.svg',
-// 	maxLeverage: 1.8,
-// 	defaultLeverage: 1.5
-// };
+export const B_SOL: LST = {
+	symbol: 'bSOL',
+	driftAccountName: 'Super Stake bSOL',
+	spotMarket: MainnetSpotMarkets[8],
+	logoUrl: '/bSol.svg',
+	maxLeverage: 1.8,
+	defaultLeverage: 1.5
+};
 
-export const ALL_LST: LST[] = [M_SOL, JITO_SOL];
+export const ALL_LST: LST[] = [M_SOL, JITO_SOL, B_SOL];
 
 export const ALL_LST_MAP: Record<string, LST> = {
 	[M_SOL.symbol]: M_SOL,
-	[JITO_SOL.symbol]: JITO_SOL
-	// [B_SOL.symbol]: B_SOL
+	[JITO_SOL.symbol]: JITO_SOL,
+	[B_SOL.symbol]: B_SOL
 };
