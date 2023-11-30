@@ -10,7 +10,7 @@ import { useAppActions } from "./useAppActions";
 
 const useCurrentUserData = () => {
   const activeLst = useAppStore(s => s.activeLst);
-  const superStakeUser = useAppStore(s => s.superStakeUser);
+  const superStakeUser = useAppStore(s => s.currentUserAccount.user);
   const actions = useAppActions();
   const driftClientIsReady = useCustomDriftClientIsReady();
   const { connected } = useWallet();
