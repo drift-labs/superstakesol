@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`src/actions/appActions.ts creates app actions without error 1`] = `
+{
+  "handleSuperStakeDeposit": [Function],
+  "handleSuperStakeRepayBorrow": [Function],
+  "handleSuperStakeWithdrawal": [Function],
+  "resetCurrentUserData": [Function],
+  "switchActiveLst": [Function],
+  "switchActiveSubaccount": [Function],
+  "switchSubaccountToActiveLst": [Function],
+  "updateCurrentUserData": [Function],
+}
+`;
+
+exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets new state with valid LSTs 1`] = `
+{
+  "activeLst": {
+    "defaultLeverage": 1.4,
+    "driftAccountName": "Super Stake JitoSOL",
+    "logoUrl": "/jitoSol.svg",
+    "maxLeverage": 1.8,
+    "spotMarket": {
+      "marketIndex": 6,
+      "mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
+      "oracle": "7yyaeuJ1GGtVBLT2z2xub5ZWYKaNhF28mj1RdV4VDFVk",
+      "oracleSource": {
+        "pyth": {},
+      },
+      "precision": "3b9aca00",
+      "precisionExp": "09",
+      "serumMarket": "DkbVbMhFxswS32xnn1K2UY4aoBugXooBTxdzkWWDWRkH",
+      "symbol": "jitoSOL",
+    },
+    "symbol": "JitoSOL",
+  },
+  "stakeUnstakeForm": {
+    "amountToStakeString": "",
+    "amountToStakeUncappedString": "",
+    "amountToUnstakeString": "",
+    "isMaxStake": false,
+    "isMaxUnstake": false,
+    "leverageToUse": 1.4,
+    "unstakeLeverage": 0,
+  },
+}
+`;
+
+exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets new state with valid LSTs 2`] = `
+{
+  "activeLst": {
+    "defaultLeverage": 1.4,
+    "driftAccountName": "Super Stake JitoSOL",
+    "logoUrl": "/jitoSol.svg",
+    "maxLeverage": 1.8,
+    "spotMarket": {
+      "marketIndex": 6,
+      "mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
+      "oracle": "7yyaeuJ1GGtVBLT2z2xub5ZWYKaNhF28mj1RdV4VDFVk",
+      "oracleSource": {
+        "pyth": {},
+      },
+      "precision": "3b9aca00",
+      "precisionExp": "09",
+      "serumMarket": "DkbVbMhFxswS32xnn1K2UY4aoBugXooBTxdzkWWDWRkH",
+      "symbol": "jitoSOL",
+    },
+    "symbol": "JitoSOL",
+  },
+  "stakeUnstakeForm": {
+    "amountToStakeString": "",
+    "amountToStakeUncappedString": "",
+    "amountToUnstakeString": "",
+    "isMaxStake": false,
+    "isMaxUnstake": false,
+    "leverageToUse": 1.4,
+    "unstakeLeverage": 0,
+  },
+}
+`;
+
+exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst throws an error with invalid LST 1`] = `""No LST exists with symbol longLiveSolana"`;
