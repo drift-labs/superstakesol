@@ -578,7 +578,7 @@ const createAppActions = (
     if (!lstData) {
       throw new Error(`"No LST exists with symbol ${newLstSymbol}`);
     }
-
+    
     set((state) => {
       state.activeLst = lstData;
       state.stakeUnstakeForm = {
