@@ -22,6 +22,7 @@ const VaultPageContent = () => {
   const firstLstWithPosition = useFirstLstWithPosition();
 
   useEffect(() => {
+    console.log('firstLstWithPosition', firstLstWithPosition);
     setActiveLst(firstLstWithPosition.symbol);
   }, [firstLstWithPosition]);
 

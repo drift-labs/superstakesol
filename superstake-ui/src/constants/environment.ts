@@ -12,12 +12,15 @@ const driftEnv =
 InitializeCommon(driftEnv);
 
 type EnvironmentVariables = {
-	driftEnv: DriftEnv;
+
+
+		driftEnv: DriftEnv;
 	nextEnv: string | undefined;
 	isDev: boolean | undefined;
 	basePollingRateMs: number;
 	rpcOverride: string | undefined;
 	historyServerUrl: string;
+	defaultActiveLst: string | undefined;
 };
 
 const Env: EnvironmentVariables = {
@@ -34,6 +37,7 @@ const Env: EnvironmentVariables = {
 		process.env.NEXT_PUBLIC_DRIFT_ENV === 'mainnet-beta'
 			? EnvironmentConstants.historyServerUrl.mainnet
 			: EnvironmentConstants.historyServerUrl.dev,
+	defaultActiveLst: process.env.NEXT_PUBLIC_DEFAULT_ACTIVE_LST
 };
 
 export default Env;
