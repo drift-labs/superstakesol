@@ -4,8 +4,9 @@ import VaultInfoPanel from "./VaultInfoPanel";
 import { ALL_LST } from "../../constants/lst";
 import Button from "../Button";
 import { twMerge } from "tailwind-merge";
-import useAppStore from "../../hooks/useAppStore";
+import useAppStore, { DEFAULT_STORE_STATE } from "../../hooks/useAppStore";
 import useFirstLstWithPosition from "../../hooks/useFirstLstWithPosition";
+import { useAppActions } from "../../hooks/useAppActions";
 
 const VaultContentPanel = (props: PropsWithChildren) => {
   return (
@@ -16,9 +17,8 @@ const VaultContentPanel = (props: PropsWithChildren) => {
 };
 
 const VaultPageContent = () => {
-  const setAppStore = useAppStore((s) => s.set);
-  const currentActiveLst = useAppStore((s) => s.activeLst);
-
+  const actions = useAppActions();
+  const activeLst = useAppStore((s) => s.activeLst);
   const firstLstWithPosition = useFirstLstWithPosition();
 
   useEffect(() => {
@@ -26,9 +26,7 @@ const VaultPageContent = () => {
   }, [firstLstWithPosition]);
 
   const setActiveLst = (activeLstSymbol: string) => {
-    setAppStore((state) => {
-      state.activeLst = activeLstSymbol;
-    });
+    actions.switchActiveLst(activeLstSymbol);
   };
 
   return (
@@ -52,7 +50,7 @@ const VaultPageContent = () => {
                 isFirst && "rounded rounded-r-none",
                 isLast && "rounded rounded-l-none"
               )}
-              selected={currentActiveLst === lst.symbol}
+              selected={activeLst.symbol === lst.symbol}
               onClick={() => setActiveLst(lst.symbol)}
             >
               <img src={lst.logoUrl} className="w-6 h-6" />

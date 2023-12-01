@@ -7,7 +7,7 @@ import useCurrentLstMetrics from './useCurrentLstMetrics';
 
 const useCurrentSuperstakePosition = () => {
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
-	const activeLst = useAppStore((s) => s.getActiveLst());
+	const activeLst = useAppStore((s) => s.activeLst);
 
 	const lsSpotMarket = activeLst.spotMarket;
 	const solSpotMarket = (

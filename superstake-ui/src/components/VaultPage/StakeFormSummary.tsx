@@ -46,7 +46,7 @@ const StakeFormSummary = ({
   accountExists,
 }: // projectedYield30d,
 StakeFormSummaryProps) => {
-  const activeLst = useAppStore((s) => s.getActiveLst());
+  const activeLst = useAppStore((s) => s.activeLst);
   const solSpotMarket = SpotMarkets["mainnet-beta"][SOL_SPOT_MARKET_INDEX];
   const { userLstDeposits, userSolBorrows } = useCurrentSuperstakePosition();
 

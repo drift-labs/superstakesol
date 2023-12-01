@@ -44,7 +44,7 @@ const useEstimateApr = ({
 	const driftClient = useCommonDriftStore((s) => s.driftClient?.client);
 	const driftClientisReady = useCustomDriftClientIsReady();
 	const lstMetrics = useCurrentLstMetrics();
-	const activeLst = useAppStore((s) => s.getActiveLst());
+	const activeLst = useAppStore((s) => s.activeLst);
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
 
 	const lstSpotMarket = activeLst.spotMarket;

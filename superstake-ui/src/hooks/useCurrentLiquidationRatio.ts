@@ -30,7 +30,7 @@ const useEstimatedLiquidationRatio = ({
   const lstMetrics = useCurrentLstMetrics();
 
   const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
-  const activeLst = useAppStore((s) => s.getActiveLst());
+  const activeLst = useAppStore((s) => s.activeLst);
 
   const lstSpotMarket = activeLst.spotMarket;
   const solSpotMarket = (

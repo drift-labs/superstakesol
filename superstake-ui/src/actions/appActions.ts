@@ -1,6 +1,6 @@
 import { SLIPPAGE_TOLERANCE_DEFAULT } from "../constants";
-import { AppStoreState } from "../hooks/useAppStore";
-import { decodeName } from "../utils/uiUtils";
+import { AppStoreState, DEFAULT_STORE_STATE, DEFAULT_USER_DATA } from "../hooks/useAppStore";
+import { SOL_SPOT_MARKET_INDEX, decodeName } from "../utils/uiUtils";
 import {
   BN,
   BigNum,
@@ -12,6 +12,10 @@ import {
   findBestSuperStakeIxs,
   SwapReduceOnly,
   getUserAccountPublicKeySync,
+  TEN_THOUSAND,
+  LAMPORTS_PRECISION,
+  FOUR,
+  UserAccount,
 } from "@drift-labs/sdk";
 import { COMMON_UI_UTILS } from "@drift/common";
 import {
@@ -20,6 +24,7 @@ import {
 } from "@solana/spl-token";
 import {
   AddressLookupTableAccount,
+  LAMPORTS_PER_SOL,
   Signer,
   TransactionInstruction,
 } from "@solana/web3.js";
@@ -27,7 +32,7 @@ import { StoreApi } from "zustand";
 import NOTIFICATION_UTILS from "../utils/notify";
 import { CommonDriftStore } from "@drift-labs/react";
 import invariant from "tiny-invariant";
-import { LST } from "../constants/lst";
+import { ALL_LST_MAP, LST } from "../constants/lst";
 
 const DEPOSIT_TOAST_ID = "deposit_toast";
 
@@ -60,9 +65,9 @@ type DepositProps = {
 
 const createAppActions = (
   get: StoreApi<AppStoreState>["getState"],
-  _set: (x: (s: AppStoreState) => void) => void,
+  set: (x: (s: AppStoreState) => void) => void,
   getCommon: StoreApi<CommonDriftStore>["getState"],
-  _setCommon: (x: (s: CommonDriftStore) => void) => void
+  setCommon: (x: (s: CommonDriftStore) => void) => void
 ) => {
   /**
    * Returns the ID of the current super stake account or the id for tne new super stake account to create if it doesn't exist
@@ -71,39 +76,36 @@ const createAppActions = (
   const getSubaccountIdForSuperStakeAccount = async () => {
     const commonState = getCommon();
     const driftClient = commonState.driftClient.client;
-
-    const activeLst = get().getActiveLst();
+    const activeLst = get().activeLst;
 
     invariant(driftClient, "Drift client is undefined");
     invariant(commonState.connection, "Connection is undefined");
 
     try {
-      const userAccounts = driftClient
-        .getUsers()
-        .map((u) => u.getUserAccount());
+      const subaccounts = await driftClient.getUserAccountsForAuthority(commonState.authority);
 
       // If drift account exists, either find superstake subaccount, or create new one
-      const superStakeAccount = userAccounts.find((account) => {
-        return decodeName(account.name) === activeLst.driftAccountName;
+      const superStakeAccount = subaccounts.find((account) => {
+        return account && decodeName(account.name) === activeLst.driftAccountName;
       });
 
       if (superStakeAccount) {
         return superStakeAccount.subAccountId;
       }
 
+      // Subaccount for current LST doen't exist
+      // But user may have a stats account already
+      // If we do we want to return the next available subaccount id
       const userStatsAccount = await fetchUserStatsAccount(
         commonState.connection,
         driftClient.program,
-        driftClient.authority
+        commonState.authority
       );
 
       return userStatsAccount?.numberOfSubAccountsCreated ?? 0;
     } catch (err) {
+      // We should never get here now, but just leaving the catch here in case it does happen again.
       console.log(err);
-      // TODO: dangerously assume user is new, this is a workaround for catching the error when a new user tries to deposit,
-      // but because a new user is added to the drift client before this step, u.getUserAccount() above will throw an error
-      // when attempted on the new user. forgot when the logic of adding a new user to the drift client was added, will need
-      // a more thorough debugging again (chester)
       return 0;
     }
   };
@@ -133,23 +135,26 @@ const createAppActions = (
 
     const instructions: TransactionInstruction[] = [];
 
-    let sssAccountPublicKey: PublicKey = getUserAccountPublicKeySync(
-      driftClient.program.programId,
-      commonState.authority,
-      superstakeSubAccountId
-    );
+    let sssAccountPublicKey: PublicKey
+    try {
+      sssAccountPublicKey = getUserAccountPublicKeySync(
+        driftClient.program.programId,
+        commonState.authority,
+        superstakeSubAccountId
+      );
+    } catch (err) {
+      console.log('no sssAccountPublicKey');
+    }
 
     const subAccounts = await driftClient.getUserAccountsForAuthority(
-      driftClient.authority
+      commonState.authority
     );
     const driftAccountExists = subAccounts.length > 0;
 
     let creatingNewUser = false;
 
     if (!driftAccountExists) {
-      console.log("creating new drift account");
-
-      // If no drift account exists, create subaccount 0 and use it as the superstake account
+      // If no drift account exists, create subaccount and use it as the superstake account
       creatingNewUser = true;
 
       const [_, initializeSssAccountIx] =
@@ -159,7 +164,6 @@ const createAppActions = (
         );
 
       if (superstakeSubAccountId === 0) {
-        console.log("creating user stats");
         instructions.push(await driftClient.getInitializeUserStatsIx());
       }
 
@@ -176,13 +180,11 @@ const createAppActions = (
       instructions.push(lstDepositIx);
     } else {
       // If drift account exists, either find superstake  subaccount, or create new one
-      const superStakeAccount = commonState.userAccounts.find((account) => {
+      const superStakeAccount = subAccounts.find((account) => {
         return decodeName(account.name) === props.lst.driftAccountName;
       });
 
       if (superStakeAccount) {
-        console.log("found super stake account");
-
         driftClient.switchActiveUser(superstakeSubAccountId);
 
         const lstDepositIx = await driftClient.getDepositInstruction(
@@ -201,7 +203,6 @@ const createAppActions = (
             `An error (bad subaccount id) occurred. Please refresh the page and try again.`
           );
         }
-        console.log("creating new superstake account");
 
         creatingNewUser = true;
 
@@ -255,7 +256,6 @@ const createAppActions = (
         onlyDirectRoutes: true,
         marketIndex: props.lst.spotMarket.marketIndex,
       });
-      console.log(`swapping using ${method} w expected price ${price}`);
 
       swapInstructions = _swapInstructions;
       lookupTables = _lookupTables;
@@ -281,7 +281,7 @@ const createAppActions = (
     // Pre-Flight safety check before sending transaction. To ENSURE we're not creating duplicate superstake acounts.
     if (creatingNewUser) {
       const currentUserAccountsForAuthority =
-        await driftClient.getUserAccountsForAuthority(driftClient.authority);
+        await driftClient.getUserAccountsForAuthority(commonState.authority);
 
       const preExistingSuperstakeAccount = currentUserAccountsForAuthority.find(
         (account) => decodeName(account.name) === props.lst.driftAccountName
@@ -298,8 +298,6 @@ const createAppActions = (
     );
 
     await driftClient.addUser(superstakeSubAccountId, commonState.authority);
-
-    // console.log({ _txSig, _slot });
   };
 
   /**
@@ -310,38 +308,44 @@ const createAppActions = (
    */
   const handleSuperStakeDeposit = async (props: DepositProps) => {
     try {
+      const state = get();
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
 
       invariant(driftClient, "Drift client is undefined");
 
       const superStakeAccountId = await getSubaccountIdForSuperStakeAccount();
+      const superStakeUser = state.currentUserAccount?.user;
 
-      // TODO : This logically does the correct thing but I think that I've misnamed / badly constructed this .. it's confusing being called initializeAndSubscribeToNewUserAccount when it doesn't necessarily initialize an account => Luke to refactor
-      await COMMON_UI_UTILS.initializeAndSubscribeToNewUserAccount(
-        // @ts-ignore
-        driftClient,
-        superStakeAccountId,
-        commonState.authority as PublicKey,
-        {
-          initializationStep: async () => {
-            await doDepositTx(props, superStakeAccountId);
-            return true;
-          },
-          //@ts-ignore
-          handleSuccessStep: async () => {
-            NOTIFICATION_UTILS.toast.success(
-              `Super Staked ${BigNum.from(
-                props.lstDepositAmount,
-                props.lst.spotMarket.precisionExp
-              ).prettyPrint(true)} ${props.lst.symbol} Successfully`,
-              {
-                toastId: DEPOSIT_TOAST_ID,
-              }
-            );
-          },
-        }
-      );
+      if (superStakeUser) {
+        await doDepositTx(props, superStakeAccountId);
+      } else {
+        await COMMON_UI_UTILS.initializeAndSubscribeToNewUserAccount(
+          // @ts-ignore
+          driftClient,
+          superStakeAccountId,
+          commonState.authority as PublicKey,
+          {
+            initializationStep: async () => {
+              await doDepositTx(props, superStakeAccountId);
+              return true;
+            },
+            //@ts-ignore
+            handleSuccessStep: async () => {
+              NOTIFICATION_UTILS.toast.success(
+                `Super Staked ${BigNum.from(
+                  props.lstDepositAmount,
+                  props.lst.spotMarket.precisionExp
+                ).prettyPrint(true)} ${props.lst.symbol} Successfully`,
+                {
+                  toastId: DEPOSIT_TOAST_ID,
+                }
+              );
+              switchSubaccountToActiveLst();
+            },
+          }
+        );
+      }
     } catch (err) {
       console.log(err);
       if ((err as any)?.logs) {
@@ -370,7 +374,7 @@ const createAppActions = (
     try {
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
-      const activeLst = get().getActiveLst();
+      const activeLst = get().activeLst;
 
       const lstSpotMarket = activeLst.spotMarket;
       const solSpotMarket = (
@@ -468,7 +472,6 @@ const createAppActions = (
         additionalSigners
       );
 
-      console.log({ _txSig, _slot });
       NOTIFICATION_UTILS.toast.success(`Unstaked Successfully`);
     } catch (err) {
       console.log(err);
@@ -510,7 +513,7 @@ const createAppActions = (
     try {
       const commonState = getCommon();
       const driftClient = commonState.driftClient.client;
-      const activeLst = get().getActiveLst();
+      const activeLst = get().activeLst;
 
       const lstSpotMarket = activeLst.spotMarket;
       const solSpotMarket = (
@@ -558,7 +561,6 @@ const createAppActions = (
         tx
       );
 
-      console.log({ _txSig, _slot });
     } catch (err) {
       console.log(err);
       if ((err as any)?.logs) {
@@ -569,10 +571,151 @@ const createAppActions = (
     }
   };
 
+  // Switches active LST. Does NOT switch the subaccount automatically
+  const switchActiveLst = (newLstSymbol: string) => {
+    const lstData = ALL_LST_MAP[newLstSymbol];
+
+    if (!lstData) {
+      throw new Error(`"No LST exists with symbol ${newLstSymbol}`);
+    }
+
+    set((state) => {
+      state.activeLst = lstData;
+      state.stakeUnstakeForm = {
+        ...DEFAULT_STORE_STATE.stakeUnstakeForm,
+        leverageToUse: lstData?.defaultLeverage ?? 2,
+        unstakeLeverage: 0
+      }
+    });
+  }
+
+  // Resets the current subaccount / user data
+  const resetCurrentUserData = (loaded?: boolean) => {
+    set((s) => {
+      s.currentUserAccount = { ...DEFAULT_USER_DATA, loaded: !!loaded };
+      s.eventRecords = {
+        depositRecords: [],
+        swapRecords: [],
+        mostRecentTx: undefined,
+        loaded: !!loaded,
+      };
+    });
+    setCommon((s) => {
+      s.userAccounts = [];
+    });
+  };
+
+  const switchSubaccountToActiveLst = async (currentLstPrice?: number, authorityParam?: PublicKey) => {
+    let authority = authorityParam;
+    if (!authority) {
+      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+    }
+    const activeLst = get().activeLst;
+    const driftClient = getCommon().driftClient?.client;
+
+    if (!driftClient) {
+      return;
+    }
+
+    if (!authority) {
+      return;
+    }
+
+    const userAccounts = await driftClient.getUserAccountsForAuthority(
+      authority
+    );
+
+    const superStakeAccount = userAccounts.find((account) => {
+      return decodeName(account.name) === activeLst.driftAccountName;
+    });
+
+    if (!superStakeAccount) {
+      resetCurrentUserData(true);
+      return;
+    }
+
+    resetCurrentUserData(false);  
+    await switchActiveSubaccount(superStakeAccount.subAccountId, authority);
+    await updateCurrentUserData(currentLstPrice);
+  }
+
+  // Updates current user lst subaccount data in the store w/ latest data stored in memory by driftClient
+  const updateCurrentUserData = async (currentLstPrice?: number) => {
+    const driftClient = getCommon().driftClient;
+    const superStakeUser = driftClient.client.getUser();
+
+    if (superStakeUser) {
+      const superStakeAccount = superStakeUser.getUserAccount();
+      const activeLst = get().activeLst;
+
+      let leverage = new BN(0);
+      if (superStakeUser && currentLstPrice) {
+        const lstTokenAmount = superStakeUser.getTokenAmount(
+          activeLst.spotMarket.marketIndex
+        );
+        const solTokenAmount = superStakeUser.getTokenAmount(SOL_SPOT_MARKET_INDEX);
+        if (solTokenAmount.lt(ZERO)) {
+          const lstRatioBN = new BN(currentLstPrice * LAMPORTS_PER_SOL);
+          // lst deposit / (lst deposit - abs(sol borrow) / lst ratio)
+          leverage = lstTokenAmount
+            .mul(TEN_THOUSAND)
+            .div(
+              lstTokenAmount.sub(
+                solTokenAmount.abs().mul(LAMPORTS_PRECISION).div(lstRatioBN)
+              )
+            );
+        }
+      }
+
+      set((s) => {
+        s.currentUserAccount = {
+          user: superStakeUser,
+          userAccount: superStakeAccount,
+          leverage: BigNum.from(leverage ?? 0, FOUR).toNum(),
+          spotPositions: superStakeAccount?.spotPositions || [],
+          accountId: superStakeAccount?.subAccountId,
+          loaded: true,
+        };
+      });
+    } else {
+      resetCurrentUserData(true);
+    }
+  }
+
+  // Switch active subaccount in drift client without updating the store state for it
+  const switchActiveSubaccount = async (subAccountId: number, authorityParam?: PublicKey) => {
+    let authority = authorityParam;
+    if (!authority) {
+      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+    }
+
+    if (!authority) {
+      return;
+    }
+
+    const driftClient = getCommon().driftClient?.client;
+
+    if (!driftClient) {
+      return;
+    }
+
+    await driftClient.switchActiveUser(
+      subAccountId,
+      authority
+    );
+
+    await driftClient.addUser(subAccountId, authority);
+  }
+
   return {
     handleSuperStakeDeposit,
     handleSuperStakeWithdrawal,
     handleSuperStakeRepayBorrow,
+    resetCurrentUserData,
+    switchActiveLst,
+    switchActiveSubaccount,
+    switchSubaccountToActiveLst,
+    updateCurrentUserData
   };
 };
 

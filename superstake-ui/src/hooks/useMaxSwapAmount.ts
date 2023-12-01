@@ -25,7 +25,7 @@ const useMaxSwapAmount = (lstDeposit: number) => {
   const driftClient = useCommonDriftStore((s) => s.driftClient?.client);
   const driftClientIsReady = useCustomDriftClientIsReady();
   const user = mockUser(driftClient, currentUser);
-  const activeLst = useAppStore((s) => s.getActiveLst());
+  const activeLst = useAppStore((s) => s.activeLst);
 
   if (!lstMetrics.loaded || !driftClient || !driftClientIsReady || !user) {
     return {
