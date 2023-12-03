@@ -28,8 +28,6 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 	}, pollingRateMs);
 	
 	async function fetchAndSetBSolMetrics() {
-		console.log('fetchAndSetBSolMetrics', activeLst.symbol);
-		
 		if (activeLst.symbol !== B_SOL.symbol) return;
 		
 		try {
@@ -53,15 +51,7 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 				const data = await driftEmissionsResponse.json();
 				driftEmissions = data?.emissions?.lend;
 			}
-			
-			console.log('bsol metrics', {
-				priceInSol,
-				driftEmissions,
-				baseApy,
-				blzeApy,
-				lendingMultiplier,
-			});
-			
+
 			setMetrics({
 				loaded: true,
 				baseApy,

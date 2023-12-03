@@ -681,7 +681,6 @@ const createAppActions = (
       });
     } else {
       resetCurrentUserData(true);
-      console.log('reset current user data');
     }
   }
 
