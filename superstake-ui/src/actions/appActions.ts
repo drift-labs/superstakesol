@@ -133,11 +133,6 @@ const createAppActions = (
     invariant(commonState.authority, "Authority is undefined");
     invariant(commonState.connection, "Connection is undefined");
 
-    console.log('doDepositTx', {
-      ...props,
-      superstakeSubAccountId
-    });
-
     const instructions: TransactionInstruction[] = [];
 
     let sssAccountPublicKey: PublicKey
@@ -159,8 +154,6 @@ const createAppActions = (
     let creatingNewUser = false;
 
     if (!driftAccountExists) {
-      console.log('drift account doesnt exist');
-
       // If no drift account exists, create subaccount and use it as the superstake account
       creatingNewUser = true;
 
@@ -192,7 +185,6 @@ const createAppActions = (
       });
 
       if (superStakeAccount) {
-        console.log('super stake account exists');
         driftClient.switchActiveUser(superstakeSubAccountId);
 
         const lstDepositIx = await driftClient.getDepositInstruction(
@@ -204,8 +196,6 @@ const createAppActions = (
 
         instructions.push(lstDepositIx);
       } else {
-        console.log('creating new super stake account');
-
         if (superstakeSubAccountId === 0) {
           // We should never get here - where driftAccountExists is true but we're trying to create a new account with ID=0.
           //// Attempt to give a friendly error back to the user
@@ -328,8 +318,6 @@ const createAppActions = (
 
       const superStakeAccountId = await getSubaccountIdForSuperStakeAccount();
       const superStakeUser = state.currentUserAccount?.user;
-
-      console.log(commonState.authority);
 
       if (superStakeUser) {
         await doDepositTx(props, superStakeAccountId);

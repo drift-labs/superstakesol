@@ -125,16 +125,6 @@ const useEstimateApr = ({
 	const leveragedBorrowRate = solOut / (initialLstDeposit * lstMetrics.priceInSol);
 	const leveragedDepositRate = solInFromDeposit / (initialLstDeposit * lstMetrics.priceInSol);
 
-	console.log({
-		solBorrowRate: solBorrowRate.toNum(),
-		solInFromDeposit,
-		solInFromStaking,
-		solOut,
-		solRewardsPerYear,
-		leveragedLstApr,
-		lstNetProjectedApr,
-	});
-
 	// Add emissions APR on top because they are airdropped separately
 	// Not subject to the borrow rate
 	const emissionsAprFromApy = lstMetrics.emissionsApy ? 

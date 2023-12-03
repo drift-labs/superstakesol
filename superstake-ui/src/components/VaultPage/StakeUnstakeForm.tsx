@@ -163,19 +163,6 @@ const StakeUnstakeForm = () => {
       -1 * (userSolBorrows.abs().toNum() - advancedModeTargetBorrow);
   }
 
-  // const amountToRepayNum = advancedMode
-  // 	? Math.abs(unstakeBorrowChangeAmount)
-  // 	: userSolBorrows.abs().toNum();
-
-  // console.log({
-  // amountToWithdrawWithoutRepay,
-  // amountToUnstakeNum,
-  // userSolBorrows.toNum(),
-  // advancedModeTargetBorrow,
-  // // targetBorrowAfterUnstake,
-  // unstakeBorrowChangeAmount
-  // });
-
   const unstakeLstPosition =
     canWithdrawWithoutRepay ||
     isNaN(amountToUnstakeNum) ||
