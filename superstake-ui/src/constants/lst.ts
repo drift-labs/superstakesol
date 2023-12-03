@@ -11,6 +11,8 @@ export type LST = {
 	maxLeverage: number;
 	// Default leverage to start the form out with when switching to the lst
 	defaultLeverage: number;
+	// Symbol of the token offered as emissions if there's an emissions APY on top of the normal APY
+	emissionsTokenSymbol?: string;
 };
 
 export const M_SOL: LST = {
@@ -37,7 +39,8 @@ export const B_SOL: LST = {
 	spotMarket: MainnetSpotMarkets[8],
 	logoUrl: '/bsol.svg',
 	maxLeverage: 3,
-	defaultLeverage: 2
+	defaultLeverage: 2,
+	emissionsTokenSymbol: 'BLZE'
 };
 
 export const ALL_LST: LST[] = [M_SOL, JITO_SOL, B_SOL];

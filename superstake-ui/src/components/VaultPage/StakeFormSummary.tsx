@@ -29,6 +29,9 @@ type StakeFormSummaryProps = {
   lstDepositRate: number;
   solBorrowRate: number;
   accountExists?: boolean | undefined;
+  emissionsApr?: number;
+  emissionsTokenSymbol?: string;
+  leverageToUse?: number;
   // projectedYield30d: number;
 };
 
@@ -44,6 +47,9 @@ const StakeFormSummary = ({
   lstDepositRate = 0,
   solBorrowRate = 0,
   accountExists,
+  emissionsApr,
+  emissionsTokenSymbol,
+  leverageToUse = 1
 }: // projectedYield30d,
 StakeFormSummaryProps) => {
   const activeLst = useAppStore((s) => s.activeLst);
@@ -63,6 +69,8 @@ StakeFormSummaryProps) => {
   const afterLstDeposits = userLstDeposits.add(
     BigNum.fromPrint(`${totalToStake}`, activeLst.spotMarket.precisionExp)
   );
+
+  const hasEmissions = emissionsTokenSymbol && emissionsApr;
 
   return (
     <>
@@ -143,11 +151,20 @@ StakeFormSummaryProps) => {
               )}
             >
               <Text.BODY1 className="font-normal">
-                {activeLst.symbol} APR (incl. leverage):{" "}
+                {activeLst.symbol} APR:{" "}
                 <span className="font-bold text-text-positive-green">
                   {lstApr.toFixed(2)}%
                 </span>{" "}
                 <br />
+                {hasEmissions && (
+                  <>
+                    {emissionsTokenSymbol} emissions APR:{" "}
+                    <span className="font-bold text-text-positive-green">
+                      {emissionsApr.toFixed(2)}%
+                    </span>{" "}
+                    <br />
+                  </>
+                )}
                 {activeLst.symbol} Deposit APR:{" "}
                 {lstDepositRate === 0 ? (
                   <span>0%</span>
@@ -177,7 +194,7 @@ StakeFormSummaryProps) => {
             </div>
           </div>
         </SummaryRow>
-        {amountToStake !== 0 && projectedApr < unleveragedApr && (
+        {amountToStake !== 0 && projectedApr < unleveragedApr && leverageToUse > 1 && (
           <div className="flex flex-row items-center justify-between w-[80%]">
             <div className="mr-4">
               <ExclamationTriangleIcon className="w-8 h-8" />

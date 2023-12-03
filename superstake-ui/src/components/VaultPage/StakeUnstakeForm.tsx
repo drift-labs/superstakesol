@@ -215,10 +215,12 @@ const StakeUnstakeForm = () => {
   });
 
   const {
-    lstAprFromApy,
-    solBorrowRate,
-    lstDepositRate,
-    projectedApr,
+    leveragedLstApr,
+    leveragedEmissionsApr,
+    leveragedBorrowRate,
+    leveragedDepositRate,
+    // lstDepositRate,
+    totalNetProjectedApr,
     projectedLiqRatio,
     unleveragedApr,
   } = useEstimateApr({
@@ -570,12 +572,15 @@ const StakeUnstakeForm = () => {
                   ? 0
                   : projectedLiqRatio
               }
-              projectedApr={isNaN(projectedApr) ? 0 : projectedApr}
+              projectedApr={isNaN(totalNetProjectedApr) ? 0 : totalNetProjectedApr}
               unleveragedApr={isNaN(unleveragedApr) ? 0 : unleveragedApr}
-              lstApr={isNaN(lstAprFromApy) ? 0 : lstAprFromApy}
-              solBorrowRate={solBorrowRate}
-              lstDepositRate={lstDepositRate}
+              lstApr={isNaN(leveragedLstApr) ? 0 : leveragedLstApr}
+              emissionsApr={isNaN(leveragedEmissionsApr) ? 0 : leveragedEmissionsApr}
+              solBorrowRate={isNaN(leveragedBorrowRate) ? 0 : leveragedBorrowRate}
+              lstDepositRate={isNaN(leveragedDepositRate) ? 0 : leveragedDepositRate}
               accountExists={accountExists}
+              emissionsTokenSymbol={activeLst.emissionsTokenSymbol}
+              leverageToUse={leverageToUse}
             />
           </>
         ) : (

@@ -1,21 +1,26 @@
-import { JITO_SOL, M_SOL } from "../constants/lst";
+import { B_SOL, JITO_SOL, M_SOL } from "../constants/lst";
 import useAppStore from "./useAppStore";
 import useSyncMSolMetrics from "./useSyncMSolMetrics";
 import { useMemo } from "react";
 import useJitoSolMetrics from "./useJitoSolMetrics";
+import useBSolMetrics from "./useBSolMetrics";
 
 export default function useCurrentLstMetrics(): {
   priceInSol: number;
   loaded: boolean;
+  // Base APY of the LST
   lstPriceApy30d: number;
+  // Extra emissions APY (most likely airdropped to users separately)
+  emissionsApy?: number;
 } {
   const activeLst = useAppStore((s) => s.activeLst);
 
   const mSolMetrics = useSyncMSolMetrics();
   const jitoSolMetrics = useJitoSolMetrics();
+  const bSolMetrics = useBSolMetrics();
 
   const getCurrentLstMetrics = () => {
-    switch (activeLst) {
+    switch (activeLst.symbol) {
       case M_SOL.symbol:
       default:
         return {
@@ -29,6 +34,13 @@ export default function useCurrentLstMetrics(): {
           priceInSol: jitoSolMetrics.priceInSol ?? 0,
           loaded: jitoSolMetrics.loaded,
         };
+      case B_SOL.symbol:
+          return {
+            lstPriceApy30d: (bSolMetrics.baseApy ?? 0),
+            priceInSol: bSolMetrics.priceInSol ?? 0,
+            loaded: bSolMetrics.loaded,
+            emissionsApy: bSolMetrics.blzeApy,
+          };
     }
   };
 

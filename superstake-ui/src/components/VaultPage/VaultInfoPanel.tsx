@@ -38,17 +38,19 @@ const TextWithSkeleton = ({
   loading,
   value,
   isAuthorityValue,
+  smaller
 }: {
   loading?: boolean;
   value: string | number | ReactNode;
   isAuthorityValue?: boolean;
+  smaller?: boolean;
 }) => {
   const authority = useCommonDriftStore((s) => s.authority);
 
   return loading && (isAuthorityValue ? authority : true) ? (
     <Skeleton height={38} />
   ) : (
-    <Text.H4>{value}</Text.H4>
+    smaller ? <Text.BODY1 className="text-[18px]">{value}</Text.BODY1> : <Text.H4>{value}</Text.H4>
   );
 };
 
@@ -61,7 +63,10 @@ const VaultOverviewPanel = () => {
     leverage,
   });
   const {
-    projectedApr,
+    lstNetProjectedApr,
+    totalNetProjectedApr,
+    leveragedLstApr,
+    leveragedEmissionsApr,
     unleveragedApr,
     loaded: isAprLoaded,
   } = useEstimateApr({
@@ -69,7 +74,9 @@ const VaultOverviewPanel = () => {
     solAmount,
   });
 
-  const maxAprPercentage = Math.max(projectedApr, unleveragedApr);
+  const hasEmissions = activeLst.emissionsTokenSymbol && leveragedEmissionsApr;
+
+  const maxAprPercentage = Math.max(totalNetProjectedApr, unleveragedApr);
 
   const {
     tvl,
@@ -94,7 +101,7 @@ const VaultOverviewPanel = () => {
                     <>
                       <div>
                         Based on staking 100 {activeLst.symbol} at{" "}
-                        {projectedApr > unleveragedApr ? `${leverage}x` : "1x"} leverage
+                        {leveragedLstApr > unleveragedApr ? `${leverage}x` : "1x"} leverage
                       </div>
                     </>
                   }
@@ -110,6 +117,15 @@ const VaultOverviewPanel = () => {
             loading={!isAprLoaded}
           />
         </div>
+        {hasEmissions && (
+        <div className="">
+          <TextWithSkeleton
+              value={`(${lstNetProjectedApr.toFixed(2)}% superstaking + ${leveragedEmissionsApr.toFixed(2)}% ${activeLst.emissionsTokenSymbol})`}
+              loading={!isAprLoaded}
+              smaller
+            />
+        </div>
+        )}
       </div>
 
       <div className="mt-8">
@@ -158,7 +174,7 @@ const YourStakePanel = () => {
   } = useCurrentSuperstakePosition();
 
   const {
-    projectedApr: yourAprPercentage,
+    totalNetProjectedApr: yourAprPercentage,
     projectedLiqRatio: estLiquidationRatio,
     loaded: isAprLoaded,
   } = useEstimateApr({
