@@ -442,6 +442,7 @@ const VaultInfoPanel = () => {
   const [selectedPanel, setSelectedPanel] = useState(0);
 
   const hasDefaultedToUserStakePanel = useRef(false);
+  const lastActiveLstSymbol = useRef('');
 
   const handleSwitchPanels = (direction: "left" | "right") => {
     if (direction === "left" && selectedPanel > 0) {
@@ -452,12 +453,19 @@ const VaultInfoPanel = () => {
     }
   };
 
+  // Switch panels either on first load, or when activeLst change
   useEffect(() => {
-    if (userLstEquity.value > 0 && !hasDefaultedToUserStakePanel.current) {
-      setSelectedPanel(1);
+    const switchedLsts = activeLst.symbol !== lastActiveLstSymbol.current
+    if (userLstEquity.loaded && (!hasDefaultedToUserStakePanel.current || switchedLsts)) {
+      if (userLstEquity.value > 0) {
+        setSelectedPanel(1);
+      } else {
+        setSelectedPanel(0);
+      }
       hasDefaultedToUserStakePanel.current = true;
+      lastActiveLstSymbol.current = activeLst.symbol;
     }
-  }, [userLstEquity.value]);
+  }, [userLstEquity.value, activeLst.symbol, userLstEquity.loaded]);
 
   return (
     <div>

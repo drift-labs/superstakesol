@@ -303,6 +303,37 @@ const createAppActions = (
     await driftClient.addUser(superstakeSubAccountId, commonState.authority);
   };
 
+  const stopPollingForNewAccount = () => {
+    clearInterval(get().newAccountPollingTimer);
+  }
+
+  const pollForNewAccount = () => {
+    const authority = getCommon().authority;
+    const connected = getCommon().currentlyConnectedWalletContext.connected;
+    let retries = 10;
+
+    const timer = setInterval(async () => {
+      if (!connected || retries === 0) {
+        stopPollingForNewAccount();
+        return;
+      }
+
+      const superStakeAccount = await getSuperStakeAccount(authority);
+
+      if (superStakeAccount) {
+        await switchActiveSubaccount(superStakeAccount.subAccountId, authority);
+        await updateCurrentUserData();
+        stopPollingForNewAccount();
+      }
+
+      retries--;
+    }, 1000);
+
+    set(s => {
+      s.newAccountPollingTimer = timer
+    });
+  }
+
   /**
    * Outer method to handle a deposit
    *
@@ -344,7 +375,7 @@ const createAppActions = (
                   toastId: DEPOSIT_TOAST_ID,
                 }
               );
-              switchSubaccountToActiveLst();
+              pollForNewAccount();
             },
           }
         );
@@ -608,19 +639,11 @@ const createAppActions = (
     });
   };
 
-  const switchSubaccountToActiveLst = async (currentLstPrice?: number, authorityParam?: PublicKey) => {
-    let authority = authorityParam;
-    if (!authority) {
-      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
-    }
+  const getSuperStakeAccount = async (authority: PublicKey) => {
     const activeLst = get().activeLst;
     const driftClient = getCommon().driftClient?.client;
 
-    if (!driftClient) {
-      return;
-    }
-
-    if (!authority) {
+    if (!driftClient || !authority) {
       return;
     }
 
@@ -631,6 +654,17 @@ const createAppActions = (
     const superStakeAccount = userAccounts.find((account) => {
       return decodeName(account.name) === activeLst.driftAccountName;
     });
+
+    return superStakeAccount;
+  }
+
+  const switchSubaccountToActiveLst = async (currentLstPrice?: number, authorityParam?: PublicKey) => {
+    let authority = authorityParam;
+    if (!authority) {
+      authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+    }
+
+    const superStakeAccount = await getSuperStakeAccount(authority);
 
     if (!superStakeAccount) {
       resetCurrentUserData(true);
