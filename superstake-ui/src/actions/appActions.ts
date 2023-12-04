@@ -213,12 +213,13 @@ const createAppActions = (
           );
 
         sssAccountPublicKey = _sssAccountPublicKey;
-
         const lstDepositIx = await driftClient.getDepositInstruction(
           props.lstDepositAmount,
           lstSpotMarket.marketIndex,
           props.fromTokenAccount,
-          superstakeSubAccountId
+          superstakeSubAccountId,
+          false,
+          false
         );
         instructions.push(initializeSssAccountIx);
         instructions.push(lstDepositIx);

@@ -74,7 +74,7 @@ const VaultOverviewPanel = () => {
     solAmount,
   });
 
-  const hasEmissions = activeLst.emissionsTokenSymbol && leveragedEmissionsApr;
+  const hasEmissions = activeLst.emissionsTokenSymbol && leveragedEmissionsApr ? true : false;
 
   const maxAprPercentage = Math.max(totalNetProjectedApr, unleveragedApr);
 
@@ -118,13 +118,13 @@ const VaultOverviewPanel = () => {
           />
         </div>
         {hasEmissions && (
-        <div className="">
-          <TextWithSkeleton
-              value={`(${lstNetProjectedApr.toFixed(2)}% superstaking + ${leveragedEmissionsApr.toFixed(2)}% ${activeLst.emissionsTokenSymbol})`}
-              loading={!isAprLoaded}
-              smaller
-            />
-        </div>
+          <div>
+            <TextWithSkeleton
+                value={`(${lstNetProjectedApr.toFixed(2)}% superstaking + ${leveragedEmissionsApr.toFixed(2)}% ${activeLst.emissionsTokenSymbol})`}
+                loading={!isAprLoaded}
+                smaller
+              />
+          </div>
         )}
       </div>
 
