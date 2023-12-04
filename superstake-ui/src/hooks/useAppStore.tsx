@@ -57,6 +57,7 @@ const DEFAULT_SPOT_MARKET_DATA: SpotMarketData = {
 
 export interface AppStoreState {
   currentUserAccount: UserData;
+  newAccountPollingTimer?: NodeJS.Timer;
   activeLst: LST;
   modals: {
     showConnectWalletModal: boolean;
