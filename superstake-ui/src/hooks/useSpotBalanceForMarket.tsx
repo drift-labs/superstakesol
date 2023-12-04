@@ -78,6 +78,7 @@ const useSpotBalanceForMarket = (marketIndex: number | undefined) => {
 		depositRecords?.length,
 		swapRecords?.length,
 		loaded,
+		spotPositionForMarket
 	]);
 
 	return balance;

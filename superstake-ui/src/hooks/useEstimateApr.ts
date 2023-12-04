@@ -19,11 +19,15 @@ import useAppStore from './useAppStore';
 
 const DEFAULT_VALUE = {
 	solBorrowRate: 0,
-	lstAprFromApy: 0,
 	lstDepositRate: 0,
 	lstApy: 0,
+	leveragedBorrowRate: 0,
+	leveragedDepositRate: 0,
+	leveragedLstApr: 0,
+	leveragedEmissionsApr: 0,
+	lstNetProjectedApr: 0,
+	totalNetProjectedApr: 0,
 	solBorrowAmount: 0,
-	projectedApr: 0,
 	projectedLiqRatio: 0,
 	unleveragedApr: 0,
 	loaded: false,
@@ -112,23 +116,52 @@ const useEstimateApr = ({
 		superStakeLstDeposit * lstAprFromApy * lstMetrics.priceInSol;
 	const solInFromDeposit =
 		superStakeLstDeposit * lstDepositRate.toNum() * lstMetrics.priceInSol;
-	const leveragedStakingAPR =
+	const leveragedLstApr =
 		solInFromStaking / (initialLstDeposit * lstMetrics.priceInSol);
 	const solOut = solBorrowAmount * solBorrowRate.toNum();
 	const solRewardsPerYear = solInFromStaking + solInFromDeposit - solOut;
-
-	const projectedApr =
+	const lstNetProjectedApr =
 		solRewardsPerYear / (initialLstDeposit * lstMetrics.priceInSol);
+	const leveragedBorrowRate = solOut / (initialLstDeposit * lstMetrics.priceInSol);
+	const leveragedDepositRate = solInFromDeposit / (initialLstDeposit * lstMetrics.priceInSol);
+
+	// Add emissions APR on top because they are airdropped separately
+	// Not subject to the borrow rate
+	const emissionsAprFromApy = lstMetrics.emissionsApy ? 
+		aprFromApy(lstMetrics.emissionsApy, Math.floor(365 / 2)) / 100 : 0;  // 365 / 2 ~= number of epochs per year
+	const solInFromEmissions = superStakeLstDeposit * emissionsAprFromApy;
+	const leveragedEmissionsApr = 
+	solInFromEmissions / (initialLstDeposit * lstMetrics.priceInSol);
+
+	const totalNetProjectedApr = lstNetProjectedApr + leveragedEmissionsApr;
 
 	return {
 		solBorrowRate: solBorrowRate.toNum() * 100,
 		lstDepositRate: lstDepositRate.toNum() * 100,
-		lstAprFromApy: leveragedStakingAPR * 100,
 		lstApy: lstMetrics.lstPriceApy30d,
+
+		// independant lst yield apr incl. leverage
+		leveragedLstApr: leveragedLstApr * 100,
+
+		// independent emissions apr incl. leverage
+		leveragedEmissionsApr: leveragedEmissionsApr * 100,
+
+		// Sol borro ratew denominated in % of user's collateral value in sol
+		// Helps to understand the apr breakdown where other values incl. leverage
+		leveragedBorrowRate: leveragedBorrowRate * 100,
+
+		// Deposit rate of total LST value in SOL denominated in % of user's collateral value in sol
+		leveragedDepositRate: leveragedDepositRate * 100,
+
+		// net apr of borrow rate + lst deposit rate + lst yield incl. leverage
+		lstNetProjectedApr: lstNetProjectedApr * 100,
+
+		// total net apr of lstNetProjectedApr and emissions apr together
+		totalNetProjectedApr: totalNetProjectedApr * 100,
+
 		solBorrowAmount,
-		projectedApr: projectedApr * 100,
 		projectedLiqRatio,
-		unleveragedApr: lstDepositRate.toNum() * 100 + lstAprFromApy * 100,
+		unleveragedApr: lstDepositRate.toNum() * 100 + lstAprFromApy * 100 + emissionsAprFromApy * 100,
 		loaded: true,
 	};
 };

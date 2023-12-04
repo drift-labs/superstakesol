@@ -213,12 +213,13 @@ const createAppActions = (
           );
 
         sssAccountPublicKey = _sssAccountPublicKey;
-
         const lstDepositIx = await driftClient.getDepositInstruction(
           props.lstDepositAmount,
           lstSpotMarket.marketIndex,
           props.fromTokenAccount,
-          superstakeSubAccountId
+          superstakeSubAccountId,
+          false,
+          false
         );
         instructions.push(initializeSssAccountIx);
         instructions.push(lstDepositIx);
@@ -240,6 +241,8 @@ const createAppActions = (
     let swapInstructions: TransactionInstruction[] = [];
     let lookupTables: AddressLookupTableAccount[];
 
+    const onlyDirectRoutes = !!props.lst?.onlyDirectRoute;
+
     if (props.solBorrowAmount.gt(ZERO)) {
       // Add swap instructions (SOL -> LST)
       const {
@@ -253,7 +256,7 @@ const createAppActions = (
         amount: props.solBorrowAmount,
         userAccountPublicKey: sssAccountPublicKey,
         price: props.lstSolPrice,
-        onlyDirectRoutes: true,
+        onlyDirectRoutes,
         marketIndex: props.lst.spotMarket.marketIndex,
       });
 
