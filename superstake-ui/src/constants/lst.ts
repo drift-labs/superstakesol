@@ -13,6 +13,8 @@ export type LST = {
 	defaultLeverage: number;
 	// Symbol of the token offered as emissions if there's an emissions APY on top of the normal APY
 	emissionsTokenSymbol?: string;
+	// use direct route for Jupiter swap
+	onlyDirectRoute?: boolean;
 };
 
 export const M_SOL: LST = {
@@ -40,7 +42,8 @@ export const B_SOL: LST = {
 	logoUrl: '/bsol.svg',
 	maxLeverage: 3,
 	defaultLeverage: 2,
-	emissionsTokenSymbol: 'BLZE'
+	emissionsTokenSymbol: 'BLZE',
+	onlyDirectRoute: true
 };
 
 export const ALL_LST: LST[] = [M_SOL, JITO_SOL, B_SOL];

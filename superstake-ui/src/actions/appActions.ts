@@ -241,7 +241,7 @@ const createAppActions = (
     let swapInstructions: TransactionInstruction[] = [];
     let lookupTables: AddressLookupTableAccount[];
 
-    const onlyDirectRoutes = props.lst.symbol !== 'bSOL';
+    const onlyDirectRoutes = !!props.lst?.onlyDirectRoute;
 
     if (props.solBorrowAmount.gt(ZERO)) {
       // Add swap instructions (SOL -> LST)
