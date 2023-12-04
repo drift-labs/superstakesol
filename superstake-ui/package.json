@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "install-vercel": "sh ./scripts/install-vercel.sh",
-    "build-vercel": "sh ./scripts/build-vercel.sh"
+    "build-vercel": "sh ./scripts/build-vercel.sh",
+    "test": "jest"
   },
   "browser": {
     "fs": false,
@@ -71,6 +72,9 @@
     "node": ">=14 <19"
   },
   "devDependencies": {
-    "encoding": "^0.1.13"
+    "@jest/globals": "^29.7.0",
+    "encoding": "^0.1.13",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
   }
 }

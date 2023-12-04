@@ -28,7 +28,6 @@ const useCurrentUserData = () => {
     if (connected && driftClientIsReady && appAuthorityString && lstMetrics.loaded) {
       actions.switchSubaccountToActiveLst(lstMetrics.priceInSol);
     }  else if ((!connected || !appAuthority) && superStakeUser) {
-      // console.log('useCurrentUserData resetting user data on disconnect');
       actions.resetCurrentUserData();
     }
   }, [connected, driftClientIsReady, appAuthorityString, lstMetrics.loaded, activeLst]);

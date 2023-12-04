@@ -9,8 +9,8 @@ import {
   Event,
   SwapRecord,
 } from "@drift-labs/sdk";
-import { JITO_SOL, LST, M_SOL } from "../constants/lst";
-// import invariant from "tiny-invariant";
+import { B_SOL, JITO_SOL, LST, M_SOL } from "../constants/lst";
+import Env from "../constants/environment";
 
 const DEFAULT_LEVERAGE_SLIDER_VALUE = 2;
 
@@ -47,6 +47,7 @@ const DEFAULT_SPOT_MARKET_DATA: SpotMarketData = {
   tvl: {
     [M_SOL.symbol]: BigNum.zero(),
     [JITO_SOL.symbol]: BigNum.zero(),
+    [B_SOL.symbol]: BigNum.zero(),
   },
   solBorrowCapacityRemaining: BigNum.zero(),
   percentOfCapUsed: 0,
@@ -56,6 +57,7 @@ const DEFAULT_SPOT_MARKET_DATA: SpotMarketData = {
 
 export interface AppStoreState {
   currentUserAccount: UserData;
+  newAccountPollingTimer?: NodeJS.Timer;
   activeLst: LST;
   modals: {
     showConnectWalletModal: boolean;
@@ -87,9 +89,11 @@ export interface AppStoreState {
   clearUserData: () => void;
 }
 
+const defaultActiveLst = Env.defaultActiveLst;
+
 export const DEFAULT_STORE_STATE = {
   currentUserAccount: DEFAULT_USER_DATA,
-  activeLst: M_SOL,
+  activeLst: defaultActiveLst,
   modals: {
     showConnectWalletModal: false,
     showAcknowledgeTermsModal: false,
@@ -113,7 +117,7 @@ export const DEFAULT_STORE_STATE = {
     depositRecords: [],
     swapRecords: [],
     loaded: false,
-  }
+  },
 };
 
 const useAppStore = create<AppStoreState>()((set, get) => {
@@ -132,7 +136,7 @@ const useAppStore = create<AppStoreState>()((set, get) => {
           loaded: false,
         };
       });
-    }
+    },
   };
 });
 
