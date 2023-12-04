@@ -90,8 +90,6 @@ export interface AppStoreState {
 
 const defaultActiveLst = Env.defaultActiveLst && ALL_LST_MAP[Env.defaultActiveLst] || M_SOL
 
-console.log(defaultActiveLst);
-
 export const DEFAULT_STORE_STATE = {
   currentUserAccount: DEFAULT_USER_DATA,
   activeLst: defaultActiveLst,
