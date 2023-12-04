@@ -9,7 +9,7 @@ import {
   Event,
   SwapRecord,
 } from "@drift-labs/sdk";
-import { ALL_LST_MAP, B_SOL, JITO_SOL, LST, M_SOL } from "../constants/lst";
+import { B_SOL, JITO_SOL, LST, M_SOL } from "../constants/lst";
 import Env from "../constants/environment";
 
 const DEFAULT_LEVERAGE_SLIDER_VALUE = 2;
@@ -88,7 +88,7 @@ export interface AppStoreState {
   clearUserData: () => void;
 }
 
-const defaultActiveLst = Env.defaultActiveLst && ALL_LST_MAP[Env.defaultActiveLst] || M_SOL
+const defaultActiveLst = Env.defaultActiveLst;
 
 export const DEFAULT_STORE_STATE = {
   currentUserAccount: DEFAULT_USER_DATA,
@@ -116,7 +116,7 @@ export const DEFAULT_STORE_STATE = {
     depositRecords: [],
     swapRecords: [],
     loaded: false,
-  }
+  },
 };
 
 const useAppStore = create<AppStoreState>()((set, get) => {
@@ -135,7 +135,7 @@ const useAppStore = create<AppStoreState>()((set, get) => {
           loaded: false,
         };
       });
-    }
+    },
   };
 });
 

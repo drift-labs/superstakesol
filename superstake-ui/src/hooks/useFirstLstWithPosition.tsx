@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import useCustomDriftClientIsReady from "./useCustomDriftClientIsReady";
 import Env from "../constants/environment";
 
-const DEFAULT_LST = ALL_LST_MAP[Env.defaultActiveLst] || ALL_LST[0];
 
 export default function useFirstLstWithPosition() {
   const commonStore = useCommonDriftStore();
@@ -14,7 +13,7 @@ export default function useFirstLstWithPosition() {
   const driftClientIsReady = useCustomDriftClientIsReady();
 
   const [firstLstWithPosition, setFirstLstWithPosition] = useState<LST>(
-    DEFAULT_LST
+    Env.defaultActiveLst
   );
 
   const hasSetFirstLstWithPosition = useRef(false);
