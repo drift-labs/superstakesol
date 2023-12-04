@@ -634,8 +634,9 @@ const StakeUnstakeForm = () => {
                   <span className="text-text-default">
                     {isMaxUnstake
                       ? 0
-                      : unstakeLeverage?.toFixed(4) ||
-                        userLstLeverage?.toFixed(4)}
+                      : +unstakeLeverage
+                      ? unstakeLeverage?.toFixed(4)
+                      : userLstLeverage?.toFixed(4)}
                     x {unstakeLeverage === userLstLeverage && " (current)"}
                   </span>
                 </Text.BODY3>
