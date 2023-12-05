@@ -54,8 +54,8 @@ const useCurrentSuperstakePosition = () => {
 		userLstEquity.loaded && hasOpenPosition
 			? lstSpotBalanceBigNum.toNum() / userLstEquity.value
 			: hasLstDeposits
-			? 1
-			: 0;
+			  ? 1
+			  : 0;
 
 	return {
 		hasOpenPosition,

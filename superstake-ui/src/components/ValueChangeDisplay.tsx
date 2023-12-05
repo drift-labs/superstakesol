@@ -40,12 +40,12 @@ const ValueChangeDisplay = ({
 	const arrowColor = forceWhite
 		? 'text-text-default'
 		: isLessThan
-		? !reverseColours
-			? 'text-negative-red'
-			: 'text-positive-green'
-		: !reverseColours
-		? 'text-positive-green'
-		: 'text-negative-red';
+		  ? !reverseColours
+				? 'text-negative-red'
+				: 'text-positive-green'
+		  : !reverseColours
+		    ? 'text-positive-green'
+		    : 'text-negative-red';
 
 	return (
 		<div className="flex flex-wrap items-center space-x-1 font-numeral">

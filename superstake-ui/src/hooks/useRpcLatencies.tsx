@@ -39,11 +39,11 @@ const useRpcLatencies = (rpcOptions: RpcEndpoint[]) => {
 					const lastFiveLatencies = !rpc.latency
 						? []
 						: avgLatencies?.[rpc.value]?.lastFiveLatencies
-						? [
-								rpc.latency,
-								...(avgLatencies?.[rpc.value]?.lastFiveLatencies || []),
-						  ].slice(0, 5)
-						: [rpc.latency];
+						  ? [
+									rpc.latency,
+									...(avgLatencies?.[rpc.value]?.lastFiveLatencies || []),
+						    ].slice(0, 5)
+						  : [rpc.latency];
 					const avg = Math.ceil(average(lastFiveLatencies));
 					newLatencies[rpc.value] = { avg, lastFiveLatencies };
 				});

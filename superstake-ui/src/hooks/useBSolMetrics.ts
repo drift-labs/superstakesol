@@ -1,14 +1,18 @@
-import { DEFAULT_METRICS_POLLING_RATE_MS } from "../constants";
-import { B_SOL, JITO_SOL } from "../constants/lst";
-import { BSOL_STATS_API_RESPONSE, fetchBSolDriftEmissions, fetchBSolMetrics } from "@drift-labs/sdk";
-import { useEffect, useState } from "react";
-import { singletonHook } from "react-singleton-hook";
-import { useInterval } from "react-use";
-import useAppStore from "./useAppStore";
+import { DEFAULT_METRICS_POLLING_RATE_MS } from '../constants';
+import { B_SOL } from '../constants/lst';
+import {
+	BSOL_STATS_API_RESPONSE,
+	fetchBSolDriftEmissions,
+	fetchBSolMetrics,
+} from '@drift-labs/sdk';
+import { useEffect, useState } from 'react';
+import { singletonHook } from 'react-singleton-hook';
+import { useInterval } from 'react-use';
+import useAppStore from './useAppStore';
 
 function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
-	const activeLst = useAppStore(s => s.activeLst);
-	
+	const activeLst = useAppStore((s) => s.activeLst);
+
 	const [metrics, setMetrics] = useState<{
 		loaded: boolean;
 		baseApy?: number;
@@ -18,18 +22,18 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 		driftEmissions?: number;
 		priceInSol?: number;
 	}>({ loaded: false });
-	
+
 	useEffect(() => {
 		fetchAndSetBSolMetrics();
 	}, [activeLst.symbol]);
-	
+
 	useInterval(() => {
 		fetchAndSetBSolMetrics();
 	}, pollingRateMs);
-	
+
 	async function fetchAndSetBSolMetrics() {
 		if (activeLst.symbol !== B_SOL.symbol) return;
-		
+
 		try {
 			let baseApy: number;
 			let blzeApy: number;
@@ -37,9 +41,9 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 			let priceInSol: number;
 			let driftEmissions: number;
 
-			const statsResponse = await fetchBSolMetrics();			
+			const statsResponse = await fetchBSolMetrics();
 			if (statsResponse.status === 200) {
-				const data = await statsResponse.json() as BSOL_STATS_API_RESPONSE;
+				const data = (await statsResponse.json()) as BSOL_STATS_API_RESPONSE;
 				priceInSol = data?.stats?.conversion?.bsol_to_sol;
 				baseApy = data?.stats?.apy.base;
 				lendingMultiplier = data?.stats?.apy.lending;
@@ -64,7 +68,7 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 			setMetrics({ loaded: false });
 		}
 	}
-	
+
 	return metrics;
 }
 

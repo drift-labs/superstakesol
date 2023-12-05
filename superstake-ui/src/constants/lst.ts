@@ -24,7 +24,7 @@ export const M_SOL: LST = {
 	logoUrl: '/mSol.svg',
 	maxLeverage: 3,
 	defaultLeverage: 2,
-	onlyDirectRoute: true
+	onlyDirectRoute: true,
 };
 
 export const JITO_SOL: LST = {
@@ -34,7 +34,7 @@ export const JITO_SOL: LST = {
 	logoUrl: '/jitoSol.svg',
 	maxLeverage: 1.8,
 	defaultLeverage: 1.4,
-	onlyDirectRoute: true
+	onlyDirectRoute: true,
 };
 
 export const B_SOL: LST = {
@@ -45,7 +45,7 @@ export const B_SOL: LST = {
 	maxLeverage: 3,
 	defaultLeverage: 2,
 	emissionsTokenSymbol: 'BLZE',
-	onlyDirectRoute: true
+	onlyDirectRoute: true,
 };
 
 export const ALL_LST: LST[] = [M_SOL, JITO_SOL, B_SOL];
@@ -53,5 +53,5 @@ export const ALL_LST: LST[] = [M_SOL, JITO_SOL, B_SOL];
 export const ALL_LST_MAP: Record<string, LST> = {
 	[M_SOL.symbol]: M_SOL,
 	[JITO_SOL.symbol]: JITO_SOL,
-	[B_SOL.symbol]: B_SOL
+	[B_SOL.symbol]: B_SOL,
 };
