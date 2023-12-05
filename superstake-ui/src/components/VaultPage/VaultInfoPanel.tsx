@@ -50,11 +50,12 @@ const TextWithSkeleton = ({
   return loading && (isAuthorityValue ? authority : true) ? (
     <Skeleton height={38} />
   ) : (
-    smaller ? <Text.BODY1 className="text-[18px]">{value}</Text.BODY1> : <Text.H4>{value}</Text.H4>
+    smaller ? <Text.BODY1 className="text-[16px]">{value}</Text.BODY1> : <Text.H4>{value}</Text.H4>
   );
 };
 
 const VaultOverviewPanel = () => {
+  const lstMetrics = useCurrentLstMetrics();
   const activeLst = useAppStore(s => s.activeLst);
   const lstAmount = 100;
   const leverage = activeLst.maxLeverage ?? 3;
@@ -78,6 +79,8 @@ const VaultOverviewPanel = () => {
 
   const maxAprPercentage = Math.max(totalNetProjectedApr, unleveragedApr);
 
+  const driftEmissions = lstMetrics.driftEmissions;
+
   const {
     tvl,
     solBorrowCapacityRemaining: solBorrowCapacityRemaining,
@@ -94,38 +97,55 @@ const VaultOverviewPanel = () => {
         <div>
           <TextWithSkeleton
             value={
-              <>
-                {`${maxAprPercentage.toFixed(2)}% APR`}
-                <Tooltip
-                  content={
-                    <>
-                      <div>
-                        Based on staking 100 {activeLst.symbol} at{" "}
-                        {leveragedLstApr > unleveragedApr ? `${leverage}x` : "1x"} leverage
-                      </div>
-                    </>
-                  }
-                  placement="top"
-                >
-                  <Info
-                    size={24}
-                    className="relative ml-2 cursor-pointer top-0.5"
-                  />
-                </Tooltip>
-              </>
+                <div className="flex flex-row items-center">
+                  {`${maxAprPercentage.toFixed(2)}% APR`}
+                  <Tooltip
+                    content={
+                      <>
+                        <div>
+                          <Text.BODY1>
+                            Based on staking 100 {activeLst.symbol} at{" "}
+                            {leveragedLstApr > unleveragedApr ? `${leverage}x` : "1x"} leverage
+                          </Text.BODY1>
+                        </div>
+                        {hasEmissions && (
+                          <>
+                          <div className="mt-2">
+                            <Text.BODY1>
+                                {`(${lstNetProjectedApr.toFixed(2)}% super staking + ${leveragedEmissionsApr.toFixed(2)}% ${activeLst.emissionsTokenSymbol})`}
+                            </Text.BODY1>
+                          </div>
+                          </>
+                        )}
+                        {activeLst.symbol === 'bSOL' && driftEmissions && <div>
+                          <div className="mt-2 mb-1">
+                            <Text.BODY1 className="font-extrabold">Supercharged:</Text.BODY1> <Text.BODY1>
+                               Super staked bSOL will be eligible for a {driftEmissions.toLocaleString()} BLZE price pool.
+                            </Text.BODY1>
+                          </div>
+                        </div>}
+                      </>
+                    }
+                    placement="top"
+                  >
+                      {activeLst.symbol === 'bSOL' && driftEmissions ? (
+                        <div className="rounded overflow-hidden gradient-border-tooltip p-0.5 ml-4 cursor-pointer p-[2px]">
+                          <div className=" flex flex-row space-x-3 bg-container-bg rounded relative overflow-hidden p-1">
+                          <Text.BODY1 className="text-[14px] ml-2 relative">Supercharged</Text.BODY1>
+                          <img src="/blze.png" alt="BLZE" className="w-5 h-5 rounded" />
+                          </div>
+                        </div>
+                      ) : (
+                      <Info
+                        size={24}
+                        className="relative cursor-pointer top-0.5 ml-2"
+                      />)}
+                  </Tooltip>
+              </div>
             }
             loading={!isAprLoaded}
           />
         </div>
-        {hasEmissions && (
-          <div>
-            <TextWithSkeleton
-                value={`(${lstNetProjectedApr.toFixed(2)}% superstaking + ${leveragedEmissionsApr.toFixed(2)}% ${activeLst.emissionsTokenSymbol})`}
-                loading={!isAprLoaded}
-                smaller
-              />
-          </div>
-        )}
       </div>
 
       <div className="mt-8">

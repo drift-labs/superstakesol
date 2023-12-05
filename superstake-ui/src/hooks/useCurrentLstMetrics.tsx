@@ -12,6 +12,8 @@ export default function useCurrentLstMetrics(): {
   lstPriceApy30d: number;
   // Extra emissions APY (most likely airdropped to users separately)
   emissionsApy?: number;
+  // Extra promotional emissions that may be available as a temporary reward but do not have an APY
+  driftEmissions?: number;
 } {
   const activeLst = useAppStore((s) => s.activeLst);
 
@@ -19,35 +21,27 @@ export default function useCurrentLstMetrics(): {
   const jitoSolMetrics = useJitoSolMetrics();
   const bSolMetrics = useBSolMetrics();
 
-  const getCurrentLstMetrics = () => {
-    switch (activeLst.symbol) {
-      case M_SOL.symbol:
-      default:
-        return {
-          lstPriceApy30d: mSolMetrics.msol_price_apy_30d ?? 0,
-          priceInSol: mSolMetrics.m_sol_price ?? 0,
-          loaded: mSolMetrics.loaded,
-        };
-      case JITO_SOL.symbol:
-        return {
-          lstPriceApy30d: jitoSolMetrics.past30DaysApyAvg ?? 0,
-          priceInSol: jitoSolMetrics.priceInSol ?? 0,
-          loaded: jitoSolMetrics.loaded,
-        };
-      case B_SOL.symbol:
-          return {
-            lstPriceApy30d: (bSolMetrics.baseApy ?? 0),
-            priceInSol: bSolMetrics.priceInSol ?? 0,
-            loaded: bSolMetrics.loaded,
-            emissionsApy: bSolMetrics.blzeApy,
-          };
-    }
-  };
-
-  const currentLstMetrics = useMemo(
-    () => getCurrentLstMetrics(),
-    [activeLst, mSolMetrics]
-  );
-
-  return currentLstMetrics;
+  switch (activeLst.symbol) {
+    case M_SOL.symbol:
+    default:
+      return {
+        lstPriceApy30d: mSolMetrics.msol_price_apy_30d ?? 0,
+        priceInSol: mSolMetrics.m_sol_price ?? 0,
+        loaded: mSolMetrics.loaded,
+      };
+    case JITO_SOL.symbol:
+      return {
+        lstPriceApy30d: jitoSolMetrics.past30DaysApyAvg ?? 0,
+        priceInSol: jitoSolMetrics.priceInSol ?? 0,
+        loaded: jitoSolMetrics.loaded,
+      };
+    case B_SOL.symbol:
+      return {
+        lstPriceApy30d: (bSolMetrics.baseApy ?? 0),
+        priceInSol: bSolMetrics.priceInSol ?? 0,
+        loaded: bSolMetrics.loaded,
+        emissionsApy: bSolMetrics.blzeApy,
+        driftEmissions: bSolMetrics.driftEmissions
+      };
+  }
 }
