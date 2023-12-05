@@ -50,7 +50,7 @@ describe('src/actions/appActions.ts', () => {
 			expect(state).toMatchSnapshot();
 
 			actions.switchActiveLst(mSolSymbol);
-			const setter2 = mockSet.mock.calls[0][1];
+			const setter2 = mockSet.mock.calls[1][0];
 			setter2(state);
 			expect(state).toMatchSnapshot();
 		});

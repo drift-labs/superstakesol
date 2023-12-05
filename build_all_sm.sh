@@ -47,6 +47,7 @@ get_submodules # Drift SDK submodule
 cd ..
 
 # Call the function with directory name, build and link flags
+handle_directory "." false "" false
 handle_directory "drift-common" false "" false
 handle_directory "drift-common/protocol/sdk" true "" true
 handle_directory "drift-common/common-ts" true "@drift-labs/sdk" true
