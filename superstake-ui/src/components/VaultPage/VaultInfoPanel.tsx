@@ -120,7 +120,7 @@ const VaultOverviewPanel = () => {
                         {activeLst.symbol === 'bSOL' && driftEmissions && <div>
                           <div className="mt-2 mb-1">
                             <Text.BODY1 className="font-extrabold">Supercharged:</Text.BODY1> <Text.BODY1>
-                               Super staked bSOL will be eligible for a {driftEmissions.toLocaleString()} BLZE price pool.
+                               Super staked bSOL will be eligible for a {driftEmissions.toLocaleString()} BLZE reward pool.
                             </Text.BODY1>
                           </div>
                         </div>}
