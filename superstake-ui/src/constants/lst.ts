@@ -42,8 +42,8 @@ export const B_SOL: LST = {
 	driftAccountName: 'Super Stake bSOL',
 	spotMarket: MainnetSpotMarkets[8],
 	logoUrl: '/bsol.svg',
-	maxLeverage: 3,
-	defaultLeverage: 2,
+	maxLeverage: 2.5,
+	defaultLeverage: 1.8,
 	emissionsTokenSymbol: 'BLZE',
 	onlyDirectRoute: true,
 };
