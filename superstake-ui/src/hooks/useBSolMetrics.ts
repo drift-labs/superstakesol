@@ -21,7 +21,7 @@ function useBSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 	
 	useEffect(() => {
 		fetchAndSetBSolMetrics();
-	}, []);
+	}, [activeLst.symbol]);
 	
 	useInterval(() => {
 		fetchAndSetBSolMetrics();

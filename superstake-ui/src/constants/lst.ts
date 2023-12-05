@@ -23,7 +23,8 @@ export const M_SOL: LST = {
 	spotMarket: MainnetSpotMarkets[2],
 	logoUrl: '/mSol.svg',
 	maxLeverage: 3,
-	defaultLeverage: 2
+	defaultLeverage: 2,
+	onlyDirectRoute: true
 };
 
 export const JITO_SOL: LST = {
@@ -32,7 +33,8 @@ export const JITO_SOL: LST = {
 	spotMarket: MainnetSpotMarkets[6],
 	logoUrl: '/jitoSol.svg',
 	maxLeverage: 1.8,
-	defaultLeverage: 1.4
+	defaultLeverage: 1.4,
+	onlyDirectRoute: true
 };
 
 export const B_SOL: LST = {

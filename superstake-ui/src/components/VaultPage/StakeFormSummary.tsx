@@ -158,7 +158,7 @@ StakeFormSummaryProps) => {
                 <br />
                 {hasEmissions && (
                   <>
-                    {emissionsTokenSymbol} emissions APR:{" "}
+                    {emissionsTokenSymbol} Rewards APR:{" "}
                     <span className="font-bold text-text-positive-green">
                       {emissionsApr.toFixed(2)}%
                     </span>{" "}
