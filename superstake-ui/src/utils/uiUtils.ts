@@ -15,8 +15,8 @@ export const getRpcLatencyColor = (rpcLatency: number | undefined) => {
 	return !rpcLatency || rpcLatency === -1
 		? 'var(--status-neutral)'
 		: rpcLatency < 250
-		? 'var(--status-positive)'
-		: 'var(--status-negative)';
+		  ? 'var(--status-positive)'
+		  : 'var(--status-negative)';
 };
 
 // export const aprFromApy = (apy: number, compoundsPerYear: number) => {

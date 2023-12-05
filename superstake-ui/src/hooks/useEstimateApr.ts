@@ -122,16 +122,19 @@ const useEstimateApr = ({
 	const solRewardsPerYear = solInFromStaking + solInFromDeposit - solOut;
 	const lstNetProjectedApr =
 		solRewardsPerYear / (initialLstDeposit * lstMetrics.priceInSol);
-	const leveragedBorrowRate = solOut / (initialLstDeposit * lstMetrics.priceInSol);
-	const leveragedDepositRate = solInFromDeposit / (initialLstDeposit * lstMetrics.priceInSol);
+	const leveragedBorrowRate =
+		solOut / (initialLstDeposit * lstMetrics.priceInSol);
+	const leveragedDepositRate =
+		solInFromDeposit / (initialLstDeposit * lstMetrics.priceInSol);
 
 	// Add emissions APR on top because they are airdropped separately
 	// Not subject to the borrow rate
-	const emissionsAprFromApy = lstMetrics.emissionsApy ? 
-		aprFromApy(lstMetrics.emissionsApy, Math.floor(365 / 2)) / 100 : 0;  // 365 / 2 ~= number of epochs per year
+	const emissionsAprFromApy = lstMetrics.emissionsApy
+		? aprFromApy(lstMetrics.emissionsApy, Math.floor(365 / 2)) / 100
+		: 0; // 365 / 2 ~= number of epochs per year
 	const solInFromEmissions = superStakeLstDeposit * emissionsAprFromApy;
-	const leveragedEmissionsApr = 
-	solInFromEmissions / (initialLstDeposit * lstMetrics.priceInSol);
+	const leveragedEmissionsApr =
+		solInFromEmissions / (initialLstDeposit * lstMetrics.priceInSol);
 
 	const totalNetProjectedApr = lstNetProjectedApr + leveragedEmissionsApr;
 
@@ -161,7 +164,10 @@ const useEstimateApr = ({
 
 		solBorrowAmount,
 		projectedLiqRatio,
-		unleveragedApr: lstDepositRate.toNum() * 100 + lstAprFromApy * 100 + emissionsAprFromApy * 100,
+		unleveragedApr:
+			lstDepositRate.toNum() * 100 +
+			lstAprFromApy * 100 +
+			emissionsAprFromApy * 100,
 		loaded: true,
 	};
 };

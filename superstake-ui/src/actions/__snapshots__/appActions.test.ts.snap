@@ -20,6 +20,7 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
     "driftAccountName": "Super Stake JitoSOL",
     "logoUrl": "/jitoSol.svg",
     "maxLeverage": 1.8,
+    "onlyDirectRoute": true,
     "spotMarket": {
       "marketIndex": 6,
       "mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
@@ -49,23 +50,24 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
 exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets new state with valid LSTs 2`] = `
 {
   "activeLst": {
-    "defaultLeverage": 1.4,
-    "driftAccountName": "Super Stake JitoSOL",
-    "logoUrl": "/jitoSol.svg",
-    "maxLeverage": 1.8,
+    "defaultLeverage": 2,
+    "driftAccountName": "Super Stake SOL",
+    "logoUrl": "/mSol.svg",
+    "maxLeverage": 3,
+    "onlyDirectRoute": true,
     "spotMarket": {
-      "marketIndex": 6,
-      "mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
-      "oracle": "7yyaeuJ1GGtVBLT2z2xub5ZWYKaNhF28mj1RdV4VDFVk",
+      "marketIndex": 2,
+      "mint": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
+      "oracle": "E4v1BBgoso9s64TQvmyownAVJbhbEPGyzA3qn4n46qj9",
       "oracleSource": {
         "pyth": {},
       },
       "precision": "3b9aca00",
       "precisionExp": "09",
-      "serumMarket": "DkbVbMhFxswS32xnn1K2UY4aoBugXooBTxdzkWWDWRkH",
-      "symbol": "jitoSOL",
+      "serumMarket": "9Lyhks5bQQxb9EyyX55NtgKQzpM4WK7JCmeaWuQ5MoXD",
+      "symbol": "mSOL",
     },
-    "symbol": "JitoSOL",
+    "symbol": "mSOL",
   },
   "stakeUnstakeForm": {
     "amountToStakeString": "",
@@ -73,7 +75,7 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
     "amountToUnstakeString": "",
     "isMaxStake": false,
     "isMaxUnstake": false,
-    "leverageToUse": 1.4,
+    "leverageToUse": 2,
     "unstakeLeverage": 0,
   },
 }
