@@ -30,6 +30,7 @@ import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from '../../hooks/useCurrentLstMetrics';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
 import Checkbox from '../Checkbox';
+import useMaxLeverageForLst from '../../hooks/useMaxLeverageForLst';
 
 const UnstakeSteps = ({
 	highlightedStep,
@@ -112,6 +113,8 @@ const StakeUnstakeForm = () => {
 	} = useAppStore((s) => s.stakeUnstakeForm);
 
 	const lstMetrics = useCurrentLstMetrics();
+
+	const maxLeverage = useMaxLeverageForLst(activeLst);
 
 	const currentSubAccountId = useAppStore(
 		(s) => s.currentUserAccount?.accountId
@@ -551,7 +554,7 @@ const StakeUnstakeForm = () => {
 								value={leverageToUse}
 								step={0.1}
 								min={1}
-								max={activeLst.maxLeverage}
+								max={maxLeverage}
 							/>
 						</div>
 
@@ -670,7 +673,7 @@ const StakeUnstakeForm = () => {
 									}
 									step={0.1}
 									min={1}
-									max={activeLst.maxLeverage}
+									max={maxLeverage}
 								/>
 							</div>
 						</div>
