@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useAppStore from './useAppStore';
 import { BigNum, calculateSolEarned } from '@drift-labs/sdk';
 import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
@@ -35,7 +35,9 @@ const useUserSolEarned = () => {
 		})();
 	}, [depositRecords?.length, !!currentUserData, driftClientIsReady]);
 
-	return { solEarned, loaded };
+	return useMemo(() => {
+		return { solEarned, loaded };
+	}, [solEarned, loaded]);
 };
 
 export default useUserSolEarned;
