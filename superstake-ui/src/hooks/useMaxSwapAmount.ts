@@ -4,7 +4,7 @@ import {
 	getUserAccountPublicKeySync,
 	LAMPORTS_PRECISION,
 	User,
-	MockUserAccountSubscriber,
+	BasicUserAccountSubscriber,
 } from '@drift-labs/sdk';
 import useAppStore from './useAppStore';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
@@ -109,7 +109,7 @@ function mockUser(
 		userAccountPublicKey,
 		accountSubscription: {
 			type: 'custom',
-			userAccountSubscriber: new MockUserAccountSubscriber(
+			userAccountSubscriber: new BasicUserAccountSubscriber(
 				userAccountPublicKey,
 				userAccount,
 				1
