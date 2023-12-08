@@ -483,11 +483,7 @@ const PANELS = [
 const VaultInfoPanel = () => {
 	const { userLstEquity: userLstEquity } = useCurrentSuperstakePosition();
 	const activeLst = useAppStore((s) => s.activeLst);
-
-	// MAY need to move this into the app store:
 	const [selectedPanel, setSelectedPanel] = useState(0);
-
-	const hasDefaultedToUserStakePanel = useRef(false);
 	const lastActiveLstSymbol = useRef('');
 
 	const handleSwitchPanels = (direction: 'left' | 'right') => {
@@ -501,17 +497,12 @@ const VaultInfoPanel = () => {
 
 	// Switch panels either on first load, or when activeLst change
 	useEffect(() => {
-		const switchedLsts = activeLst.symbol !== lastActiveLstSymbol.current;
-		if (
-			userLstEquity.loaded &&
-			(!hasDefaultedToUserStakePanel.current || switchedLsts)
-		) {
+		if (userLstEquity.loaded) {
 			if (userLstEquity.value > 0) {
 				setSelectedPanel(1);
 			} else {
 				setSelectedPanel(0);
 			}
-			hasDefaultedToUserStakePanel.current = true;
 			lastActiveLstSymbol.current = activeLst.symbol;
 		}
 	}, [userLstEquity.value, activeLst.symbol, userLstEquity.loaded]);
