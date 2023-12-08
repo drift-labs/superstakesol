@@ -393,8 +393,14 @@ const createAppActions = (
 				console.log((err as any)?.logs);
 			}
 
-			// @ts-ignore
-			NOTIFICATION_UTILS.toast.error(err.message);
+			// TODO: abstract TransactionErrorHandler from main UI into common
+			if (err.message.includes('0x1850')) {
+				NOTIFICATION_UTILS.toast.error(
+					'We have reached the maximum capacity of users. Please try again later.'
+				);
+			} else {
+				NOTIFICATION_UTILS.toast.error(err.message);
+			}
 
 			return false;
 		}
