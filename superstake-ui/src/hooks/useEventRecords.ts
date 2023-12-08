@@ -34,6 +34,7 @@ const useEventRecords = () => {
 		depositRecords: Event<DepositRecord>[],
 		swapRecords: Event<SwapRecord>[]
 	) => {
+		console.log(`Received event records`);
 		set((s) => {
 			s.eventRecords = {
 				depositRecords: [...s.eventRecords.depositRecords, ...depositRecords],
@@ -56,8 +57,10 @@ const useEventRecords = () => {
 		}
 		accountBeingFetched.current = user.getUserAccountPublicKey();
 
+		console.log(`Getting events`);
 		if (setLoadingState) {
 			set((s) => {
+				console.log(`Setting event record loading state`);
 				s.eventRecords = {
 					...s.eventRecords,
 					loaded: false,

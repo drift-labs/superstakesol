@@ -11,11 +11,18 @@ import { matchEnum } from '@drift/common';
 import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { useCommonDriftStore } from '@drift-labs/react';
 
-const DEFAULT_RETURN_VALUE = {
+const INITIAL_RETURN_VALUE = {
 	balanceType: SpotBalanceType.DEPOSIT,
 	tokenAmount: new BN(0),
 	cumulativeDeposits: new BN(0),
 	loaded: false,
+};
+
+const DEFAULT_LOADED_RETURN_VALUE = {
+	balanceType: SpotBalanceType.DEPOSIT,
+	tokenAmount: new BN(0),
+	cumulativeDeposits: new BN(0),
+	loaded: true,
 };
 
 /**
@@ -42,8 +49,16 @@ const useSpotBalanceForMarket = (marketIndex: number | undefined) => {
 	);
 
 	const balance = useMemo(() => {
-		if (!spotPositionForMarket || !driftClientIsReady) {
-			return DEFAULT_RETURN_VALUE;
+		if (!driftClientIsReady) {
+			return INITIAL_RETURN_VALUE;
+		}
+
+		if (!spotPositionForMarket) {
+			if (loaded) {
+				return DEFAULT_LOADED_RETURN_VALUE;
+			} else {
+				return INITIAL_RETURN_VALUE;
+			}
 		}
 
 		let marketAccount;
@@ -53,7 +68,7 @@ const useSpotBalanceForMarket = (marketIndex: number | undefined) => {
 				marketIndex as number
 			) as SpotMarketAccount;
 		} catch (e) {
-			return DEFAULT_RETURN_VALUE;
+			return INITIAL_RETURN_VALUE;
 		}
 
 		return {

@@ -5,10 +5,11 @@ import {
 } from '@drift/common';
 import { ALL_LST, ALL_LST_MAP, LST } from './lst';
 
-const driftEnv =
-	process.env.NEXT_PUBLIC_DRIFT_ENV === 'mainnet-beta'
-		? 'mainnet-beta'
-		: ('devnet' as DriftEnv);
+const driftEnv = (
+	process.env.NEXT_PUBLIC_DRIFT_ENV
+		? process.env.NEXT_PUBLIC_DRIFT_ENV
+		: 'mainnet-beta'
+) as DriftEnv; // Default to mainnet-beta
 
 InitializeCommon(driftEnv);
 

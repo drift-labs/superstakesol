@@ -315,6 +315,8 @@ const createAppActions = (
 	};
 
 	const pollForNewAccount = () => {
+		console.log(`pollForNewAccount`);
+
 		const authority = getCommon().authority;
 		const connected = getCommon().currentlyConnectedWalletContext.connected;
 		let retries = 10;
@@ -629,6 +631,7 @@ const createAppActions = (
 
 	// Resets the current subaccount / user data
 	const resetCurrentUserData = (loaded?: boolean) => {
+		console.log(`Resetting current user data`);
 		set((s) => {
 			s.currentUserAccount = { ...DEFAULT_USER_DATA, loaded: !!loaded };
 			s.eventRecords = {
@@ -667,7 +670,9 @@ const createAppActions = (
 	) => {
 		let authority = authorityParam;
 		if (!authority) {
-			authority = getCommon().currentlyConnectedWalletContext?.publicKey;
+			authority =
+				getCommon().currentlyConnectedWalletContext?.publicKey ??
+				getCommon()?.authority;
 		}
 
 		const superStakeAccount = await getSuperStakeAccount(authority);
@@ -677,7 +682,7 @@ const createAppActions = (
 			return;
 		}
 
-		resetCurrentUserData(false);
+		// resetCurrentUserData(false); // TODO : DOUBLE CHECK THIS - BUT LOOKS UNNECESSARY AND IT WAS MAKING ACCOUNT GET STUCK IN "LOADING" STATE WHEN SWITCHING ACCOUNTS
 		await switchActiveSubaccount(superStakeAccount.subAccountId, authority);
 		await updateCurrentUserData(currentLstPrice);
 	};

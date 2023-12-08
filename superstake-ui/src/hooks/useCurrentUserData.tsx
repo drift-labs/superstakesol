@@ -13,7 +13,8 @@ const useCurrentUserData = () => {
 	const superStakeUser = useAppStore((s) => s.currentUserAccount.user);
 	const actions = useAppActions();
 	const driftClientIsReady = useCustomDriftClientIsReady();
-	const { connected } = useWallet();
+	const { connected: walletConnected } = useWallet();
+	const emulationMode = useCommonDriftStore((s) => s.emulationMode);
 	const appAuthority = useCommonDriftStore((s) => s.authority);
 	const lstMetrics = useCurrentLstMetrics();
 
@@ -21,6 +22,8 @@ const useCurrentUserData = () => {
 	const appAuthorityString = useMemo(() => {
 		return appAuthority ? appAuthority.toString() : '';
 	}, [appAuthority]);
+
+	const connected = walletConnected || emulationMode;
 
 	// Initially switch to superstake user account when drift client is ready and metrics are loaded
 	// Sometimes this randomly triggers even though none of the values have changed and I don't know why.
