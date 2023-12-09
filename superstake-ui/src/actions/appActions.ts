@@ -118,6 +118,29 @@ const createAppActions = (
 		}
 	};
 
+	const checkSuperStakeLstSubaccountForAuthority = async (
+		lst: LST,
+		authority: PublicKey
+	) => {
+		const commonState = getCommon();
+		const driftClient = commonState.driftClient.client;
+
+		const subAccounts =
+			await driftClient.getUserAccountsForAuthority(authority);
+
+		const driftAccountExists = subAccounts.length > 0;
+
+		if (!driftAccountExists) {
+			return false;
+		}
+
+		const superStakeAccount = subAccounts.find((account) => {
+			return decodeName(account.name) === lst.driftAccountName;
+		});
+
+		return !!superStakeAccount;
+	};
+
 	/**
 	 * Does a super stake deposit. Creates the subaccount if it doesn't exist.
 	 *
@@ -767,6 +790,7 @@ const createAppActions = (
 		switchActiveSubaccount,
 		switchSubaccountToActiveLst,
 		updateCurrentUserData,
+		checkSuperStakeLstSubaccountForAuthority,
 	};
 };
 

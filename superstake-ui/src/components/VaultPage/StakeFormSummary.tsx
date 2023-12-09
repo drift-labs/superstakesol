@@ -8,6 +8,11 @@ import { SOL_SPOT_MARKET_INDEX } from '../../utils/uiUtils';
 import { BigNum, SpotMarkets } from '@drift-labs/sdk';
 import useAppStore from '../../hooks/useAppStore';
 import ExclamationTriangleIcon from '@heroicons/react/24/outline/ExclamationTriangleIcon';
+import { useAccountCreationCost } from '@drift-labs/react';
+import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
+import { Info, Share } from '@drift-labs/icons';
+import Tooltip from '../Tooltip';
+import { NEW_ACCOUNT_DONATION } from '@drift/common';
 
 const SummaryRow = ({ children }: PropsWithChildren) => {
 	return (
@@ -28,7 +33,6 @@ type StakeFormSummaryProps = {
 	lstApr: number;
 	lstDepositRate: number;
 	solBorrowRate: number;
-	accountExists?: boolean | undefined;
 	emissionsApr?: number;
 	emissionsTokenSymbol?: string;
 	leverageToUse?: number;
@@ -46,7 +50,6 @@ const StakeFormSummary = ({
 	lstApr = 0,
 	lstDepositRate = 0,
 	solBorrowRate = 0,
-	accountExists,
 	emissionsApr,
 	emissionsTokenSymbol,
 	leverageToUse = 1,
@@ -55,6 +58,8 @@ StakeFormSummaryProps) => {
 	const activeLst = useAppStore((s) => s.activeLst);
 	const solSpotMarket = SpotMarkets['mainnet-beta'][SOL_SPOT_MARKET_INDEX];
 	const { userLstDeposits, userSolBorrows } = useCurrentSuperstakePosition();
+	const { accountCreationCost } = useAccountCreationCost();
+	const hasSuperstakeLstSubaccount = useHasSuperstakeLstSubaccount();
 
 	const [aprExpanded, setAprExpanded] = useState(false);
 
@@ -71,6 +76,8 @@ StakeFormSummaryProps) => {
 	);
 
 	const hasEmissions = emissionsTokenSymbol && emissionsApr;
+	const creationCostMinusDonation =
+		accountCreationCost.sub(NEW_ACCOUNT_DONATION);
 
 	return (
 		<>
@@ -114,12 +121,53 @@ StakeFormSummaryProps) => {
 						rightSymbol={` ${activeLst.symbol}/SOL`}
 					/>
 				</SummaryRow>
-				{accountExists === false && (
+				{!hasSuperstakeLstSubaccount && (
 					<SummaryRow>
 						<Text.BODY2 className="font-normal">
 							New account creation cost
-						</Text.BODY2>{' '}
-						<Text.BODY2>0.03 SOL</Text.BODY2>
+						</Text.BODY2>
+						<div>
+							<Tooltip
+								content={
+									<div className="px-2 font-normal">
+										<div className="mb-1">
+											<Text.BODY1 className="font-normal">
+												New Account Fee: {NEW_ACCOUNT_DONATION.toFixed(3)} SOL
+											</Text.BODY1>
+										</div>
+										<div className="mb-3">
+											<Text.BODY1 className="font-normal">
+												Rent: {creationCostMinusDonation.toFixed(3)} SOL
+											</Text.BODY1>
+										</div>
+										<div className="mb-3">
+											<Text.BODY1 className="font-normal">
+												Rent is currently higher due to increased user activity
+												but can be reclaimed after 13 days when you delete your
+												account, or a few hours after you have withdrawn all
+												funds.
+											</Text.BODY1>
+										</div>
+										<a
+											href="https://docs.drift.trade/creating-a-subaccount"
+											target="_blank"
+											rel="noreferrer"
+											className="flex items-center"
+										>
+											<Text.BODY1 className="font-normal">
+												Learn more{' '}
+											</Text.BODY1>
+											<Share className="inline-block w-4 h-4 ml-1" />
+										</a>
+									</div>
+								}
+								className="flex items-center"
+								allowHover
+							>
+								<Text.BODY2>{accountCreationCost.toFixed(3)} SOL</Text.BODY2>
+								<Info size={24} className="relative ml-1 cursor-pointer" />
+							</Tooltip>
+						</div>
 					</SummaryRow>
 				)}
 			</div>

@@ -2,6 +2,7 @@
 
 exports[`src/actions/appActions.ts creates app actions without error 1`] = `
 {
+  "checkSuperStakeLstSubaccountForAuthority": [Function],
   "handleSuperStakeDeposit": [Function],
   "handleSuperStakeRepayBorrow": [Function],
   "handleSuperStakeWithdrawal": [Function],
