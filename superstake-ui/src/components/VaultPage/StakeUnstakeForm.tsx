@@ -19,7 +19,6 @@ import useBorrowAmountForStake from '../../hooks/useBorrowAmountForStake';
 import useEstimateApr from '../../hooks/useEstimateApr';
 import useMaxSwapAmount from '../../hooks/useMaxSwapAmount';
 import useEstimatedLiquidationRatio from '../../hooks/useCurrentLiquidationRatio';
-import { useAccountExists } from '../../hooks/useAccountExists';
 import useSwapSlippageTolerance from '../../hooks/useSwapSlippageTolerance';
 import SlippageTolerance from '../SlippageTolerance';
 import { SLIPPAGE_TOLERANCE_DEFAULT } from '../../constants';
@@ -74,7 +73,6 @@ const StakeUnstakeForm = () => {
 	const actions = useAppActions();
 	const connected = useWallet().connected;
 	const setStoreState = useAppStore((s) => s.set);
-	const accountExists = useAccountExists();
 	const activeLst = useAppStore((s) => s.activeLst);
 	const currentUserAccountLoaded = useAppStore(
 		(s) => s.currentUserAccount.loaded
@@ -574,7 +572,6 @@ const StakeUnstakeForm = () => {
 							lstDepositRate={
 								isNaN(leveragedDepositRate) ? 0 : leveragedDepositRate
 							}
-							accountExists={accountExists}
 							emissionsTokenSymbol={activeLst.emissionsTokenSymbol}
 							leverageToUse={leverageToUse}
 						/>
