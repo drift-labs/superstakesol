@@ -12,7 +12,7 @@ import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
 import { Info, Share } from '@drift-labs/icons';
 import Tooltip from '../Tooltip';
-import { NEW_ACCOUNT_DONATION } from '@drift/common';
+import { MIN_LEFTOVER_SOL, NEW_ACCOUNT_DONATION } from '@drift/common';
 
 const SummaryRow = ({ children }: PropsWithChildren) => {
 	return (
@@ -63,7 +63,8 @@ StakeFormSummaryProps) => {
 
 	const solBalance = useCommonDriftStore((s) => s.currentSolBalance);
 	const hasEnoughSolToCreateAccount =
-		solBalance.loaded && solBalance.value.gte(accountCreationCost);
+		solBalance.loaded &&
+		solBalance.value.gte(accountCreationCost.add(MIN_LEFTOVER_SOL));
 
 	const [aprExpanded, setAprExpanded] = useState(false);
 
@@ -177,7 +178,9 @@ StakeFormSummaryProps) => {
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
 							<div className="w-full">
 								<Text.BODY1 className="font-normal text-text-negative-red">
-									Your wallet does not have enough SOL to create an account.
+									You must have at least{' '}
+									{accountCreationCost.add(MIN_LEFTOVER_SOL).toFixed(3)} SOL to
+									cover account creation and transaction fees.
 								</Text.BODY1>
 								<br />
 								<Text.BODY1 className="font-normal text-text-negative-red">
