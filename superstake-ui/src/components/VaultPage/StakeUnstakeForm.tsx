@@ -25,9 +25,11 @@ import { SLIPPAGE_TOLERANCE_DEFAULT } from '../../constants';
 import { SOL_PRECISION_EXP } from '../../utils/uiUtils';
 import { twMerge } from 'tailwind-merge';
 import { ChevronRight } from '@drift-labs/icons';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
 import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from '../../hooks/useCurrentLstMetrics';
+import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
+import Checkbox from '../Checkbox';
 
 const UnstakeSteps = ({
 	highlightedStep,
@@ -86,6 +88,15 @@ const StakeUnstakeForm = () => {
 	const [selectedTab, setSelectedTab] = useState<Tab>('stake');
 	const { swapSlippageTolerance, setSwapSlippageTolerance } =
 		useSwapSlippageTolerance();
+
+	const hasSuperstakeLstSubaccount = useHasSuperstakeLstSubaccount();
+	const [hasAcceptedAccountCreationFee, setHasAcceptedAccontCreationFee] =
+		useState(false);
+
+	const { accountCreationCost } = useAccountCreationCost();
+	const solBalance = useCommonDriftStore((s) => s.currentSolBalance);
+	const hasEnoughSolToCreateAccount =
+		solBalance.loaded && solBalance.value.gte(accountCreationCost);
 
 	// other values in app store
 	const { solBorrowCapacityRemaining } = useAppStore((s) => s.spotMarketData);
@@ -716,31 +727,61 @@ const StakeUnstakeForm = () => {
 			{selectedTab === 'stake' ? (
 				<div className="mt-6">
 					{connected ? (
-						<Button
-							className="w-full"
-							onClick={handleSuperStakeDeposit}
-							disabled={
-								!amountToStakeString ||
-								amountToStakeNum === 0 ||
-								isNaN(amountToStakeNum) ||
-								submitting ||
-								exceedsMax ||
-								exceedsMaxBorrow ||
-								!currentUserAccountLoaded
-							}
-						>
-							{submitting ? (
-								'Approving Transaction...'
-							) : amountToStakeNum && exceedsMaxBorrow ? (
-								<Text.H5>Full Capacity Reached</Text.H5>
-							) : exceedsMax ? (
-								<Text.H5>Insufficient {activeLst.symbol} balance</Text.H5>
-							) : (
-								<Text.H5>
-									Super Stake {amountToStakeString} {activeLst.symbol}
-								</Text.H5>
-							)}
-						</Button>
+						<div>
+							<div
+								className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
+								onClick={() =>
+									setHasAcceptedAccontCreationFee(
+										!hasAcceptedAccountCreationFee
+									)
+								}
+							>
+								<div>
+									<Checkbox
+										className="relative"
+										checked={hasAcceptedAccountCreationFee}
+										onChange={() =>
+											setHasAcceptedAccontCreationFee(
+												!hasAcceptedAccountCreationFee
+											)
+										}
+									/>
+								</div>
+								<Text.BODY1>
+									I understand that dynamic account creation fees are in place
+									as a safe guard and that rent can be reclaimed upon account
+									deletion.
+								</Text.BODY1>
+							</div>
+							<Button
+								className="w-full"
+								onClick={handleSuperStakeDeposit}
+								disabled={
+									!amountToStakeString ||
+									amountToStakeNum === 0 ||
+									isNaN(amountToStakeNum) ||
+									submitting ||
+									exceedsMax ||
+									exceedsMaxBorrow ||
+									!currentUserAccountLoaded ||
+									(!hasSuperstakeLstSubaccount &&
+										(!hasAcceptedAccountCreationFee ||
+											!hasEnoughSolToCreateAccount))
+								}
+							>
+								{submitting ? (
+									'Approving Transaction...'
+								) : amountToStakeNum && exceedsMaxBorrow ? (
+									<Text.H5>Full Capacity Reached</Text.H5>
+								) : exceedsMax ? (
+									<Text.H5>Insufficient {activeLst.symbol} balance</Text.H5>
+								) : (
+									<Text.H5>
+										Super Stake {amountToStakeString} {activeLst.symbol}
+									</Text.H5>
+								)}
+							</Button>
+						</div>
 					) : (
 						<ConnectWalletButton />
 					)}
