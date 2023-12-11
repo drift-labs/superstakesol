@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Button from '../Button';
 import Text from '../Text';
 import CollateralInput from '../CollateralInput';
@@ -115,6 +115,8 @@ const StakeUnstakeForm = () => {
 	const lstMetrics = useCurrentLstMetrics();
 
 	const maxLeverage = useMaxLeverageForLst(activeLst);
+	const lastMaxLeverage = useRef<number>(1);
+	const lastLst = useRef<string>('');
 
 	const currentSubAccountId = useAppStore(
 		(s) => s.currentUserAccount?.accountId
@@ -504,6 +506,23 @@ const StakeUnstakeForm = () => {
 			});
 		}
 	}, [amountToStakeString, isMaxStake, lstBalance.balance]);
+
+	// Set current leverage to half way along the slider if:
+	// - leverage went from 1x to >1x
+	// - active lst changed
+	useEffect(() => {
+		if (
+			(lastMaxLeverage.current === 1 && maxLeverage > 1) ||
+			lastLst.current !== activeLst.symbol
+		) {
+			const defaultLeverage = 1 + Math.floor((10 * (maxLeverage - 1)) / 2) / 10;
+			setStoreState((s) => {
+				s.stakeUnstakeForm.leverageToUse = defaultLeverage;
+			});
+			lastMaxLeverage.current = maxLeverage;
+			lastLst.current = activeLst.symbol;
+		}
+	}, [lastMaxLeverage.current, lastLst.current, activeLst, maxLeverage]);
 
 	return (
 		<div className="flex flex-col justify-between h-full">

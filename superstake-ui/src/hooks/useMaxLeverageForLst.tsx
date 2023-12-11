@@ -1,55 +1,62 @@
-import { useCommonDriftStore, useWallet } from '@drift-labs/react';
-import { calculateSuperStakeMaxLeverage } from '../../../drift-common/protocol/sdk/lib';
+import { useCommonDriftStore } from '@drift-labs/react';
 import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { LST } from '../constants/lst';
 import { SOL_SPOT_MARKET_INDEX } from '../utils/uiUtils';
-import useSPLTokenBalance from './useSPLTokenBalance';
-import { BASE_PRECISION_EXP } from '@drift-labs/sdk';
-import { BigNum } from '@drift-labs/sdk';
+import {
+	BigNum,
+	QUOTE_PRECISION_EXP,
+	SPOT_MARKET_WEIGHT_PRECISION,
+	calculateScaledInitialAssetWeight,
+} from '@drift-labs/sdk';
 
 const useMaxLeverageForLst = (lst: LST) => {
 	const driftClientIsReady = useCustomDriftClientIsReady();
 	const driftClient = useCommonDriftStore((s) => s.driftClient);
-	const connected = useWallet().connected;
 
 	const lstSpotMarket = lst.spotMarket;
-	const precision = lstSpotMarket?.precisionExp || BASE_PRECISION_EXP;
-	const lstBalance = useSPLTokenBalance(
-		lstSpotMarket?.mint?.toString() || '',
-		precision
-	);
 
 	if (!driftClient || !driftClientIsReady) {
 		return 1;
 	}
 
-	if (
-		!connected ||
-		!lstBalance.balanceLoaded ||
-		(lstBalance.balanceLoaded && lstBalance.balanceBigNum.eqZero())
-	) {
-		// Hypothetical balance of 100 to match the left panel max leverage value if wallet balance is 0 or unavailable
-		lstBalance.balance = 100;
-		lstBalance.balanceBigNum = BigNum.fromPrint('100', precision);
-		lstBalance.balanceLoaded = true;
-		lstBalance.tokenAccountAddress = '';
-	}
+	const lstSpotMarketAccount = driftClient.client.getSpotMarketAccount(
+		lstSpotMarket.marketIndex
+	);
+	const solSpotMarketAccount = driftClient.client.getSpotMarketAccount(
+		SOL_SPOT_MARKET_INDEX
+	);
 
-	const { weightedDepositValue, maxBorrowValue, maxLeverage } =
-		calculateSuperStakeMaxLeverage(
-			driftClient.client,
-			SOL_SPOT_MARKET_INDEX,
-			lstSpotMarket.marketIndex,
-			lstBalance.balanceBigNum.val
-		);
+	const spotWeightPrecisionExp =
+		SPOT_MARKET_WEIGHT_PRECISION.toString().length - 1;
 
-	console.log({
-		weightedDepositValue: weightedDepositValue.toNumber(),
-		maxBorrowValue: maxBorrowValue.toNumber(),
-		maxLeverage,
-	});
+	const lstOraclePriceData = driftClient.client.getOracleDataForSpotMarket(
+		lstSpotMarket.marketIndex
+	);
+	const lstOraclePriceBigNum = BigNum.from(
+		lstOraclePriceData.price,
+		QUOTE_PRECISION_EXP
+	);
 
-	return parseFloat(maxLeverage.toFixed(1));
+	const lstInitialAssetWeight = BigNum.from(
+		calculateScaledInitialAssetWeight(
+			lstSpotMarketAccount,
+			lstOraclePriceBigNum.val
+		),
+		spotWeightPrecisionExp
+	);
+
+	const solInitialLiabilityWeight = BigNum.from(
+		solSpotMarketAccount.initialLiabilityWeight,
+		spotWeightPrecisionExp
+	);
+
+	const unroundedMaxLeverage =
+		lstInitialAssetWeight.toNum() / (solInitialLiabilityWeight.toNum() - 1) - 1;
+
+	const maxLeverage =
+		Math.floor(10 * Math.min(3, Math.max(1, unroundedMaxLeverage))) / 10;
+
+	return maxLeverage;
 };
 
 export default useMaxLeverageForLst;
