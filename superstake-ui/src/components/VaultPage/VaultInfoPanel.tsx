@@ -16,6 +16,7 @@ import EpochEndingDisplay from '../EpochEndingDisplay';
 import { useCommonDriftStore } from '@drift-labs/react';
 import useCurrentLstMetrics from '../../hooks/useCurrentLstMetrics';
 import Skeleton from 'react-loading-skeleton';
+import useMaxLeverageForLst from '../../hooks/useMaxLeverageForLst';
 
 const Bubble = ({
 	selected,
@@ -60,10 +61,10 @@ const VaultOverviewPanel = () => {
 	const lstMetrics = useCurrentLstMetrics();
 	const activeLst = useAppStore((s) => s.activeLst);
 	const lstAmount = 100;
-	const leverage = activeLst.maxLeverage ?? 3;
+	const maxLeverageForLst = useMaxLeverageForLst(activeLst);
 	const solAmount = useBorrowAmountForStake({
 		lstAmount,
-		leverage,
+		leverage: maxLeverageForLst.maxLeverage,
 	});
 	const {
 		lstNetProjectedApr,
@@ -73,7 +74,7 @@ const VaultOverviewPanel = () => {
 		unleveragedApr,
 		loaded: isAprLoaded,
 	} = useEstimateApr({
-		lstAmount: lstAmount * leverage,
+		lstAmount: lstAmount * maxLeverageForLst.maxLeverage,
 		solAmount,
 	});
 
@@ -109,7 +110,7 @@ const VaultOverviewPanel = () => {
 												<Text.BODY1>
 													Based on staking 100 {activeLst.symbol} at{' '}
 													{leveragedLstApr > unleveragedApr
-														? `${leverage}x`
+														? `${maxLeverageForLst.maxLeverage}x`
 														: '1x'}{' '}
 													leverage
 												</Text.BODY1>
@@ -174,7 +175,10 @@ const VaultOverviewPanel = () => {
 
 			<div className="mt-8">
 				<Text.BODY3>Max. leverage</Text.BODY3>
-				<Text.H4>{leverage}x</Text.H4>
+				<TextWithSkeleton
+					value={<Text.H4>{maxLeverageForLst.maxLeverage}x</Text.H4>}
+					loading={!maxLeverageForLst.loaded}
+				/>
 			</div>
 
 			<div className="mt-8">

@@ -114,8 +114,9 @@ const StakeUnstakeForm = () => {
 
 	const lstMetrics = useCurrentLstMetrics();
 
-	const maxLeverage = useMaxLeverageForLst(activeLst);
-	const lastMaxLeverage = useRef<number>(1);
+	const maxLeverageForLst = useMaxLeverageForLst(activeLst);
+	const maxLeverage = maxLeverageForLst.maxLeverage;
+	const lastMaxLeverageLoaded = useRef<boolean>(false);
 	const lastLst = useRef<string>('');
 
 	const currentSubAccountId = useAppStore(
@@ -508,21 +509,28 @@ const StakeUnstakeForm = () => {
 	}, [amountToStakeString, isMaxStake, lstBalance.balance]);
 
 	// Set current leverage to half way along the slider if:
-	// - leverage went from 1x to >1x
+	// - max leverage went from not loaded to loaded
 	// - active lst changed
 	useEffect(() => {
 		if (
-			(lastMaxLeverage.current === 1 && maxLeverage > 1) ||
+			(lastMaxLeverageLoaded.current === false &&
+				maxLeverageForLst.loaded === true) ||
 			lastLst.current !== activeLst.symbol
 		) {
-			const defaultLeverage = 1 + Math.floor((10 * (maxLeverage - 1)) / 2) / 10;
+			const defaultLeverage =
+				1 + Math.floor((10 * (maxLeverageForLst.maxLeverage - 1)) / 2) / 10;
 			setStoreState((s) => {
 				s.stakeUnstakeForm.leverageToUse = defaultLeverage;
 			});
-			lastMaxLeverage.current = maxLeverage;
+			lastMaxLeverageLoaded.current = true;
 			lastLst.current = activeLst.symbol;
 		}
-	}, [lastMaxLeverage.current, lastLst.current, activeLst, maxLeverage]);
+	}, [
+		maxLeverageForLst,
+		lastMaxLeverageLoaded.current,
+		lastLst.current,
+		activeLst,
+	]);
 
 	return (
 		<div className="flex flex-col justify-between h-full">
@@ -562,7 +570,9 @@ const StakeUnstakeForm = () => {
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
 								Select your leverage:{' '}
-								<span className="text-text-default">{leverageToUse}x</span>
+								{maxLeverageForLst.loaded && (
+									<span className="text-text-default">{leverageToUse}x</span>
+								)}
 							</Text.BODY3>
 						</div>
 

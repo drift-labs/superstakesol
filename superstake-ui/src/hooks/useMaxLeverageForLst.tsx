@@ -16,7 +16,10 @@ const useMaxLeverageForLst = (lst: LST) => {
 	const lstSpotMarket = lst.spotMarket;
 
 	if (!driftClient || !driftClientIsReady) {
-		return 1;
+		return {
+			maxLeverage: 1,
+			loaded: false,
+		};
 	}
 
 	const lstSpotMarketAccount = driftClient.client.getSpotMarketAccount(
@@ -56,7 +59,10 @@ const useMaxLeverageForLst = (lst: LST) => {
 	const maxLeverage =
 		Math.floor(10 * Math.min(3, Math.max(1, unroundedMaxLeverage))) / 10;
 
-	return maxLeverage;
+	return {
+		maxLeverage,
+		loaded: true,
+	};
 };
 
 export default useMaxLeverageForLst;
