@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Button from '../Button';
 import Text from '../Text';
 import CollateralInput from '../CollateralInput';
@@ -30,6 +30,7 @@ import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from '../../hooks/useCurrentLstMetrics';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
 import Checkbox from '../Checkbox';
+import useMaxLeverageForLst from '../../hooks/useMaxLeverageForLst';
 
 const UnstakeSteps = ({
 	highlightedStep,
@@ -112,6 +113,11 @@ const StakeUnstakeForm = () => {
 	} = useAppStore((s) => s.stakeUnstakeForm);
 
 	const lstMetrics = useCurrentLstMetrics();
+
+	const maxLeverageForLst = useMaxLeverageForLst(activeLst);
+	const maxLeverage = maxLeverageForLst.maxLeverage;
+	const lastMaxLeverageLoaded = useRef<boolean>(false);
+	const lastLst = useRef<string>('');
 
 	const currentSubAccountId = useAppStore(
 		(s) => s.currentUserAccount?.accountId
@@ -502,6 +508,30 @@ const StakeUnstakeForm = () => {
 		}
 	}, [amountToStakeString, isMaxStake, lstBalance.balance]);
 
+	// Set current leverage to half way along the slider if:
+	// - max leverage went from not loaded to loaded
+	// - active lst changed
+	useEffect(() => {
+		if (
+			(lastMaxLeverageLoaded.current === false &&
+				maxLeverageForLst.loaded === true) ||
+			lastLst.current !== activeLst.symbol
+		) {
+			const defaultLeverage =
+				1 + Math.floor((10 * (maxLeverageForLst.maxLeverage - 1)) / 2) / 10;
+			setStoreState((s) => {
+				s.stakeUnstakeForm.leverageToUse = defaultLeverage;
+			});
+			lastMaxLeverageLoaded.current = true;
+			lastLst.current = activeLst.symbol;
+		}
+	}, [
+		maxLeverageForLst,
+		lastMaxLeverageLoaded.current,
+		lastLst.current,
+		activeLst,
+	]);
+
 	return (
 		<div className="flex flex-col justify-between h-full">
 			{/* TABS */}
@@ -540,7 +570,9 @@ const StakeUnstakeForm = () => {
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
 								Select your leverage:{' '}
-								<span className="text-text-default">{leverageToUse}x</span>
+								{maxLeverageForLst.loaded && (
+									<span className="text-text-default">{leverageToUse}x</span>
+								)}
 							</Text.BODY3>
 						</div>
 
@@ -551,7 +583,7 @@ const StakeUnstakeForm = () => {
 								value={leverageToUse}
 								step={0.1}
 								min={1}
-								max={activeLst.maxLeverage}
+								max={maxLeverage}
 							/>
 						</div>
 
@@ -670,7 +702,7 @@ const StakeUnstakeForm = () => {
 									}
 									step={0.1}
 									min={1}
-									max={activeLst.maxLeverage}
+									max={maxLeverage}
 								/>
 							</div>
 						</div>
@@ -728,31 +760,33 @@ const StakeUnstakeForm = () => {
 				<div className="mt-6">
 					{connected ? (
 						<div>
-							<div
-								className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
-								onClick={() =>
-									setHasAcceptedAccontCreationFee(
-										!hasAcceptedAccountCreationFee
-									)
-								}
-							>
-								<div>
-									<Checkbox
-										className="relative"
-										checked={hasAcceptedAccountCreationFee}
-										onChange={() =>
-											setHasAcceptedAccontCreationFee(
-												!hasAcceptedAccountCreationFee
-											)
-										}
-									/>
+							{!hasSuperstakeLstSubaccount && (
+								<div
+									className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
+									onClick={() =>
+										setHasAcceptedAccontCreationFee(
+											!hasAcceptedAccountCreationFee
+										)
+									}
+								>
+									<div>
+										<Checkbox
+											className="relative"
+											checked={hasAcceptedAccountCreationFee}
+											onChange={() =>
+												setHasAcceptedAccontCreationFee(
+													!hasAcceptedAccountCreationFee
+												)
+											}
+										/>
+									</div>
+									<Text.BODY1>
+										I understand that dynamic account creation fees are in place
+										as a safe guard and that rent can be reclaimed upon account
+										deletion.
+									</Text.BODY1>
 								</div>
-								<Text.BODY1>
-									I understand that dynamic account creation fees are in place
-									as a safe guard and that rent can be reclaimed upon account
-									deletion.
-								</Text.BODY1>
-							</div>
+							)}
 							<Button
 								className="w-full"
 								onClick={handleSuperStakeDeposit}
