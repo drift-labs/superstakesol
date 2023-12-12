@@ -760,31 +760,33 @@ const StakeUnstakeForm = () => {
 				<div className="mt-6">
 					{connected ? (
 						<div>
-							<div
-								className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
-								onClick={() =>
-									setHasAcceptedAccontCreationFee(
-										!hasAcceptedAccountCreationFee
-									)
-								}
-							>
-								<div>
-									<Checkbox
-										className="relative"
-										checked={hasAcceptedAccountCreationFee}
-										onChange={() =>
-											setHasAcceptedAccontCreationFee(
-												!hasAcceptedAccountCreationFee
-											)
-										}
-									/>
+							{!hasSuperstakeLstSubaccount && (
+								<div
+									className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
+									onClick={() =>
+										setHasAcceptedAccontCreationFee(
+											!hasAcceptedAccountCreationFee
+										)
+									}
+								>
+									<div>
+										<Checkbox
+											className="relative"
+											checked={hasAcceptedAccountCreationFee}
+											onChange={() =>
+												setHasAcceptedAccontCreationFee(
+													!hasAcceptedAccountCreationFee
+												)
+											}
+										/>
+									</div>
+									<Text.BODY1>
+										I understand that dynamic account creation fees are in place
+										as a safe guard and that rent can be reclaimed upon account
+										deletion.
+									</Text.BODY1>
 								</div>
-								<Text.BODY1>
-									I understand that dynamic account creation fees are in place
-									as a safe guard and that rent can be reclaimed upon account
-									deletion.
-								</Text.BODY1>
-							</div>
+							)}
 							<Button
 								className="w-full"
 								onClick={handleSuperStakeDeposit}
