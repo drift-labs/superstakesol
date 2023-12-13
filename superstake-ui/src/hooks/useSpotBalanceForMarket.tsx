@@ -42,8 +42,12 @@ const useSpotBalanceForMarket = (marketIndex: number | undefined) => {
 	);
 
 	const balance = useMemo(() => {
-		if (!spotPositionForMarket || !driftClientIsReady) {
+		if (!driftClientIsReady) {
 			return DEFAULT_RETURN_VALUE;
+		}
+
+		if (!spotPositionForMarket) {
+			return { ...DEFAULT_RETURN_VALUE, loaded: true };
 		}
 
 		let marketAccount;
