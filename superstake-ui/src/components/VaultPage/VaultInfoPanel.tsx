@@ -148,7 +148,7 @@ const VaultOverviewPanel = () => {
 								>
 									{activeLst.symbol === 'bSOL' && driftEmissions ? (
 										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 ml-4 cursor-pointer p-[2px]">
-											<div className=" flex flex-row space-x-3 bg-container-bg rounded relative overflow-hidden p-1">
+											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg">
 												<Text.BODY1 className="text-[14px] ml-2 relative">
 													Supercharged
 												</Text.BODY1>
@@ -176,7 +176,7 @@ const VaultOverviewPanel = () => {
 			<div className="mt-8">
 				<Text.BODY3>Max. leverage</Text.BODY3>
 				<TextWithSkeleton
-					value={<Text.H4>{maxLeverageForLst.maxLeverage}x</Text.H4>}
+					value={`${maxLeverageForLst.maxLeverage}x`}
 					loading={!maxLeverageForLst.loaded}
 				/>
 			</div>

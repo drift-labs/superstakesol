@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import useAppStore from './useAppStore';
 import { useCommonDriftStore } from '@drift-labs/react';
@@ -17,28 +17,18 @@ const useCurrentUserData = () => {
 	const appAuthority = useCommonDriftStore((s) => s.authority);
 	const lstMetrics = useCurrentLstMetrics();
 
-	// Just like in drift main ui this should prob be stringified in the common store
-	const appAuthorityString = useMemo(() => {
-		return appAuthority ? appAuthority.toString() : '';
-	}, [appAuthority]);
-
 	// Initially switch to superstake user account when drift client is ready and metrics are loaded
 	// Sometimes this randomly triggers even though none of the values have changed and I don't know why.
 	useEffect(() => {
-		if (
-			connected &&
-			driftClientIsReady &&
-			appAuthorityString &&
-			lstMetrics.loaded
-		) {
-			actions.switchSubaccountToActiveLst(lstMetrics.priceInSol);
+		if (connected && driftClientIsReady && appAuthority && lstMetrics.loaded) {
+			actions.switchSubaccountToActiveLst(lstMetrics.priceInSol, appAuthority);
 		} else if ((!connected || !appAuthority) && superStakeUser) {
 			actions.resetCurrentUserData();
 		}
 	}, [
 		connected,
 		driftClientIsReady,
-		appAuthorityString,
+		appAuthority,
 		lstMetrics.loaded,
 		activeLst,
 	]);
