@@ -134,8 +134,12 @@ const StakeUnstakeForm = () => {
 
 	const amountToStakeNum = parseFloat(amountToStakeUncappedString) || 0;
 
+	const userLstEquityValue = isNaN(userLstEquity.value)
+		? 0
+		: userLstEquity.value;
+
 	const userLstEquityBigNum = BigNum.fromPrint(
-		`${userLstEquity.value}`,
+		`${userLstEquityValue}`,
 		activeLst.spotMarket.precisionExp
 	);
 
@@ -186,7 +190,7 @@ const StakeUnstakeForm = () => {
 		amountToUnstakeNum === 0
 			? userLstDeposits.toNum() - amountToWithdrawWithoutRepay
 			: (userLstEquity.value - amountToUnstakeNum) *
-			  (unstakeLeverage ?? userLstLeverage ?? 0);
+				(unstakeLeverage ?? userLstLeverage ?? 0);
 
 	const unstakeLiqRatio = useEstimatedLiquidationRatio({
 		lstAmount: unstakeLstPosition,
@@ -356,7 +360,7 @@ const StakeUnstakeForm = () => {
 				? BigNum.fromPrint(
 						`${amountToWithdrawWithoutRepay}`,
 						lstSpotMarket.precisionExp
-				  ).val
+					).val
 				: userLstDeposits.add(withdrawalBufferLst).val;
 
 			const withdrawalBufferSol = BigNum.fromPrint(
@@ -598,8 +602,8 @@ const StakeUnstakeForm = () => {
 										? 0
 										: currentLiqRatio
 									: isNaN(projectedLiqRatio)
-									  ? 0
-									  : projectedLiqRatio
+										? 0
+										: projectedLiqRatio
 							}
 							projectedApr={
 								isNaN(totalNetProjectedApr) ? 0 : totalNetProjectedApr
@@ -684,8 +688,8 @@ const StakeUnstakeForm = () => {
 										{isMaxUnstake
 											? 0
 											: +unstakeLeverage
-											  ? unstakeLeverage?.toFixed(4)
-											  : userLstLeverage?.toFixed(4)}
+												? unstakeLeverage?.toFixed(4)
+												: userLstLeverage?.toFixed(4)}
 										x {unstakeLeverage === userLstLeverage && ' (current)'}
 									</span>
 								</Text.BODY3>
@@ -762,7 +766,7 @@ const StakeUnstakeForm = () => {
 						<div>
 							{!hasSuperstakeLstSubaccount && (
 								<div
-									className="flex space-x-4 pl-4 cursor-pointer items-center mb-6"
+									className="flex items-center pl-4 mb-6 space-x-4 cursor-pointer"
 									onClick={() =>
 										setHasAcceptedAccontCreationFee(
 											!hasAcceptedAccountCreationFee
