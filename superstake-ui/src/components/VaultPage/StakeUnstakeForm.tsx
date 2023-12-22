@@ -190,7 +190,7 @@ const StakeUnstakeForm = () => {
 		amountToUnstakeNum === 0
 			? userLstDeposits.toNum() - amountToWithdrawWithoutRepay
 			: (userLstEquity.value - amountToUnstakeNum) *
-				(unstakeLeverage ?? userLstLeverage ?? 0);
+			  (unstakeLeverage ?? userLstLeverage ?? 0);
 
 	const unstakeLiqRatio = useEstimatedLiquidationRatio({
 		lstAmount: unstakeLstPosition,
@@ -360,7 +360,7 @@ const StakeUnstakeForm = () => {
 				? BigNum.fromPrint(
 						`${amountToWithdrawWithoutRepay}`,
 						lstSpotMarket.precisionExp
-					).val
+				  ).val
 				: userLstDeposits.add(withdrawalBufferLst).val;
 
 			const withdrawalBufferSol = BigNum.fromPrint(
@@ -602,8 +602,8 @@ const StakeUnstakeForm = () => {
 										? 0
 										: currentLiqRatio
 									: isNaN(projectedLiqRatio)
-										? 0
-										: projectedLiqRatio
+									  ? 0
+									  : projectedLiqRatio
 							}
 							projectedApr={
 								isNaN(totalNetProjectedApr) ? 0 : totalNetProjectedApr
@@ -688,8 +688,8 @@ const StakeUnstakeForm = () => {
 										{isMaxUnstake
 											? 0
 											: +unstakeLeverage
-												? unstakeLeverage?.toFixed(4)
-												: userLstLeverage?.toFixed(4)}
+											  ? unstakeLeverage?.toFixed(4)
+											  : userLstLeverage?.toFixed(4)}
 										x {unstakeLeverage === userLstLeverage && ' (current)'}
 									</span>
 								</Text.BODY3>

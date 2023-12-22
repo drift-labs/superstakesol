@@ -46,15 +46,23 @@ const useMaxLeverageForLst = (lst: LST) => {
 			lstOraclePriceBigNum.val
 		),
 		spotWeightPrecisionExp
-	);
+	).toNum();
 
 	const solInitialLiabilityWeight = BigNum.from(
 		solSpotMarketAccount.initialLiabilityWeight,
 		spotWeightPrecisionExp
-	);
+	).toNum();
 
 	const unroundedMaxLeverage =
-		lstInitialAssetWeight.toNum() / (solInitialLiabilityWeight.toNum() - 1) - 1;
+		lstInitialAssetWeight /
+			(solInitialLiabilityWeight - lstInitialAssetWeight) /
+			(1 +
+				lstInitialAssetWeight /
+					(solInitialLiabilityWeight - lstInitialAssetWeight)) +
+		1;
+
+	// const unroundedMaxLeverage =
+	// 	lstInitialAssetWeight.toNum() / (solInitialLiabilityWeight.toNum() - 1) - 1;
 
 	const maxLeverage =
 		Math.floor(10 * Math.min(3, Math.max(1, unroundedMaxLeverage))) / 10;
