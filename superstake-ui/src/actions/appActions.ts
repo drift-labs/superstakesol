@@ -37,6 +37,7 @@ import NOTIFICATION_UTILS from '../utils/notify';
 import { CommonDriftStore } from '@drift-labs/react';
 import invariant from 'tiny-invariant';
 import { ALL_LST_MAP, LST } from '../constants/lst';
+import { getSwapQuote } from '../utils/getSwapQuote';
 
 const DEPOSIT_TOAST_ID = 'deposit_toast';
 
@@ -606,8 +607,17 @@ const createAppActions = (
 					? Math.floor(slippageBps)
 					: SLIPPAGE_TOLERANCE_DEFAULT * 100;
 
+			const swapQuote = await getSwapQuote({
+				swapAmount: solSwapOutAmount,
+				swapFromMarket: lstSpotMarket,
+				swapToMarket: solSpotMarket,
+				jupiterClient,
+				slippageBps: slippageBpsToUse,
+				swapMode: 'ExactOut',
+			});
+
 			const { ixs: swapInstructions, lookupTables } =
-				await driftClient.getJupiterSwapIx({
+				await driftClient.getJupiterSwapIxV6({
 					jupiterClient,
 					inMarketIndex: lstSpotMarket.marketIndex,
 					outMarketIndex: solSpotMarket.marketIndex,
@@ -615,6 +625,8 @@ const createAppActions = (
 					slippageBps: slippageBpsToUse,
 					swapMode: 'ExactOut',
 					reduceOnly: SwapReduceOnly.In,
+					onlyDirectRoutes: activeLst?.onlyDirectRoute,
+					quote: swapQuote,
 				});
 
 			const tx = await driftClient.buildTransaction(
