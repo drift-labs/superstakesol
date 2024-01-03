@@ -31,7 +31,7 @@ const Button = (props: ButtonProps) => {
 		>
 			<button
 				className={twMerge(
-					`border-container-border border-2 rounded bg-container-bg py-3 px-9 transition-all relative bottom-1 shadow-[inset_0_0_0_rgba(255,201,182,1)]`,
+					`border-container-border border-2 rounded bg-container-bg py-3 px-6 md:px-9 transition-all relative bottom-1 shadow-[inset_0_0_0_rgba(255,201,182,1)]`,
 					isPressed || props.disabled ? 'bottom-0' : '',
 					props.disabled
 						? 'bg-container-bg-selected text-text-disabled'

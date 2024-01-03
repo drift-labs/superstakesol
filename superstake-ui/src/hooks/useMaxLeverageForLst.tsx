@@ -53,16 +53,11 @@ const useMaxLeverageForLst = (lst: LST) => {
 		spotWeightPrecisionExp
 	).toNum();
 
+	// make sure to under estimate
 	const unroundedMaxLeverage =
 		lstInitialAssetWeight /
-			(solInitialLiabilityWeight - lstInitialAssetWeight) /
-			(1 +
-				lstInitialAssetWeight /
-					(solInitialLiabilityWeight - lstInitialAssetWeight)) +
+			(solInitialLiabilityWeight - lstInitialAssetWeight) +
 		1;
-
-	// const unroundedMaxLeverage =
-	// 	lstInitialAssetWeight.toNum() / (solInitialLiabilityWeight.toNum() - 1) - 1;
 
 	const maxLeverage =
 		Math.floor(10 * Math.min(3, Math.max(1, unroundedMaxLeverage))) / 10;

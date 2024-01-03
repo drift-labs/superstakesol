@@ -148,7 +148,7 @@ const VaultOverviewPanel = () => {
 								>
 									{activeLst.symbol === 'bSOL' && driftEmissions ? (
 										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 ml-4 cursor-pointer p-[2px]">
-											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg">
+											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg min-w-[145px]">
 												<Text.BODY1 className="text-[14px] ml-2 relative">
 													Supercharged
 												</Text.BODY1>
@@ -511,10 +511,51 @@ const VaultInfoPanel = () => {
 		}
 	}, [userLstEquity.value, activeLst.symbol, userLstEquity.loaded]);
 
+	const panelControls = (
+		<div className="flex flex-row items-center w-full">
+			<button
+				onClick={() => handleSwitchPanels('left')}
+				className="flex flex-row grow"
+			>
+				<ChevronLeftIcon
+					className={`w-10 h-10 ${
+						selectedPanel === 0 ? 'opacity-20 cursor-default' : ''
+					}`}
+				/>
+			</button>
+
+			<div className="flex flex-row items-stretch justify-center space-x-2">
+				{PANELS.map((_, index) => (
+					<Bubble
+						selected={index === selectedPanel}
+						key={index}
+						onClick={() => setSelectedPanel(index)}
+					/>
+				))}
+			</div>
+
+			<button
+				onClick={() => handleSwitchPanels('right')}
+				className="flex flex-row-reverse grow"
+			>
+				<ChevronRightIcon
+					className={`w-10 h-10  ${
+						selectedPanel === PANELS.length - 1
+							? 'opacity-20 cursor-default'
+							: ''
+					}`}
+				/>
+			</button>
+		</div>
+	);
+
 	return (
 		<div>
 			<Text.H2>{activeLst.symbol} Super Staking</Text.H2>
 			<div className="mt-2 bg-accent-pink w-20 h-1.5 rounded" />
+
+			{/* Left/Right controls at the top on mobile too */}
+			<div className="md:hidden mt-4">{panelControls}</div>
 
 			{/* Carousel section */}
 			<div className="w-full mb-20">
@@ -531,41 +572,7 @@ const VaultInfoPanel = () => {
 			</div>
 
 			{/* Bottom panel left/right controls */}
-			<div className="flex flex-row items-center w-full">
-				<button
-					onClick={() => handleSwitchPanels('left')}
-					className="flex flex-row grow"
-				>
-					<ChevronLeftIcon
-						className={`w-10 h-10 ${
-							selectedPanel === 0 ? 'opacity-20 cursor-default' : ''
-						}`}
-					/>
-				</button>
-
-				<div className="flex flex-row items-stretch justify-center space-x-2">
-					{PANELS.map((_, index) => (
-						<Bubble
-							selected={index === selectedPanel}
-							key={index}
-							onClick={() => setSelectedPanel(index)}
-						/>
-					))}
-				</div>
-
-				<button
-					onClick={() => handleSwitchPanels('right')}
-					className="flex flex-row-reverse grow"
-				>
-					<ChevronRightIcon
-						className={`w-10 h-10  ${
-							selectedPanel === PANELS.length - 1
-								? 'opacity-20 cursor-default'
-								: ''
-						}`}
-					/>
-				</button>
-			</div>
+			{panelControls}
 		</div>
 	);
 };
