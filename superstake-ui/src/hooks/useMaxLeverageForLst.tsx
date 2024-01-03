@@ -52,13 +52,11 @@ const useMaxLeverageForLst = (lst: LST) => {
 		solSpotMarketAccount.initialLiabilityWeight,
 		spotWeightPrecisionExp
 	).toNum();
-
+    
+    // make sure to under estimate
 	const unroundedMaxLeverage =
 		lstInitialAssetWeight /
-			(solInitialLiabilityWeight - lstInitialAssetWeight) /
-			(1 +
-				lstInitialAssetWeight /
-					(solInitialLiabilityWeight - lstInitialAssetWeight)) +
+			(solInitialLiabilityWeight - lstInitialAssetWeight) +
 		1;
 
 	// const unroundedMaxLeverage =
