@@ -480,6 +480,12 @@ const StakeUnstakeForm = () => {
 		});
 	};
 
+	const handleConnect = () => {
+		setStoreState((s) => {
+			s.modals.showConnectWalletModal = true;
+		});
+	};
+
 	const handleMaxUnstake = () => {
 		// reset leverage to default
 		setStoreState((s) => {
@@ -568,6 +574,8 @@ const StakeUnstakeForm = () => {
 							label={'Amount to stake'}
 							value={amountToStakeUncappedString}
 							onMax={handleMaxStake}
+							onConnect={handleConnect}
+							connected={connected}
 							placeholder={'0'}
 							maxLoading={!lstBalance.balanceLoaded}
 						/>
@@ -677,6 +685,8 @@ const StakeUnstakeForm = () => {
 								label={'Amount to unstake'}
 								value={canWithdrawWithoutRepay ? '' : amountToUnstakeString}
 								onMax={handleMaxUnstake}
+								onConnect={handleConnect}
+								connected={connected}
 								placeholder={'0'}
 								maxLoading={!userLstEquity.loaded}
 								showBuyButton={false}

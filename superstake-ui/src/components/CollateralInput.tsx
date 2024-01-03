@@ -13,6 +13,7 @@ type CrossCollateralInputProps = {
 	label: string;
 	value?: string;
 	onMax?: () => void;
+	onConnect?: () => void;
 	amountLabel?: string;
 	isBorrowAmount?: boolean;
 	currentBalance?: BigNum;
@@ -20,6 +21,7 @@ type CrossCollateralInputProps = {
 	placeholder?: string;
 	maxLoading?: boolean;
 	showBuyButton?: boolean;
+	connected?: boolean;
 };
 
 const CollateralInput = (props: CrossCollateralInputProps) => {
@@ -48,6 +50,17 @@ const CollateralInput = (props: CrossCollateralInputProps) => {
 		props.onChange(val);
 	};
 
+	const connectButton = (
+		<Text.BODY2 className="flex flex-row items-center space-x-2">
+			<button
+				className="border-b border-container-border"
+				onClick={props.onConnect}
+			>
+				Connect Wallet
+			</button>
+		</Text.BODY2>
+	);
+
 	const maxButton = (
 		<Text.BODY2 className="flex flex-row items-center space-x-2">
 			<div>Max:</div>
@@ -68,7 +81,9 @@ const CollateralInput = (props: CrossCollateralInputProps) => {
 		<div className="w-full">
 			<div className="flex flex-row items-end justify-between w-full mb-2">
 				<Text.BODY3 className="text-text-label">{props.label}</Text.BODY3>
-				<div className="hidden md:block">{maxButton}</div>
+				<div className="hidden md:block">
+					{props.connected ? maxButton : connectButton}
+				</div>
 			</div>
 			<div className="flex flex-row items-stretch justify-between w-full overflow-hidden border-2 rounded-sm border-container-border">
 				<input
@@ -97,7 +112,9 @@ const CollateralInput = (props: CrossCollateralInputProps) => {
 						</Text.BODY2>
 					</Link>
 				)}
-				<div className="md:hidden mb-3">{maxButton}</div>
+				<div className="md:hidden mb-3">
+					{props.connected ? maxButton : connectButton}
+				</div>
 			</div>
 		</div>
 	);
