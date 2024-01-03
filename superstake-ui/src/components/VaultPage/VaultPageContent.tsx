@@ -41,7 +41,7 @@ const VaultPageContent = () => {
 						<Button
 							key={lst.symbol}
 							className={twMerge(
-								'w-[140px] rounded-none flex items-center gap-1 justify-center',
+								'min-w-[100px] md:min-w-[140px] rounded-none flex items-center gap-1 justify-center',
 								isFirst && 'rounded rounded-r-none border-r-[1px]',
 								isLast && 'rounded rounded-l-none border-l-[1px]'
 							)}
