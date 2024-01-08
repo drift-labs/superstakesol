@@ -153,6 +153,9 @@ const createAppActions = (
 	) => {
 		const commonState = getCommon();
 		const driftClient = commonState.driftClient.client;
+		const jupiterClient = new JupiterClient({
+			connection: commonState.connection,
+		});
 
 		const lstSpotMarket = props.lst.spotMarket;
 		const solSpotMarket = (
@@ -164,6 +167,11 @@ const createAppActions = (
 		invariant(driftClient, 'Drift client is undefined');
 		invariant(commonState.authority, 'Authority is undefined');
 		invariant(commonState.connection, 'Connection is undefined');
+
+		// Sign, send and confirm tx here
+		NOTIFICATION_UTILS.toast('Sending Transaction', {
+			toastId: DEPOSIT_TOAST_ID,
+		});
 
 		const instructions: TransactionInstruction[] = [];
 
@@ -177,6 +185,18 @@ const createAppActions = (
 		} catch (err) {
 			console.log('no sssAccountPublicKey');
 		}
+
+		const onlyDirectRoutes = !!props.lst?.onlyDirectRoute;
+		// asynchronously fetch best super stake instructions
+		const bestSuperStakeIxsPromise = findBestSuperStakeIxs({
+			jupiterClient,
+			driftClient,
+			amount: props.solBorrowAmount,
+			userAccountPublicKey: sssAccountPublicKey,
+			price: props.lstSolPrice,
+			onlyDirectRoutes,
+			marketIndex: props.lst.spotMarket.marketIndex,
+		});
 
 		const subAccounts = await driftClient.getUserAccountsForAuthority(
 			commonState.authority
@@ -266,14 +286,8 @@ const createAppActions = (
 			);
 		instructions.push(enableMarginTradingIx);
 
-		const jupiterClient = new JupiterClient({
-			connection: commonState.connection,
-		});
-
 		let swapInstructions: TransactionInstruction[] = [];
 		let lookupTables: AddressLookupTableAccount[];
-
-		const onlyDirectRoutes = !!props.lst?.onlyDirectRoute;
 
 		if (props.solBorrowAmount.gt(ZERO)) {
 			// Add swap instructions (SOL -> LST)
@@ -282,15 +296,7 @@ const createAppActions = (
 				lookupTables: _lookupTables,
 				// method,
 				// price,
-			} = await findBestSuperStakeIxs({
-				jupiterClient,
-				driftClient,
-				amount: props.solBorrowAmount,
-				userAccountPublicKey: sssAccountPublicKey,
-				price: props.lstSolPrice,
-				onlyDirectRoutes,
-				marketIndex: props.lst.spotMarket.marketIndex,
-			});
+			} = await bestSuperStakeIxsPromise;
 
 			swapInstructions = _swapInstructions;
 			lookupTables = _lookupTables;
@@ -307,11 +313,6 @@ const createAppActions = (
 			// @ts-ignore
 			lookupTables
 		);
-
-		// Sign, send and confirm tx here
-		NOTIFICATION_UTILS.toast('Sending Transaction', {
-			toastId: DEPOSIT_TOAST_ID,
-		});
 
 		// Pre-Flight safety check before sending transaction. To ENSURE we're not creating duplicate superstake acounts.
 		if (creatingNewUser) {
