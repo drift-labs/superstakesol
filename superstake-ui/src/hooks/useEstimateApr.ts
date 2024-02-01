@@ -16,6 +16,7 @@ import useEstimatedLiquidationRatio from './useCurrentLiquidationRatio';
 import { useCommonDriftStore } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import useAppStore from './useAppStore';
+import { dlog } from '../dev';
 
 const DEFAULT_VALUE = {
 	solBorrowRate: 0,
@@ -137,6 +138,22 @@ const useEstimateApr = ({
 		solInFromEmissions / (initialLstDeposit * lstMetrics.priceInSol);
 
 	const totalNetProjectedApr = lstNetProjectedApr + leveragedEmissionsApr;
+
+	dlog(`apr_calculation_debugging`, `apr_calculation_debugging`, {
+		lstMetrics,
+		solInFromStaking,
+		solInFromDeposit,
+		leveragedLstApr,
+		solOut,
+		solRewardsPerYear,
+		lstNetProjectedApr,
+		leveragedBorrowRate,
+		leveragedDepositRate,
+		emissionsAprFromApy,
+		solInFromEmissions,
+		leveragedEmissionsApr,
+		totalNetProjectedApr,
+	});
 
 	return {
 		solBorrowRate: solBorrowRate.toNum() * 100,
