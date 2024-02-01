@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import useAppStore from './useAppStore';
-import {
-	BigNum,
-	calculateSolEarned as oldCalculateSolEarned,
-} from '@drift-labs/sdk';
+import { BigNum } from '@drift-labs/sdk';
 import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { SOL_PRECISION_EXP } from '../utils/uiUtils';
 import { calculateSolEarned } from '@drift/common';
@@ -30,12 +27,6 @@ const useUserSolEarned = () => {
 			}
 
 			const userSolEarned = await calculateSolEarned({
-				marketIndex: activeLst.spotMarket.marketIndex,
-				user: currentUserData.user,
-				depositRecords: depositRecords,
-			});
-
-			const newUserSolEarned = await oldCalculateSolEarned({
 				marketIndex: activeLst.spotMarket.marketIndex,
 				user: currentUserData.user,
 				depositRecords: depositRecords,

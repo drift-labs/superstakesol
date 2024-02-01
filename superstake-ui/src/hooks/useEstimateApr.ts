@@ -110,11 +110,9 @@ const useEstimateApr = ({
 
 	if (isNaN(solBorrowAmount)) return DEFAULT_VALUE;
 
-	// const lstApr = lstMetrics?.lstPriceApr30d
-	// 	? lstMetrics?.lstPriceApr30d
-	// 	: aprFromApy(lstMetrics.lstPriceApy30d, Math.floor(365 / 2)) / 100;
-	const lstApr =
-		aprFromApy(lstMetrics.lstPriceApy30d, Math.floor(365 / 2)) / 100;
+	const lstApr = lstMetrics?.lstPriceApr30d
+		? lstMetrics?.lstPriceApr30d / 100
+		: aprFromApy(lstMetrics.lstPriceApy30d, Math.floor(365 / 2)) / 100;
 
 	const solInFromStaking =
 		superStakeLstDeposit * lstApr * lstMetrics.priceInSol;
