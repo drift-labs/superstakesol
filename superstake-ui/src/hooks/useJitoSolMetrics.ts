@@ -1,16 +1,16 @@
 import { DEFAULT_METRICS_POLLING_RATE_MS } from '../constants';
-import { JITO_SOL } from '../constants/lst';
-import { fetchJitoSolMetrics } from '@drift-labs/sdk';
+import { getLstSolPrice, getLstYield } from '@drift/common';
 import { useEffect, useState } from 'react';
 import { singletonHook } from 'react-singleton-hook';
 import { useInterval } from 'react-use';
+import { BaseLstMetrics } from '../types/types';
 
 function useJitoSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
-	const [metrics, setMetrics] = useState<{
-		loaded: boolean;
-		past30DaysApyAvg?: number;
-		priceInSol?: number;
-	}>({ loaded: false });
+	const [metrics, setMetrics] = useState<
+		BaseLstMetrics & {
+			loaded: boolean;
+		}
+	>({ loaded: false });
 
 	useEffect(() => {
 		fetchAndSetJitoSolMetrics();
@@ -22,23 +22,13 @@ function useJitoSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 
 	async function fetchAndSetJitoSolMetrics() {
 		try {
-			const data = await fetchJitoSolMetrics();
-
-			const past30DaysApyAvg =
-				(data.data.getStakePoolStats.apy
-					.slice(-30)
-					.reduce((a, b) => a + b.data, 0) /
-					30) *
-				100;
-
-			const priceInSol =
-				data.data.getStakePoolStats.tvl.slice(-1)[0].data /
-				JITO_SOL.spotMarket.precision.toNumber() /
-				data.data.getStakePoolStats.supply.slice(-1)[0].data;
+			const base30DayYield = await getLstYield('jitosol', 30);
+			const priceInSol = await getLstSolPrice('jitosol');
 
 			setMetrics({
 				loaded: true,
-				past30DaysApyAvg,
+				past30DaysApyAvg: base30DayYield.apy,
+				past30DaysAprAvg: base30DayYield.apr,
 				priceInSol,
 			});
 		} catch (e) {

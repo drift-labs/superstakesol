@@ -110,11 +110,14 @@ const useEstimateApr = ({
 
 	if (isNaN(solBorrowAmount)) return DEFAULT_VALUE;
 
-	const lstAprFromApy =
+	// const lstApr = lstMetrics?.lstPriceApr30d
+	// 	? lstMetrics?.lstPriceApr30d
+	// 	: aprFromApy(lstMetrics.lstPriceApy30d, Math.floor(365 / 2)) / 100;
+	const lstApr =
 		aprFromApy(lstMetrics.lstPriceApy30d, Math.floor(365 / 2)) / 100;
 
 	const solInFromStaking =
-		superStakeLstDeposit * lstAprFromApy * lstMetrics.priceInSol;
+		superStakeLstDeposit * lstApr * lstMetrics.priceInSol;
 	const solInFromDeposit =
 		superStakeLstDeposit * lstDepositRate.toNum() * lstMetrics.priceInSol;
 	const leveragedLstApr =
@@ -182,9 +185,7 @@ const useEstimateApr = ({
 		solBorrowAmount,
 		projectedLiqRatio,
 		unleveragedApr:
-			lstDepositRate.toNum() * 100 +
-			lstAprFromApy * 100 +
-			emissionsAprFromApy * 100,
+			lstDepositRate.toNum() * 100 + lstApr * 100 + emissionsAprFromApy * 100,
 		loaded: true,
 	};
 };
