@@ -101,14 +101,17 @@ const VaultOverviewPanel = () => {
 				<div>
 					<TextWithSkeleton
 						value={
-							<div className="flex flex-row items-center">
-								{`${maxAprPercentage.toFixed(2)}% APR`}
+							<div className={`flex flex-row flex-wrap items-center`}>
+								<div className="mr-4 my-1 sm:my-0">
+									{`${maxAprPercentage.toFixed(2)}% APR`}
+								</div>
 								<Tooltip
 									content={
 										<>
 											<div>
 												<Text.BODY1>
-													Based on staking 100 {activeLst.symbol} at{' '}
+													Estimated APR Based on staking 100 {activeLst.symbol}{' '}
+													at{' '}
 													{leveragedLstApr > unleveragedApr
 														? `${maxLeverageForLst.maxLeverage}x`
 														: '1x'}{' '}
@@ -142,12 +145,33 @@ const VaultOverviewPanel = () => {
 													</div>
 												</div>
 											)}
+											{activeLst.symbol === 'mSOL' && (
+												<div>
+													<div className="mt-2 mb-1">
+														<Text.BODY1 className="font-extrabold">
+															Eligible for MNDE rewards:
+														</Text.BODY1>
+														<br />
+														<Text.BODY1 className="mt-1">
+															Learn more on{' '}
+															<a
+																href="https://marinade.finance/app/rewards/"
+																target="_blank"
+																rel="noreferrer"
+																className="underline"
+															>
+																Marinade Earn
+															</a>
+														</Text.BODY1>{' '}
+													</div>
+												</div>
+											)}
 										</>
 									}
 									placement="top"
 								>
 									{activeLst.symbol === 'bSOL' && driftEmissions ? (
-										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 ml-4 cursor-pointer p-[2px]">
+										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 cursor-pointer p-[2px]">
 											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg min-w-[145px]">
 												<Text.BODY1 className="text-[14px] ml-2 relative">
 													Supercharged
@@ -159,10 +183,23 @@ const VaultOverviewPanel = () => {
 												/>
 											</div>
 										</div>
+									) : activeLst.symbol === 'mSOL' ? (
+										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 cursor-pointer p-[2px]">
+											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg min-w-[145px]">
+												<Text.BODY1 className="text-[14px] ml-2 relative">
+													Eligible for Rewards
+												</Text.BODY1>
+												<img
+													src="/mnde.png"
+													alt="MNDE"
+													className="w-5 h-5 rounded"
+												/>
+											</div>
+										</div>
 									) : (
 										<Info
 											size={24}
-											className="relative cursor-pointer top-0.5 ml-2"
+											className="relative cursor-pointer top-0.5 left-[-4px]"
 										/>
 									)}
 								</Tooltip>

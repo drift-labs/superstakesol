@@ -25,16 +25,12 @@ function useJitoSolMetrics(pollingRateMs = DEFAULT_METRICS_POLLING_RATE_MS) {
 			const data = await fetchJitoSolMetrics();
 
 			const past30DaysApyAvg =
-				(data.data.getStakePoolStats.apy
-					.slice(-30)
-					.reduce((a, b) => a + b.data, 0) /
-					30) *
-				100;
+				(data.apy.slice(-30).reduce((a, b) => a + b.data, 0) / 30) * 100;
 
 			const priceInSol =
-				data.data.getStakePoolStats.tvl.slice(-1)[0].data /
+				data.tvl.slice(-1)[0].data /
 				JITO_SOL.spotMarket.precision.toNumber() /
-				data.data.getStakePoolStats.supply.slice(-1)[0].data;
+				data.supply.slice(-1)[0].data;
 
 			setMetrics({
 				loaded: true,
