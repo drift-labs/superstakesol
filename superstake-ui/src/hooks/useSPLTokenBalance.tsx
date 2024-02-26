@@ -104,9 +104,8 @@ const useSPLTokenBalance = (
 		} else {
 			(async () => {
 				const targetAddress = await getTokenAddress(
-					tokenMintAddress,
-					// @ts-ignore
-					wallet.publicKey.toString()
+					new PublicKey(tokenMintAddress),
+					wallet.publicKey
 				);
 
 				setTargetAccountAddress(targetAddress.toString());
