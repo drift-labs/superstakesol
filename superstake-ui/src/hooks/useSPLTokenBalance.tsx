@@ -63,8 +63,8 @@ const useSPLTokenBalance = (
 
 			const targetAccount = await getTokenAccount(
 				connection,
-				tokenMintAddress,
-				wallet.publicKey.toString()
+				new PublicKey(tokenMintAddress),
+				wallet.publicKey
 			);
 
 			if (!targetAccount) {
