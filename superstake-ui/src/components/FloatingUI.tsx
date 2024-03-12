@@ -4,6 +4,7 @@ import ConnectWalletModal from './ConnectWalletModal';
 import AcknowledgeTermsModal from './AcknowledgeTermsModal';
 import TermsAndConditionModal from './TermsAndConditionModal';
 import RpcSwitcherModal from './RpcSwitcherModal';
+import PriorityFeesModal from './PriorityFeesModal';
 
 const FloatingUI = () => {
 	// # Constants
@@ -12,6 +13,7 @@ const FloatingUI = () => {
 		showAcknowledgeTermsModal,
 		showTermsAndConditionModal,
 		showRpcSwitcherModal,
+		showPriorityFeesModal,
 	} = useAppStore((s) => s.modals);
 
 	return (
@@ -24,6 +26,8 @@ const FloatingUI = () => {
 				<TermsAndConditionModal />
 			) : showRpcSwitcherModal ? (
 				<RpcSwitcherModal />
+			) : showPriorityFeesModal ? (
+				<PriorityFeesModal />
 			) : (
 				<></>
 			)}

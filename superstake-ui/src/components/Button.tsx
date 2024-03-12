@@ -24,7 +24,7 @@ const Button = (props: ButtonProps) => {
 	return (
 		<div
 			className={twMerge(
-				'bg-container-border border-cntainer-border rounded relative mt-2',
+				'bg-container-border border-container-border rounded relative mt-2',
 				props.className?.includes('w-full') ? 'w-full' : '',
 				props.outerClassName
 			)}

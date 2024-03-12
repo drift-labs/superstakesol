@@ -20,6 +20,12 @@ const HeaderSection = () => {
 		});
 	};
 
+	const openPriorityFeesModal = () => {
+		setStore((s) => {
+			s.modals.showPriorityFeesModal = true;
+		});
+	};
+
 	return (
 		<div className="flex flex-col items-center w-full pt-8 pb-2 md:px-8 md:flex-row space-between">
 			<div className="flex items-end flex-grow gap-8 -mt-2 text-center md:text-left">
@@ -64,13 +70,19 @@ const HeaderSection = () => {
 						)}
 					</Text.BODY1>
 
-					<Text.BODY1 className="hidden md:pl-3 lg:pl-6 md:block">
+					<Text.BODY1
+						className="hidden cursor-pointer md:pl-3 lg:pl-6 md:block"
+						onClick={openPriorityFeesModal}
+					>
 						Priority Fees: Dynamic
 					</Text.BODY1>
 				</div>
 
 				{/** Purely for UI purposes to split the priority fees into 2 child components */}
-				<div className="flex items-center justify-center w-full px-4 py-2 mt-4 leading-4 border-2 rounded-sm md:hidden bg-container-bg border-container-border">
+				<div
+					className="flex items-center justify-center w-full px-4 py-2 mt-4 leading-4 border-2 rounded-sm cursor-pointer md:hidden bg-container-bg border-container-border"
+					onClick={openPriorityFeesModal}
+				>
 					<Text.BODY1 className="md:pl-3 lg:pl-6">
 						Priority Fees: Dynamic
 					</Text.BODY1>

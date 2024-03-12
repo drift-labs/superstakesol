@@ -9,6 +9,7 @@ import {
 import ModalPortal from './ModalPortal';
 import XMark from '@heroicons/react/24/solid/XMarkIcon';
 import Text from './Text';
+import { twMerge } from 'tailwind-merge';
 
 const clickedInsideElement = (
 	event: MouseEvent,
@@ -99,9 +100,23 @@ export const ModalBackground = (
 	);
 };
 
-export const ModalTitle = ({ title }: { title: string }) => {
+export const ModalTitle = ({
+	title,
+	center,
+	className,
+}: {
+	title: string;
+	center?: boolean;
+	className?: string;
+}) => {
 	return (
-		<div className="flex flex-col w-full px-6 mt-4 mb-12 space-y-2">
+		<div
+			className={twMerge(
+				'flex flex-col w-full px-6 mt-4 mb-12 space-y-2',
+				center && 'md:items-center',
+				className
+			)}
+		>
 			<Text.H2>{title}</Text.H2>
 			<div className="w-10 h-1 rounded bg-container-border" />
 		</div>
