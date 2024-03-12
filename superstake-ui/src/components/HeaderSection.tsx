@@ -1,18 +1,22 @@
 import Text from './Text';
-import Link from 'next/link';
 import ConnectWalletButton from './ConnectWalletButton';
 import React from 'react';
 import useAppStore from '../hooks/useAppStore';
+import { useCurrentRpcLatency } from '../hooks/useRpcLatencies';
+import { getRpcLatencyColor } from '../utils/uiUtils';
+import { useCurrentRpc } from '@drift-labs/react';
+import { twMerge } from 'tailwind-merge';
+import SkeletonValuePlaceholder from './SkeletonValuePlaceholder';
 
 const HeaderSection = () => {
-	const set = useAppStore((s) => s.set);
+	const setStore = useAppStore((s) => s.set);
+	const [currentRpc] = useCurrentRpc();
+	const rpcLatency = useCurrentRpcLatency();
+	const rpcLatencyBgColor = getRpcLatencyColor(rpcLatency?.avg);
 
-	const openTermsModal = () => {
-		set((s) => {
-			s.modals.showTermsAndConditionModal = {
-				show: true,
-				isFromAcknowledgeModal: false,
-			};
+	const openRpcSwitcherModal = () => {
+		setStore((s) => {
+			s.modals.showRpcSwitcherModal = true;
 		});
 	};
 
@@ -23,7 +27,9 @@ const HeaderSection = () => {
 					<img src="/logo.svg" alt="logo" className="h-24" />
 				</div>
 				<div className="flex flex-col">
-					<Text.H1 className="md:relative md:top-3">super stake sol</Text.H1>
+					<Text.H1 className="md:text-5xl lg:text-6xl md:relative md:top-3">
+						super stake sol
+					</Text.H1>
 					<Text.H6 className="font-normal">
 						Earn leveraged yield on your SOL staking tokens
 					</Text.H6>
@@ -33,21 +39,41 @@ const HeaderSection = () => {
 				<div className="w-full mt-1 mb-4 md:w-auto md:relative md:top-3">
 					<ConnectWalletButton />
 				</div>
-				<div className="flex flex-row items-center mt-2 divide-x-2 space-between divide-container-border md:divide-white md:text-white">
-					<div className="px-5">
-						<Link
-							href={
-								'https://superstakesol.notion.site/superstakesol/super-stake-sol-FAQ-0cab21138d1d46958fe91c7768b6fc88'
-							}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<Text.BODY3>FAQ</Text.BODY3>
-						</Link>
-					</div>
-					<div className="px-5 cursor-pointer" onClick={openTermsModal}>
-						<Text.BODY3>Terms</Text.BODY3>
-					</div>
+
+				<div className="flex items-center justify-center w-full px-4 py-2 leading-4 border-2 divide-x rounded-sm bg-container-bg border-container-border divide-container-border md:w-auto whitespace-nowrap">
+					<Text.BODY1
+						onClick={openRpcSwitcherModal}
+						className="cursor-pointer md:pr-3 lg:pr-6"
+					>
+						{currentRpc ? (
+							<>
+								<div
+									className={twMerge(
+										'rounded w-3 h-3 inline-block relative mr-3',
+										`bg-[${rpcLatencyBgColor}]`
+									)}
+								/>
+								{currentRpc?.label}{' '}
+								{rpcLatency ? <>({rpcLatency?.avg}ms)</> : null}
+							</>
+						) : (
+							<SkeletonValuePlaceholder
+								loading
+								className="w-20 h-4 relative top-0.5 inline-block"
+							/>
+						)}
+					</Text.BODY1>
+
+					<Text.BODY1 className="hidden md:pl-3 lg:pl-6 md:block">
+						Priority Fees: Dynamic
+					</Text.BODY1>
+				</div>
+
+				{/** Purely for UI purposes to split the priority fees into 2 child components */}
+				<div className="flex items-center justify-center w-full px-4 py-2 mt-4 leading-4 border-2 rounded-sm md:hidden bg-container-bg border-container-border">
+					<Text.BODY1 className="md:pl-3 lg:pl-6">
+						Priority Fees: Dynamic
+					</Text.BODY1>
 				</div>
 			</div>
 		</div>
