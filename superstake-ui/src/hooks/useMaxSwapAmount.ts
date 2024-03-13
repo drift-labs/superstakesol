@@ -9,9 +9,8 @@ import {
 import useAppStore from './useAppStore';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { SOL_SPOT_MARKET_INDEX } from '../utils/uiUtils';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { BorshAccountsCoder } from '@coral-xyz/anchor';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import { LST } from '../constants/lst';
 
@@ -23,7 +22,7 @@ const useMaxSwapAmount = (lstDeposit: number) => {
 
 	const currentUser = useAppStore((s) => s.currentUserAccount?.user);
 	const driftClient = useCommonDriftStore((s) => s.driftClient?.client);
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const user = mockUser(driftClient, currentUser);
 	const activeLst = useAppStore((s) => s.activeLst);
 

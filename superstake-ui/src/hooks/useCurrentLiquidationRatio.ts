@@ -9,9 +9,8 @@ import {
 	SPOT_MARKET_WEIGHT_PRECISION,
 	BigNum,
 } from '@drift-labs/sdk';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { SOL_PRECISION_EXP } from '../utils/uiUtils';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import useAppStore from './useAppStore';
 
@@ -26,7 +25,7 @@ const useEstimatedLiquidationRatio = ({
 	solAmount: number;
 }) => {
 	const driftClient = useCommonDriftStore((s) => s.driftClient?.client);
-	const driftClientisReady = useCustomDriftClientIsReady();
+	const driftClientisReady = useDriftClientIsReady();
 	const lstMetrics = useCurrentLstMetrics();
 
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);

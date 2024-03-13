@@ -4,15 +4,37 @@ import React from 'react';
 import useAppStore from '../hooks/useAppStore';
 import { useCurrentRpcLatency } from '../hooks/useRpcLatencies';
 import { getRpcLatencyColor } from '../utils/uiUtils';
-import { useCurrentRpc } from '@drift-labs/react';
+import {
+	FeeType,
+	useCurrentRpc,
+	usePriorityFeeUserSettings,
+} from '@drift-labs/react';
 import { twMerge } from 'tailwind-merge';
 import SkeletonValuePlaceholder from './SkeletonValuePlaceholder';
+
+function getFeeTypeLabel(feeType: FeeType) {
+	switch (feeType) {
+		case 'dynamic':
+		default:
+			return 'Dynamic';
+		case 'boosted':
+			return 'Boosted 5x';
+		case 'turbo':
+			return 'Boosted 10x';
+		case 'custom':
+			return 'Custom';
+	}
+}
 
 const HeaderSection = () => {
 	const setStore = useAppStore((s) => s.set);
 	const [currentRpc] = useCurrentRpc();
 	const rpcLatency = useCurrentRpcLatency();
 	const rpcLatencyBgColor = getRpcLatencyColor(rpcLatency?.avg);
+
+	const { priorityFeeSettings } = usePriorityFeeUserSettings();
+
+	const feeTypeLabel = getFeeTypeLabel(priorityFeeSettings.userPriorityFeeType);
 
 	const openRpcSwitcherModal = () => {
 		setStore((s) => {
@@ -74,7 +96,7 @@ const HeaderSection = () => {
 						className="hidden cursor-pointer md:pl-3 lg:pl-6 md:block"
 						onClick={openPriorityFeesModal}
 					>
-						Priority Fees: Dynamic
+						Priority Fees: {feeTypeLabel}
 					</Text.BODY1>
 				</div>
 
@@ -84,7 +106,7 @@ const HeaderSection = () => {
 					onClick={openPriorityFeesModal}
 				>
 					<Text.BODY1 className="md:pl-3 lg:pl-6">
-						Priority Fees: Dynamic
+						Priority Fees: {feeTypeLabel}
 					</Text.BODY1>
 				</div>
 			</div>

@@ -4,50 +4,107 @@ import { Modal, ModalTitle } from './Modal';
 import Text from './Text';
 import Button from './Button';
 import { CollateralInput } from './CollateralInput';
+import {
+	usePriorityFeeStore,
+	FeeType,
+	usePriorityFeeUserSettings,
+	useOraclePriceStore,
+} from '@drift-labs/react';
+import { MarketId } from '@drift/common';
+import NOTIFICATION_UTILS from '../utils/notify';
+import { useImmediateInterval } from '@drift-labs/react';
+import { SOL_SPOT_MARKET_INDEX } from '../utils/uiUtils';
+import { SSS_TRANSACTION_COMPUTE_UNITS_LIMIT } from '../constants/environment';
 
-enum PriorityFeeOptions {
-	Dynamic = 'Dynamic',
-	Boosted5x = 'Boosted5x',
-	Boosted10x = 'Boosted10x',
-	Custom = 'Custom',
-}
-
-const PRIORITY_FEES_OPTIONS = [
+const PRIORITY_FEES_OPTIONS: {
+	label: string;
+	subValue: string | undefined;
+	value: FeeType;
+}[] = [
 	{
 		label: 'Dynamic',
 		subValue: undefined,
-		value: PriorityFeeOptions.Dynamic,
+		value: 'dynamic',
 	},
 	{
 		label: 'Boosted',
 		subValue: '5x',
-		value: PriorityFeeOptions.Boosted5x,
+		value: 'boosted',
 	},
 	{
 		label: 'Boosted',
 		subValue: '10x',
-		value: PriorityFeeOptions.Boosted10x,
+		value: 'turbo',
 	},
 	{
 		label: 'Custom',
 		subValue: undefined,
-		value: PriorityFeeOptions.Custom,
+		value: 'custom',
 	},
 ];
 
+const SOL_MARKET_ID = MarketId.createSpotMarket(SOL_SPOT_MARKET_INDEX);
+
 const PriorityFeesModal = () => {
 	const setStore = useAppStore((s) => s.set);
-	const [selectedPriorityFeeOption, setSelectedPriorityFeeOption] = useState(
-		PriorityFeeOptions.Dynamic
-	);
-	const [maxFee, setMaxFee] = useState('');
+	const getMarketPriceData = useOraclePriceStore((s) => s.getMarketPriceData);
+	const getPriorityFeeToUse = usePriorityFeeStore((s) => s.getPriorityFeeToUse);
+	const { priorityFeeSettings, setPriorityFeeSettings } =
+		usePriorityFeeUserSettings();
 
-	const dynamicPriorityFee = '0.015';
+	const [selectedPriorityFeeOption, setSelectedPriorityFeeOption] = useState(
+		priorityFeeSettings.userPriorityFeeType
+	);
+	const [maxFee, setMaxFee] = useState(
+		priorityFeeSettings.userCustomMaxPriorityFeeCap.toString()
+	);
+	const [customPriorityFee, setCustomPriorityFee] = useState(
+		priorityFeeSettings.userCustomPriorityFee?.toString() ?? ''
+	);
+	const [dynamicPriorityFee, setDynamicPriorityFee] = useState('');
+
+	useImmediateInterval(() => {
+		setDynamicPriorityFee(
+			getPriorityFeeToUse(
+				SSS_TRANSACTION_COMPUTE_UNITS_LIMIT,
+				selectedPriorityFeeOption
+			).priorityFeeInSol.toString()
+		);
+	}, 1000);
+
+	function getSolPrice() {
+		const solPrice = getMarketPriceData(SOL_MARKET_ID)?.priceData.price ?? 0;
+		return solPrice;
+	}
+
+	function getUsdPrice(solValue: number) {
+		const solPrice = getSolPrice();
+		const usdPrice = solPrice * solValue;
+
+		if (usdPrice < 0.01) return '<$0.01';
+
+		return `$${usdPrice.toFixed(2)}`;
+	}
 
 	const onClose = () => {
 		setStore((s) => {
 			s.modals.showPriorityFeesModal = false;
 		});
+	};
+
+	const onSave = () => {
+		setPriorityFeeSettings({
+			userPriorityFeeType: selectedPriorityFeeOption,
+			userCustomMaxPriorityFeeCap: +maxFee,
+			userCustomPriorityFee:
+				selectedPriorityFeeOption === 'custom' ? +customPriorityFee : null,
+		});
+
+		NOTIFICATION_UTILS.toast.success('Priority fees settings saved', {
+			autoClose: 5000,
+		});
+
+		onClose();
 	};
 
 	return (
@@ -74,6 +131,7 @@ const PriorityFeesModal = () => {
 									outerClassName="w-full md:w-[170px]"
 									selected={option.value === selectedPriorityFeeOption}
 									onClick={() => setSelectedPriorityFeeOption(option.value)}
+									key={option.value}
 								>
 									<Text.H6 className="font-bold">{option.label}</Text.H6>
 									{option.subValue && (
@@ -88,12 +146,17 @@ const PriorityFeesModal = () => {
 							the last 10 blocks.
 						</Text.BODY2>
 
-						{selectedPriorityFeeOption !== PriorityFeeOptions.Custom && (
+						{selectedPriorityFeeOption !== 'custom' && (
 							<div className="flex flex-col items-center gap-8 md:flex-row">
 								<CollateralInput
 									label="Est. Fee"
 									inputClassName="text-lg md:text-2xl font-semibold py-2"
 									value={dynamicPriorityFee}
+									rightLabel={
+										<Text.BODY3 className="text-base md:text-lg text-text-label">
+											~{getUsdPrice(+dynamicPriorityFee)}
+										</Text.BODY3>
+									}
 									disabled
 									lstSymbol="SOL"
 									onChange={() => {}}
@@ -104,23 +167,32 @@ const PriorityFeesModal = () => {
 									value={maxFee}
 									lstSymbol="SOL"
 									onChange={setMaxFee}
+									rightLabel={
+										<Text.BODY3 className="text-base md:text-lg text-text-label">
+											~{getUsdPrice(+maxFee)}
+										</Text.BODY3>
+									}
 								/>
 							</div>
 						)}
 
-						{selectedPriorityFeeOption === PriorityFeeOptions.Custom && (
+						{selectedPriorityFeeOption === 'custom' && (
 							<div className="flex flex-col items-center gap-8 md:flex-row">
 								<CollateralInput
 									label="Custom Fee"
 									inputClassName="text-lg md:text-2xl font-semibold py-2"
-									value={dynamicPriorityFee}
-									disabled
+									value={customPriorityFee}
 									lstSymbol="SOL"
-									onChange={() => {}}
+									onChange={setCustomPriorityFee}
 									bottomLeftContent={
 										<Text.H6 className="text-sm font-medium">
 											Max fee is 1 SOL.
 										</Text.H6>
+									}
+									rightLabel={
+										<Text.BODY3 className="text-base md:text-lg text-text-label">
+											~{getUsdPrice(+customPriorityFee)}
+										</Text.BODY3>
 									}
 								/>
 							</div>
@@ -138,6 +210,7 @@ const PriorityFeesModal = () => {
 						<Button
 							className="py-4 md:py-5 md:px-20 md:w-[252px] w-full"
 							outerClassName="md:w-[252px]"
+							onClick={onSave}
 						>
 							Save
 						</Button>
