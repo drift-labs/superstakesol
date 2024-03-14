@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import useAppStore, { SpotMarketData } from './useAppStore';
 import {
 	BN,
@@ -20,11 +19,11 @@ import {
 } from '@drift-labs/sdk';
 import { useInterval } from 'react-use';
 import { SOL_SPOT_MARKET_INDEX } from '../utils/uiUtils';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import { LST, ALL_LST } from '../constants/lst';
 
 const useSpotMarketData = () => {
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const driftClient = useCommonDriftStore(
 		(s) => s.driftClient.client
 	) as DriftClient;

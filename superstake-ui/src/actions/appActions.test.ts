@@ -19,6 +19,7 @@ const mockGet = jest.fn();
 const mockSet = jest.fn();
 const mockGetCommon = jest.fn();
 const mockSetCommon = jest.fn();
+const mockGetPriorityFeeToUse = jest.fn();
 
 describe('src/actions/appActions.ts', () => {
 	let actions;
@@ -31,7 +32,13 @@ describe('src/actions/appActions.ts', () => {
 	});
 
 	test('creates app actions without error', () => {
-		actions = createAppActions(mockGet, mockSet, mockGetCommon, mockSetCommon);
+		actions = createAppActions(
+			mockGet,
+			mockSet,
+			mockGetCommon,
+			mockSetCommon,
+			mockGetPriorityFeeToUse
+		);
 
 		expect(actions).toBeDefined();
 

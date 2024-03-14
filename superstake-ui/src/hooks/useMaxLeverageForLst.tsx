@@ -1,5 +1,4 @@
-import { useCommonDriftStore } from '@drift-labs/react';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import { LST } from '../constants/lst';
 import { SOL_SPOT_MARKET_INDEX } from '../utils/uiUtils';
 import {
@@ -10,7 +9,7 @@ import {
 } from '@drift-labs/sdk';
 
 const useMaxLeverageForLst = (lst: LST) => {
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const driftClient = useCommonDriftStore((s) => s.driftClient);
 
 	const lstSpotMarket = lst.spotMarket;

@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import useAppStore from './useAppStore';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import { useAppActions } from './useAppActions';
@@ -12,7 +11,7 @@ const useCurrentUserData = () => {
 	const activeLst = useAppStore((s) => s.activeLst);
 	const superStakeUser = useAppStore((s) => s.currentUserAccount.user);
 	const actions = useAppActions();
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const { connected } = useWallet();
 	const appAuthority = useCommonDriftStore((s) => s.authority);
 	const lstMetrics = useCurrentLstMetrics();

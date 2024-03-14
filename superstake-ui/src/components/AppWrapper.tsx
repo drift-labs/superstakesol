@@ -30,7 +30,6 @@ const AppWrapper = (props: PropsWithChildren<any>) => {
 		<PostHogProvider>
 			<ActionsProvider>
 				<DriftProvider
-					disable={{ idlePollingRateSwitcher: true, emulation: true }} // need to use app-specific custom hooks because they use useCustomDriftClientIsReady
 					geoBlocking={{ callback: geoBlockCallback }}
 					autoconnectionDelay={3000}
 				>

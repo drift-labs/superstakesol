@@ -8,8 +8,7 @@ import {
 	getSignedTokenAmount,
 } from '@drift-labs/sdk';
 import { matchEnum } from '@drift/common';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 
 const DEFAULT_RETURN_VALUE = {
 	balanceType: SpotBalanceType.DEPOSIT,
@@ -22,7 +21,7 @@ const DEFAULT_RETURN_VALUE = {
  * Book to return memoized spot balances
  */
 const useSpotBalanceForMarket = (marketIndex: number | undefined) => {
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const driftClient = useCommonDriftStore((s) => s.driftClient.client);
 	const spotPositionForMarket = useAppStore((s) =>
 		s.currentUserAccount.spotPositions.find(

@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Button from '../Button';
 import Text from '../Text';
-import CollateralInput from '../CollateralInput';
+import { StakeFormCollateralInput } from '../CollateralInput';
 import { BASE_PRECISION_EXP, BigNum, BN, SpotMarkets } from '@drift-labs/sdk';
 import useAppStore from '../../hooks/useAppStore';
 import useSPLTokenBalance from '../../hooks/useSPLTokenBalance';
@@ -567,7 +567,7 @@ const StakeUnstakeForm = () => {
 
 				{selectedTab === 'stake' ? (
 					<>
-						<CollateralInput
+						<StakeFormCollateralInput
 							maxAmount={lstBalance.balanceBigNum}
 							lstSymbol={activeLst.symbol}
 							onChange={handleChangeStakeAmount}
@@ -677,7 +677,7 @@ const StakeUnstakeForm = () => {
 								advancedMode ? 'max-h-[230px]' : '',
 							])}
 						>
-							<CollateralInput
+							<StakeFormCollateralInput
 								disabled={!hasOpenPosition || canWithdrawWithoutRepay}
 								maxAmount={userLstEquityBigNum}
 								lstSymbol={activeLst.symbol}

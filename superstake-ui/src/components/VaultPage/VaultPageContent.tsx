@@ -10,7 +10,7 @@ import { useAppActions } from '../../hooks/useAppActions';
 
 const VaultContentPanel = (props: PropsWithChildren) => {
 	return (
-		<div className="bg-container-bg w-full lg:w-[50%] rounded-lg border-2 border-container-border p-8 vault-content-panel">
+		<div className="bg-container-bg w-full lg:w-[50%] rounded-lg border-2 border-container-border p-5 md:p-8 vault-content-panel">
 			{props.children}
 		</div>
 	);
@@ -30,7 +30,7 @@ const VaultPageContent = () => {
 	};
 
 	return (
-		<div className="flex w-full flex-col items-center gap-4 mt-2">
+		<div className="flex flex-col items-center w-full gap-4 mt-2">
 			{/** LST Tab */}
 			<div className="flex flex-row items-center justify-center">
 				{ALL_LST.map((lst, index) => {
@@ -61,7 +61,7 @@ const VaultPageContent = () => {
 			</div>
 
 			{/** Vault Content */}
-			<div className="flex flex-col space-y-6 lg:space-y-0 lg:flex-row mt-4 lg:items-stretch max-w-full">
+			<div className="flex flex-col max-w-full mt-4 space-y-6 lg:space-y-0 lg:flex-row lg:items-stretch">
 				<VaultContentPanel>
 					<VaultInfoPanel />
 				</VaultContentPanel>

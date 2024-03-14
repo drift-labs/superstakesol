@@ -1,7 +1,7 @@
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react';
 import useAppStore from './useAppStore';
 import createAppActions from '../actions/appActions';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, usePriorityFeeStore } from '@drift-labs/react';
 
 const ActionsContext = createContext({});
 
@@ -10,6 +10,7 @@ export const ActionsProvider = (props: PropsWithChildren) => {
 	const [getCommonDriftStore, setCommonDriftStore] = useCommonDriftStore(
 		(s) => [s.get, s.set]
 	);
+	const getPriorityFeeToUse = usePriorityFeeStore((s) => s.getPriorityFeeToUse);
 
 	const actions = useMemo(
 		() =>
@@ -17,9 +18,16 @@ export const ActionsProvider = (props: PropsWithChildren) => {
 				getAppStore,
 				setAppStore,
 				getCommonDriftStore,
-				setCommonDriftStore
+				setCommonDriftStore,
+				getPriorityFeeToUse
 			),
-		[getAppStore, setAppStore]
+		[
+			getAppStore,
+			setAppStore,
+			getCommonDriftStore,
+			setCommonDriftStore,
+			getPriorityFeeToUse,
+		]
 	);
 
 	return (

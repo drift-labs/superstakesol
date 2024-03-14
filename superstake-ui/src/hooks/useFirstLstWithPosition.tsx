@@ -1,15 +1,14 @@
 import { LST, ALL_LST } from '../constants/lst';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import { BigNum, SpotBalanceType, decodeName } from '@drift-labs/sdk';
 import { matchEnum } from '@drift/common';
 import { useEffect, useRef, useState } from 'react';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import Env from '../constants/environment';
 
 export default function useFirstLstWithPosition() {
 	const commonStore = useCommonDriftStore();
 	const driftClient = useCommonDriftStore((s) => s.driftClient.client);
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 
 	const [firstLstWithPosition, setFirstLstWithPosition] = useState<LST>(
 		Env.defaultActiveLst
