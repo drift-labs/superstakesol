@@ -29,6 +29,7 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
       "oracleSource": {
         "pyth": {},
       },
+      "phoenixMarket": "5LQLfGtqcC5rm2WuGxJf4tjqYmDjsQAbKo2AMLQ8KB7p",
       "precision": "3b9aca00",
       "precisionExp": "09",
       "serumMarket": "DkbVbMhFxswS32xnn1K2UY4aoBugXooBTxdzkWWDWRkH",

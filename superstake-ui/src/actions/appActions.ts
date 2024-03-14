@@ -19,6 +19,7 @@ import {
 	TEN_THOUSAND,
 	LAMPORTS_PRECISION,
 	FOUR,
+	TxParams,
 	// UserAccount,
 } from '@drift-labs/sdk';
 import { COMMON_UI_UTILS } from '@drift/common';
@@ -34,10 +35,11 @@ import {
 } from '@solana/web3.js';
 import { StoreApi } from 'zustand';
 import NOTIFICATION_UTILS from '../utils/notify';
-import { CommonDriftStore } from '@drift-labs/react';
+import { CommonDriftStore, PriorityFeeStore } from '@drift-labs/react';
 import invariant from 'tiny-invariant';
 import { ALL_LST_MAP, LST } from '../constants/lst';
 import { getSwapQuote } from '../utils/getSwapQuote';
+import { SSS_TRANSACTION_COMPUTE_UNITS_LIMIT } from '../constants/environment';
 
 const DEPOSIT_TOAST_ID = 'deposit_toast';
 
@@ -72,8 +74,26 @@ const createAppActions = (
 	get: StoreApi<AppStoreState>['getState'],
 	set: (x: (s: AppStoreState) => void) => void,
 	getCommon: StoreApi<CommonDriftStore>['getState'],
-	setCommon: (x: (s: CommonDriftStore) => void) => void
+	setCommon: (x: (s: CommonDriftStore) => void) => void,
+	getPriorityFeeToUse: PriorityFeeStore['getPriorityFeeToUse']
 ) => {
+	const getTxParams = (
+		computeUnits = SSS_TRANSACTION_COMPUTE_UNITS_LIMIT
+	): TxParams => {
+		const { computeUnitsPrice } = getPriorityFeeToUse(computeUnits);
+
+		console.log(
+			`Using compute unit price ${computeUnitsPrice} for tx with ${computeUnits} compute units. Estimated priority fee = ${
+				(computeUnitsPrice * computeUnits) / 10 ** 6 / LAMPORTS_PER_SOL
+			} SOL`
+		);
+
+		return {
+			computeUnitsPrice: computeUnitsPrice,
+			computeUnits: computeUnits,
+		};
+	};
+
 	/**
 	 * Returns the ID of the current super stake account or the id for tne new super stake account to create if it doesn't exist
 	 * @returns
@@ -306,9 +326,7 @@ const createAppActions = (
 
 		const tx = await driftClient.buildTransaction(
 			allInstructions,
-			{
-				computeUnits: 1_400_000,
-			},
+			getTxParams(),
 			0,
 			// @ts-ignore
 			lookupTables
@@ -532,9 +550,7 @@ const createAppActions = (
 
 			const tx = await driftClient.buildTransaction(
 				withdrawInstructions,
-				{
-					computeUnits: 1_400_000,
-				},
+				getTxParams(),
 				0
 			);
 
@@ -632,9 +648,7 @@ const createAppActions = (
 
 			const tx = await driftClient.buildTransaction(
 				swapInstructions,
-				{
-					computeUnits: 1_400_000,
-				},
+				getTxParams(),
 				0,
 				lookupTables
 			);

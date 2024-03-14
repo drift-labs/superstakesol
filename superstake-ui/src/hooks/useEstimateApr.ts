@@ -9,11 +9,10 @@ import {
 	ZERO,
 	calculateInterestRate,
 } from '@drift-labs/sdk';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 import { aprFromApy } from '@drift/common';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import useEstimatedLiquidationRatio from './useCurrentLiquidationRatio';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import useAppStore from './useAppStore';
 import { dlog } from '../dev';
@@ -47,7 +46,7 @@ const useEstimateApr = ({
 	includeBorrowRateDelta?: boolean;
 }) => {
 	const driftClient = useCommonDriftStore((s) => s.driftClient?.client);
-	const driftClientisReady = useCustomDriftClientIsReady();
+	const driftClientisReady = useDriftClientIsReady();
 	const lstMetrics = useCurrentLstMetrics();
 	const activeLst = useAppStore((s) => s.activeLst);
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);

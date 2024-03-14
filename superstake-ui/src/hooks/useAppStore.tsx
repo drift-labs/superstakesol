@@ -67,6 +67,7 @@ export interface AppStoreState {
 			show: boolean;
 		};
 		showRpcSwitcherModal: boolean;
+		showPriorityFeesModal: boolean;
 	};
 	stakeUnstakeForm: {
 		leverageToUse: number;
@@ -102,6 +103,7 @@ export const DEFAULT_STORE_STATE = {
 			isFromAcknowledgeModal: false,
 		},
 		showRpcSwitcherModal: false,
+		showPriorityFeesModal: false,
 	},
 	stakeUnstakeForm: {
 		leverageToUse: DEFAULT_LEVERAGE_SLIDER_VALUE,

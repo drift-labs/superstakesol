@@ -20,6 +20,10 @@ type EnvironmentVariables = {
 	rpcOverride: string | undefined;
 	historyServerUrl: string;
 	defaultActiveLst: LST;
+	priorityFee: {
+		targetPercentile: number;
+	};
+	priorityFeePollingMultiplier: number;
 };
 
 const Env: EnvironmentVariables = {
@@ -38,6 +42,18 @@ const Env: EnvironmentVariables = {
 			: EnvironmentConstants.historyServerUrl.dev,
 	defaultActiveLst:
 		ALL_LST_MAP[process.env.NEXT_PUBLIC_DEFAULT_ACTIVE_LST] || ALL_LST[0],
+	priorityFee: {
+		targetPercentile:
+			+process.env.NEXT_PUBLIC_PRIORITY_FEE_TARGET_PERCENTILE || 75,
+	},
+	priorityFeePollingMultiplier: 5,
 };
+
+export const RPC_LIST =
+	driftEnv === 'mainnet-beta'
+		? EnvironmentConstants.rpcs.mainnet
+		: EnvironmentConstants.rpcs.dev;
+
+export const SSS_TRANSACTION_COMPUTE_UNITS_LIMIT = 800_000;
 
 export default Env;

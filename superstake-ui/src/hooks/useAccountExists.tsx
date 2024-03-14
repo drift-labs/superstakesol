@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import useCustomDriftClientIsReady from './useCustomDriftClientIsReady';
 // import { singletonHook } from 'react-singleton-hook';
-import { useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
 import { useWallet } from '@drift-labs/react';
 
 export const useAccountExists = () => {
 	const walletState = useWallet();
-	const driftClientIsReady = useCustomDriftClientIsReady();
+	const driftClientIsReady = useDriftClientIsReady();
 	const driftClient = useCommonDriftStore((s) => s.driftClient.client);
 	const userAccountNotInitialized = useCommonDriftStore(
 		(s) => s.userAccountNotInitialized
