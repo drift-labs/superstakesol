@@ -44,7 +44,7 @@ const Env: EnvironmentVariables = {
 		ALL_LST_MAP[process.env.NEXT_PUBLIC_DEFAULT_ACTIVE_LST] || ALL_LST[0],
 	priorityFee: {
 		targetPercentile:
-			+process.env.NEXT_PUBLIC_PRIORITY_FEE_TARGET_PERCENTILE ?? 75,
+			+process.env.NEXT_PUBLIC_PRIORITY_FEE_TARGET_PERCENTILE || 75,
 	},
 	priorityFeePollingMultiplier: 5,
 };
