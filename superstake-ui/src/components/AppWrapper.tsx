@@ -7,7 +7,11 @@ import AppSetup from './AppSetup';
 import TailwindColourBufferer from './TailwindColourBufferer';
 
 import Env from '../constants/environment';
-import { DriftProvider, initializeDriftStore } from '@drift-labs/react';
+import {
+	DEFAULT_BREAKPOINTS,
+	DriftProvider,
+	initializeDriftStore,
+} from '@drift-labs/react';
 import { toast } from 'react-toastify';
 
 initializeDriftStore(Env);
@@ -32,6 +36,7 @@ const AppWrapper = (props: PropsWithChildren<any>) => {
 				<DriftProvider
 					geoBlocking={{ callback: geoBlockCallback }}
 					autoconnectionDelay={3000}
+					breakpoints={DEFAULT_BREAKPOINTS}
 				>
 					<AppSetup>{props.children}</AppSetup>
 					<TailwindColourBufferer />
