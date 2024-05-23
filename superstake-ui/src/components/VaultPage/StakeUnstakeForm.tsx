@@ -26,7 +26,6 @@ import { SOL_PRECISION_EXP } from '../../utils/uiUtils';
 import { twMerge } from 'tailwind-merge';
 import { ChevronRight } from '@drift-labs/icons';
 import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
-import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from '../../hooks/useCurrentLstMetrics';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
 import Checkbox from '../Checkbox';
@@ -74,12 +73,14 @@ const StakeUnstakeForm = () => {
 	const [advancedMode, setAdvancedMode] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 	const actions = useAppActions();
-	const connected = useWallet().connected;
+	const authority = useCommonDriftStore((s) => s.authority);
+	const connected = !!authority;
 	const setStoreState = useAppStore((s) => s.set);
 	const activeLst = useAppStore((s) => s.activeLst);
 	const currentUserAccountLoaded = useAppStore(
 		(s) => s.currentUserAccount.loaded
 	);
+
 	const driftEnv = useCommonDriftStore((s) => s.env.driftEnv);
 	const lstSpotMarket = activeLst.spotMarket;
 	const solSpotMarket = (

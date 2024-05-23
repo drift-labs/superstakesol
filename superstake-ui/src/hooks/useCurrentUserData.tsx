@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import useAppStore from './useAppStore';
 import { useCommonDriftStore, useDriftClientIsReady } from '@drift-labs/react';
-import { useWallet } from '@drift-labs/react';
 import useCurrentLstMetrics from './useCurrentLstMetrics';
 import { useAppActions } from './useAppActions';
 
@@ -12,25 +11,18 @@ const useCurrentUserData = () => {
 	const superStakeUser = useAppStore((s) => s.currentUserAccount.user);
 	const actions = useAppActions();
 	const driftClientIsReady = useDriftClientIsReady();
-	const { connected } = useWallet();
 	const appAuthority = useCommonDriftStore((s) => s.authority);
 	const lstMetrics = useCurrentLstMetrics();
 
 	// Initially switch to superstake user account when drift client is ready and metrics are loaded
 	// Sometimes this randomly triggers even though none of the values have changed and I don't know why.
 	useEffect(() => {
-		if (connected && driftClientIsReady && appAuthority && lstMetrics.loaded) {
+		if (driftClientIsReady && appAuthority && lstMetrics.loaded) {
 			actions.switchSubaccountToActiveLst(lstMetrics.priceInSol, appAuthority);
-		} else if ((!connected || !appAuthority) && superStakeUser) {
+		} else if (!appAuthority && superStakeUser) {
 			actions.resetCurrentUserData();
 		}
-	}, [
-		connected,
-		driftClientIsReady,
-		appAuthority,
-		lstMetrics.loaded,
-		activeLst,
-	]);
+	}, [driftClientIsReady, appAuthority, lstMetrics.loaded, activeLst]);
 
 	// Listen for user account updates, we also want this in a hook so we have access to lstMetrics.priceInSol
 	useEffect(() => {
