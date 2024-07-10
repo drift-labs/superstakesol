@@ -441,6 +441,10 @@ const createAppActions = (
 				NOTIFICATION_UTILS.toast.error(
 					'We have reached the maximum capacity of users. Please try again later.'
 				);
+			} else if (err.message.includes('0x1773')) {
+				NOTIFICATION_UTILS.toast.error(
+					'Something went wrong. Please try to reduce the leverage.'
+				);
 			} else {
 				NOTIFICATION_UTILS.toast.error(err.message);
 			}

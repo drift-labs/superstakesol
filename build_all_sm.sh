@@ -15,16 +15,15 @@ function handle_directory() {
 
   cd $dir && rm -rf node_modules && bun install
 
-  if [ "$build" = true ] ; then
-    yarn build
-  fi
-
   for link_package in ${link_packages[@]}
   do
       print_message_local "build_all_sm.sh" "bun link for ${folder} -> ${link_package}"
       bun link ${link_package}
   done
 
+  if [ "$build" = true ] ; then
+    yarn build
+  fi
 
   if [ "$link" = true ] ; then
     bun link
@@ -41,10 +40,10 @@ function get_submodules() {
 start_time=$(date +%s)
 
 # Get all submodules - will skip if already present
-get_submodules # current directory submodules
-cd drift-common
-get_submodules # Drift SDK submodule
-cd ..
+# get_submodules # current directory submodules
+# cd drift-common
+# get_submodules # Drift SDK submodule
+# cd ..
 
 # Call the function with directory name, build and link flags
 handle_directory "." false "" false

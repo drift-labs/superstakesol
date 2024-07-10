@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import { getTokenAccount, getTokenAddress } from '@drift/common';
 import { BN, BigNum } from '@drift-labs/sdk';
 import { useCommonDriftStore } from '@drift-labs/react';
-import { useWallet } from '@drift-labs/react';
 
 // TODO - this hook should return a bignum to be consistent with the app
 
@@ -23,8 +22,8 @@ const useSPLTokenBalance = (
 	const BALANCE_ZERO = BigNum.from(0, precisionExp);
 	// const getStore = useAppStore((s) => s.get);
 	const connection = useCommonDriftStore((s) => s?.connection);
-	const wallet = useWallet()?.wallet?.adapter;
-	const connected = useWallet()?.connected;
+	const authority = useCommonDriftStore((s) => s.authority);
+	const connected = !!authority;
 	const [balanceLoaded, setBalanceLoaded] = useState(false);
 	const [balanceBigNum, setBalanceBigNum] = useState(BALANCE_ZERO);
 	const [balance, setBalance] = useState(0);
@@ -39,7 +38,7 @@ const useSPLTokenBalance = (
 
 	// get and set the balance of the target token account
 	const getBalance = async () => {
-		if (!connection || !wallet?.publicKey) return BALANCE_ZERO;
+		if (!connection || !authority) return BALANCE_ZERO;
 
 		try {
 			if (targetTokenAccountAddress) {
@@ -57,14 +56,10 @@ const useSPLTokenBalance = (
 				return BALANCE_ZERO;
 			}
 
-			if (!wallet) {
-				return BALANCE_ZERO;
-			}
-
 			const targetAccount = await getTokenAccount(
 				connection,
 				tokenMintAddress,
-				wallet.publicKey.toString()
+				authority.toString()
 			);
 
 			if (!targetAccount) {
@@ -84,6 +79,7 @@ const useSPLTokenBalance = (
 
 	const getAndSetBalance = async () => {
 		const newBalance = await getBalance();
+		console.log('🚀 ~ getAndSetBalance ~ newBalance:', newBalance.toNum());
 		setBalanceLoaded(true);
 		setBalance(newBalance.toNum());
 		setBalanceBigNum(newBalance);
@@ -91,28 +87,27 @@ const useSPLTokenBalance = (
 
 	// set the assosciated token address when the user is connected and we know the token mint address
 	useEffect(() => {
-		if (!wallet || !wallet.publicKey) return;
+		if (!authority) return;
 
 		// if we are using a manual target wallet address, don't do anything
 		if (targetTokenAccountAddress) {
 			return;
 		}
 
-		if (!tokenMintAddress || !connected || !wallet?.publicKey) {
+		if (!tokenMintAddress || !connected) {
 			setTargetAccountAddress('');
 			return;
 		} else {
 			(async () => {
 				const targetAddress = await getTokenAddress(
 					tokenMintAddress,
-					// @ts-ignore
-					wallet.publicKey.toString()
+					authority.toString()
 				);
 
 				setTargetAccountAddress(targetAddress.toString());
 			})();
 		}
-	}, [tokenMintAddress, connected, solBalance, wallet?.publicKey]);
+	}, [tokenMintAddress, connected, solBalance, authority]);
 
 	// TODO-v2 : there's a minor bug with this hook where it seems like there's a race-condition that sometimes causes the connection to never get the token account updates. If you refresh the page and really quickly go into the deposit modal, you'll see that the balance doesn't update live
 	// set a listener on the target token account when ready
@@ -158,7 +153,7 @@ const useSPLTokenBalance = (
 		};
 	}, [
 		connected,
-		wallet,
+		authority,
 		targetAccountAddress,
 		targetTokenAccountAddress,
 		connection,
