@@ -52,6 +52,7 @@
     "eslint-config-next": "13.4.4",
     "immer": "^10.0.2",
     "next": "^13.4.4",
+    "path-browserify": "^1.0.1",
     "postcss": "8.4.24",
     "posthog-js": "1.82.2",
     "rc-slider": "^10.2.0",
