@@ -22,7 +22,7 @@ import {
 	TxParams,
 	// UserAccount,
 } from '@drift-labs/sdk';
-import { COMMON_UI_UTILS } from '@drift/common';
+import { COMMON_UI_UTILS, TOKEN_PROGRAM_ID } from '@drift/common';
 import {
 	createCloseAccountInstruction,
 	getAssociatedTokenAddressSync,
@@ -504,7 +504,8 @@ const createAppActions = (
 				const createAssociatedTokenAccountIx =
 					driftClient.getAssociatedTokenAccountCreationIx(
 						lstSpotMarket.mint,
-						ataPublicKey
+						ataPublicKey,
+						TOKEN_PROGRAM_ID
 					);
 				withdrawInstructions.push(createAssociatedTokenAccountIx);
 			}
