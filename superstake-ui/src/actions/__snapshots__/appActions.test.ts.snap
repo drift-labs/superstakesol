@@ -25,9 +25,9 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
     "spotMarket": {
       "marketIndex": 6,
       "mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
-      "oracle": "7yyaeuJ1GGtVBLT2z2xub5ZWYKaNhF28mj1RdV4VDFVk",
+      "oracle": "9QE1P5EfzthYDgoQ9oPeTByCEKaRJeZbVVqKJfgU9iau",
       "oracleSource": {
-        "pyth": {},
+        "pythPull": {},
       },
       "phoenixMarket": "5LQLfGtqcC5rm2WuGxJf4tjqYmDjsQAbKo2AMLQ8KB7p",
       "precision": "3b9aca00",
@@ -61,9 +61,9 @@ exports[`src/actions/appActions.ts switchActiveLst action switchActiveLst sets n
     "spotMarket": {
       "marketIndex": 2,
       "mint": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
-      "oracle": "E4v1BBgoso9s64TQvmyownAVJbhbEPGyzA3qn4n46qj9",
+      "oracle": "FAq7hqjn7FWGXKDwJHzsXGgBcydGTcK4kziJpAGWXjDb",
       "oracleSource": {
-        "pyth": {},
+        "pythPull": {},
       },
       "precision": "3b9aca00",
       "precisionExp": "09",

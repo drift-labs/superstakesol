@@ -145,27 +145,6 @@ const VaultOverviewPanel = () => {
 													</div>
 												</div>
 											)}
-											{activeLst.symbol === 'mSOL' && (
-												<div>
-													<div className="mt-2 mb-1">
-														<Text.BODY1 className="font-extrabold">
-															Eligible for MNDE rewards:
-														</Text.BODY1>
-														<br />
-														<Text.BODY1 className="mt-1">
-															Learn more on{' '}
-															<a
-																href="https://marinade.finance/app/rewards/"
-																target="_blank"
-																rel="noreferrer"
-																className="underline"
-															>
-																Marinade Earn
-															</a>
-														</Text.BODY1>{' '}
-													</div>
-												</div>
-											)}
 										</>
 									}
 									placement="top"
@@ -179,19 +158,6 @@ const VaultOverviewPanel = () => {
 												<img
 													src="/blze.png"
 													alt="BLZE"
-													className="w-5 h-5 rounded"
-												/>
-											</div>
-										</div>
-									) : activeLst.symbol === 'mSOL' ? (
-										<div className="rounded overflow-hidden gradient-border-tooltip p-0.5 cursor-pointer p-[2px]">
-											<div className="relative flex flex-row p-1 space-x-3 overflow-hidden rounded bg-container-bg min-w-[145px]">
-												<Text.BODY1 className="text-[14px] ml-2 relative">
-													Eligible for Rewards
-												</Text.BODY1>
-												<img
-													src="/mnde.png"
-													alt="MNDE"
 													className="w-5 h-5 rounded"
 												/>
 											</div>
