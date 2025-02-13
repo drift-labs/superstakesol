@@ -2,23 +2,6 @@
 const nextConfig = {
 	typescript: { ignoreBuildErrors: true },
 
-	output: 'standalone',
-
-	// <Force dynamic rendering>
-	dynamicParams: true,
-	experimental: {
-		disableStaticGeneration: true,
-	},
-	generateStaticParams: false,
-	unstable_runtimeJS: true,
-	// </Force dnamic rendering> :: The above params are an attempt to fix a build error during "static site generation" in Vercel which I can't solve and doesn't seem worth spending more time fixing considering we're going to decommission superstake soon anyway.
-
-	reactStrictMode: true,
-	compiler: {
-		// Enables the styled-components SWC transform
-		styledComponents: true,
-	},
-
 	webpack(config, { isServer }) {
 		if (!isServer) {
 			config.resolve.fallback = {
