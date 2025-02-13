@@ -603,7 +603,7 @@ const StakeUnstakeForm = () => {
 							/>
 						</div>
 
-						{/* <StakeFormSummary
+						<StakeFormSummary
 							amountToStake={isNaN(amountToStakeNum) ? 0 : amountToStakeNum}
 							amountToBorrow={solBorrowAmount}
 							totalToStake={isNaN(amountToStakeNum) ? 0 : totalStakeSize}
@@ -633,7 +633,7 @@ const StakeUnstakeForm = () => {
 							}
 							emissionsTokenSymbol={activeLst.emissionsTokenSymbol}
 							leverageToUse={leverageToUse}
-						/> */}
+						/>
 					</>
 				) : (
 					<>

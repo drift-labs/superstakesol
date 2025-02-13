@@ -96,8 +96,8 @@ StakeFormSummaryProps) => {
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Amount borrowed</Text.BODY2>{' '}
 					<ValueChangeDisplay
-						previousValue={userSolBorrows.neg()}
-						afterValue={afterSolBorrows}
+						previousValue={userSolBorrows.neg().toNum()}
+						afterValue={afterSolBorrows.toNum()}
 						previousValuePrint={userSolBorrows.neg().toFixed(3)}
 						afterValuePrint={afterSolBorrows.toFixed(3)}
 						rightSymbol={' SOL'}
@@ -107,8 +107,8 @@ StakeFormSummaryProps) => {
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Your position</Text.BODY2>{' '}
 					<ValueChangeDisplay
-						previousValue={userLstDeposits}
-						afterValue={afterLstDeposits}
+						previousValue={userLstDeposits.toNum()}
+						afterValue={afterLstDeposits.toNum()}
 						previousValuePrint={userLstDeposits.toFixed(3)}
 						afterValuePrint={afterLstDeposits.toFixed(3)}
 						rightSymbol={activeLst.symbol}
