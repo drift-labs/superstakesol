@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	typescript: { ignoreBuildErrors: true },
-	output: 'standalone', // Attempting to fix a build error during "static site generation" in Vercel which I can't solve and doesn't seem worth spending more time fixing considering we're going to decommission superstake soon anyway.
+
+	output: 'standalone',
+	experimental: {
+		disableStaticGeneration: true,
+	}, // The above two params are an attempt to fix a build error during "static site generation" in Vercel which I can't solve and doesn't seem worth spending more time fixing considering we're going to decommission superstake soon anyway.
 
 	webpack(config, { isServer }) {
 		if (!isServer) {
