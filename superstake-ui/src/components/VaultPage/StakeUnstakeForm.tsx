@@ -547,7 +547,6 @@ const StakeUnstakeForm = () => {
 		<div className="flex flex-col justify-between h-full">
 			{/* TABS */}
 
-			{/* THE BUG IS SOMEWHERE IN THIS DIV */}
 			<div>
 				<div className="flex flex-row items-center justify-center mb-8">
 					<Button
@@ -603,6 +602,7 @@ const StakeUnstakeForm = () => {
 							/>
 						</div>
 
+						{/* THE BUG IS IN THIS COMPONENT */}
 						<StakeFormSummary
 							amountToStake={isNaN(amountToStakeNum) ? 0 : amountToStakeNum}
 							amountToBorrow={solBorrowAmount}

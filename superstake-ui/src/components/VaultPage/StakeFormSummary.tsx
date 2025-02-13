@@ -86,7 +86,7 @@ StakeFormSummaryProps) => {
 
 	return (
 		<>
-			<div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
+			{/* <div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Amount to deposit</Text.BODY2>{' '}
 					<Text.BODY2>
@@ -102,7 +102,6 @@ StakeFormSummaryProps) => {
 						afterValuePrint={afterSolBorrows.toFixed(3)}
 						rightSymbol={' SOL'}
 					/>
-					{/* <Text.BODY2>{amountToBorrow.toFixed(3)} SOL</Text.BODY2> */}
 				</SummaryRow>
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Your position</Text.BODY2>{' '}
@@ -190,8 +189,9 @@ StakeFormSummaryProps) => {
 						)}
 					</>
 				)}
-			</div>
-			<div
+			</div> */}
+
+			{/* <div
 				className="w-full p-4 mb-2 space-y-4 cursor-pointer bg-container-bg-selected md:space-y-2"
 				onClick={toggleAprExpanded}
 			>
@@ -262,6 +262,7 @@ StakeFormSummaryProps) => {
 						</div>
 					</div>
 				</SummaryRow>
+				
 				{amountToStake !== 0 &&
 					projectedApr < unleveragedApr &&
 					leverageToUse > 1 && (
@@ -275,15 +276,7 @@ StakeFormSummaryProps) => {
 							</Text.BODY1>
 						</div>
 					)}
-				{/* <SummaryRow>
-					<Text.BODY2 className="font-normal">Projected Yield (30d)</Text.BODY2>{' '}
-					<Text.BODY2
-						className={projectedYield30d > 0 ? 'text-text-positive-green' : ''}
-					>
-						{projectedYield30d} SOL
-					</Text.BODY2>
-				</SummaryRow> */}
-			</div>
+			</div> */}
 		</>
 	);
 };
