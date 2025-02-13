@@ -1,5 +1,5 @@
 import { Info } from '@drift-labs/icons';
-import Tippy, { TippyProps, useSingleton } from '@tippyjs/react';
+import Tippy, { TippyProps } from '@tippyjs/react';
 import EventEmitter from 'events';
 import { PropsWithChildren, ReactNode, useEffect, useRef } from 'react';
 import 'tippy.js/animations/scale.css';
@@ -23,7 +23,6 @@ type TooltipProps = {
 	maxWidth?: string;
 	customArrow?: ReactNode;
 	zIndex?: number;
-	singletonTarget?: ReturnType<typeof useSingleton>[0];
 };
 
 const Tooltip = ({
@@ -40,7 +39,6 @@ const Tooltip = ({
 	maxWidth = '20rem',
 	customArrow,
 	zIndex,
-	singletonTarget,
 }: PropsWithChildren<TooltipProps>) => {
 	const tippyRef = useRef(null);
 
@@ -63,7 +61,6 @@ const Tooltip = ({
 	return (
 		<Tippy
 			delay={[0, 0]}
-			singleton={singletonTarget}
 			animation="scale"
 			appendTo={() => document.body}
 			maxWidth={maxWidth}

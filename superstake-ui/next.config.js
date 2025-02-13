@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	typescript: { ignoreBuildErrors: true },
+	swcMinify: false, // Disable code minification
 
 	webpack(config, { isServer }) {
 		if (!isServer) {
