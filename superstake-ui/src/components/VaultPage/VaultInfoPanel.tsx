@@ -481,11 +481,11 @@ const HistoryPanel = () => {
 	);
 };
 
-const PANELS = [
-	<VaultOverviewPanel key={0} />,
-	<YourStakePanel key={1} />,
-	<HistoryPanel key={2} />,
-];
+const PANEL_COMPONENTS = {
+	0: VaultOverviewPanel,
+	1: YourStakePanel,
+	2: HistoryPanel,
+} as const;
 
 const VaultInfoPanel = () => {
 	const { userLstEquity: userLstEquity } = useCurrentSuperstakePosition();
@@ -497,7 +497,10 @@ const VaultInfoPanel = () => {
 		if (direction === 'left' && selectedPanel > 0) {
 			setSelectedPanel(selectedPanel - 1);
 		}
-		if (direction === 'right' && selectedPanel < PANELS.length - 1) {
+		if (
+			direction === 'right' &&
+			selectedPanel < Object.keys(PANEL_COMPONENTS).length - 1
+		) {
 			setSelectedPanel(selectedPanel + 1);
 		}
 	};
@@ -528,7 +531,7 @@ const VaultInfoPanel = () => {
 			</button>
 
 			<div className="flex flex-row items-stretch justify-center space-x-2">
-				{PANELS.map((_, index) => (
+				{Object.keys(PANEL_COMPONENTS).map((_, index) => (
 					<Bubble
 						selected={index === selectedPanel}
 						key={index}
@@ -543,7 +546,7 @@ const VaultInfoPanel = () => {
 			>
 				<ChevronRightIcon
 					className={`w-10 h-10  ${
-						selectedPanel === PANELS.length - 1
+						selectedPanel === Object.keys(PANEL_COMPONENTS).length - 1
 							? 'opacity-20 cursor-default'
 							: ''
 					}`}
@@ -551,6 +554,9 @@ const VaultInfoPanel = () => {
 			</button>
 		</div>
 	);
+
+	const CurrentPanel =
+		PANEL_COMPONENTS[selectedPanel as keyof typeof PANEL_COMPONENTS];
 
 	return (
 		<div>
@@ -569,7 +575,7 @@ const VaultInfoPanel = () => {
 							left: `-${selectedPanel * 100}%`,
 						}}
 					>
-						{PANELS}
+						<CurrentPanel key={selectedPanel} />
 					</div>
 				</div>
 			</div>
