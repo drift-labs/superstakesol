@@ -139,6 +139,8 @@ export const Modal = ({
 	showX,
 	visible,
 }: ModalProps) => {
+	return null;
+
 	const closingTimeout = useRef<NodeJS.Timeout | null>(null);
 	const contentRef = useRef<HTMLDivElement | null>(null);
 

@@ -1,4 +1,3 @@
-import { BigNum } from '@drift-labs/sdk';
 import React from 'react';
 import Text from './Text';
 import Arrow from '@heroicons/react/24/solid/ArrowLongRightIcon';
@@ -15,8 +14,8 @@ const ValueChangeDisplay = ({
 	afterValuePrint,
 	overrideNoValueChange,
 }: {
-	previousValue: number | BigNum;
-	afterValue: number | BigNum;
+	previousValue: number;
+	afterValue: number;
 	leftSymbol?: string;
 	rightSymbol?: string;
 	rightLabel?: string;
@@ -26,16 +25,9 @@ const ValueChangeDisplay = ({
 	forceWhite?: boolean;
 	overrideNoValueChange?: boolean;
 }) => {
-	const isEqual =
-		typeof afterValue === 'number'
-			? afterValue === previousValue
-			: afterValue.eq(previousValue as BigNum);
+	const isEqual = afterValue === previousValue;
 
-	const isLessThan =
-		typeof afterValue === 'number'
-			? // @ts-ignore
-			  afterValue < previousValue
-			: afterValue.lt(previousValue as BigNum);
+	const isLessThan = afterValue < previousValue;
 
 	const arrowColor = forceWhite
 		? 'text-text-default'

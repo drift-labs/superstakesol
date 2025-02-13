@@ -4,37 +4,40 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 const ModalPortal = (props: PropsWithChildren<{ id?: string }>) => {
+	return null;
+
 	const defaultNode = useRef<HTMLElement | null>(null);
 	const [mounted, setMounted] = useState(false);
 
 	useDisableScroll();
 
 	useEffect(() => {
-		if (mounted == false) {
+		// Only run on client-side
+		if (typeof window !== 'undefined') {
+			if (!defaultNode.current) {
+				let portalDock = document.getElementById('modal-portal-dock');
+
+				if (!portalDock) {
+					portalDock = document.createElement('div');
+					portalDock.id = 'modal-portal-dock';
+					document.body.appendChild(portalDock);
+				}
+
+				defaultNode.current = portalDock;
+			}
 			setMounted(true);
 		}
 	}, []);
 
-	if (!defaultNode.current) {
-		let portalDock = document.getElementById('modal-portal-dock');
-
-		if (!portalDock) {
-			portalDock = document.createElement('div');
-			portalDock.id = 'modal-portal-dock';
-			document.body.appendChild(portalDock);
-		}
-
-		defaultNode.current = portalDock;
+	// Don't render anything on the server
+	if (!mounted || typeof window === 'undefined') {
+		return null;
 	}
 
-	return mounted
-		? (ReactDOM.createPortal(
-				<div style={{ zIndex: 100, position: 'absolute' }}>
-					{props.children}
-				</div>,
-				defaultNode.current
-		  ) as React.ReactNode)
-		: null;
+	return ReactDOM.createPortal(
+		<div style={{ zIndex: 100, position: 'absolute' }}>{props.children}</div>,
+		defaultNode.current!
+	);
 };
 
 ModalPortal.propTypes = {
