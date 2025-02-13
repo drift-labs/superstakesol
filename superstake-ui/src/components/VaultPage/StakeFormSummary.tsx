@@ -129,12 +129,6 @@ StakeFormSummaryProps) => {
 							<Text.BODY2 className="font-normal">
 								New account creation cost
 							</Text.BODY2>
-							<div>
-								<div className="flex items-center">
-									<Text.BODY2>{accountCreationCost.toFixed(3)} SOL</Text.BODY2>
-									<Info size={24} className="relative ml-1 cursor-pointer" />
-								</div>
-							</div>
 						</SummaryRow>
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
 							<div className="w-full">
