@@ -636,7 +636,7 @@ const StakeUnstakeForm = () => {
 					</>
 				) : (
 					<>
-						<div className="flex flex-row items-start w-full space-between">
+						{/* <div className="flex flex-row items-start w-full space-between">
 							<div className="flex-grow">
 								<Text.BODY2>
 									Amount to unstake:{' '}
@@ -768,7 +768,7 @@ const StakeUnstakeForm = () => {
 									lstSymbol={activeLst.symbol}
 								/>
 							)}
-						</div>
+						</div> */}
 					</>
 				)}
 			</div>
