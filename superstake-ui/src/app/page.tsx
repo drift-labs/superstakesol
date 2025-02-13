@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering at the page level
+export const dynamic = 'force-dynamic';
+
 import FloatingUI from '../components/FloatingUI';
 import HeaderSection from '../components/HeaderSection';
 import StatusBar from '../components/StatusBar';
