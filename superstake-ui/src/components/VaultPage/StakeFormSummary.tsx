@@ -86,8 +86,9 @@ StakeFormSummaryProps) => {
 
 	return (
 		<>
-			{/* <div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
-				<SummaryRow>
+			{/* THE BUG IS SOMEWHERE IN THIS DIV */}
+			<div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
+				{/* <SummaryRow>
 					<Text.BODY2 className="font-normal">Amount to deposit</Text.BODY2>{' '}
 					<Text.BODY2>
 						{amountToStake} {activeLst.symbol}
@@ -124,7 +125,7 @@ StakeFormSummaryProps) => {
 						afterValuePrint={projectedLiqRatio.toFixed(3)}
 						rightSymbol={` ${activeLst.symbol}/SOL`}
 					/>
-				</SummaryRow>
+				</SummaryRow> */}
 				{!hasSuperstakeLstSubaccount && (
 					<>
 						<SummaryRow>
@@ -189,7 +190,7 @@ StakeFormSummaryProps) => {
 						)}
 					</>
 				)}
-			</div> */}
+			</div>
 
 			<div
 				className="w-full p-4 mb-2 space-y-4 cursor-pointer bg-container-bg-selected md:space-y-2"
