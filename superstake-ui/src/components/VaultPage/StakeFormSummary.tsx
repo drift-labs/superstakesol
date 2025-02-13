@@ -191,7 +191,7 @@ StakeFormSummaryProps) => {
 				)}
 			</div> */}
 
-			{/* <div
+			<div
 				className="w-full p-4 mb-2 space-y-4 cursor-pointer bg-container-bg-selected md:space-y-2"
 				onClick={toggleAprExpanded}
 			>
@@ -262,7 +262,7 @@ StakeFormSummaryProps) => {
 						</div>
 					</div>
 				</SummaryRow>
-				
+
 				{amountToStake !== 0 &&
 					projectedApr < unleveragedApr &&
 					leverageToUse > 1 && (
@@ -276,7 +276,7 @@ StakeFormSummaryProps) => {
 							</Text.BODY1>
 						</div>
 					)}
-			</div> */}
+			</div>
 		</>
 	);
 };
