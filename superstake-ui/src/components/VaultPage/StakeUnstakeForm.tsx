@@ -581,7 +581,8 @@ const StakeUnstakeForm = () => {
 							connected={connected}
 							placeholder={'0'}
 							maxLoading={!lstBalance.balanceLoaded}
-						/>
+						/> */}
+
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
 								Select your leverage:{' '}
@@ -632,11 +633,11 @@ const StakeUnstakeForm = () => {
 							}
 							emissionsTokenSymbol={activeLst.emissionsTokenSymbol}
 							leverageToUse={leverageToUse}
-						/> */}
+						/>
 					</>
 				) : (
 					<>
-						{/* <div className="flex flex-row items-start w-full space-between">
+						<div className="flex flex-row items-start w-full space-between">
 							<div className="flex-grow">
 								<Text.BODY2>
 									Amount to unstake:{' '}
@@ -768,7 +769,7 @@ const StakeUnstakeForm = () => {
 									lstSymbol={activeLst.symbol}
 								/>
 							)}
-						</div> */}
+						</div>
 					</>
 				)}
 			</div>
