@@ -113,46 +113,58 @@ export const CollateralInput = ({
 	);
 };
 
-const _StakeFormCollateralInput = (props: CrossCollateralInputProps) => {
-	const connectButton = (
-		<Text.BODY2 className="flex flex-row items-center space-x-2">
+const _StakeFormConnectButton = ({ onConnect }: { onConnect: () => void }) => (
+	<Text.BODY2 className="flex flex-row items-center space-x-2">
+		<button className="border-b border-container-border" onClick={onConnect}>
+			Connect Wallet
+		</button>
+	</Text.BODY2>
+);
+
+const _StakeFormMaxButton = (props: {
+	maxLoading: boolean;
+	maxAmount: BigNum;
+	lstSymbol: string;
+	onMax: () => void;
+}) => (
+	<Text.BODY2 className="flex flex-row items-center space-x-2">
+		<div>Max:</div>
+		{props.maxLoading ? (
+			<SkeletonValuePlaceholder loading className="w-20 h-5 mr-2" />
+		) : (
 			<button
 				className="border-b border-container-border"
-				onClick={props.onConnect}
+				onClick={props.onMax}
 			>
-				Connect Wallet
+				{props.maxAmount.toFixed(3)} {props.lstSymbol}
 			</button>
-		</Text.BODY2>
-	);
+		)}
+	</Text.BODY2>
+);
 
-	const maxButton = (
-		<Text.BODY2 className="flex flex-row items-center space-x-2">
-			<div>Max:</div>
-			{props.maxLoading ? (
-				<SkeletonValuePlaceholder loading className="w-20 h-5 mr-2" />
-			) : (
-				<button
-					className="border-b border-container-border"
-					onClick={props.onMax}
-				>
-					{props.maxAmount.toFixed(3)} {props.lstSymbol}
-				</button>
-			)}
-		</Text.BODY2>
-	);
-
+const _StakeFormCollateralInput = (props: CrossCollateralInputProps) => {
 	return (
 		<div className="w-full">
-			<CollateralInput
+			{/* <CollateralInput
 				label={props.label}
 				value={props.value}
-				rightLabel={props.connected ? maxButton : connectButton}
+				rightLabel={
+					props.connected ? (
+						<_StakeFormMaxButton
+							maxLoading={props.maxLoading}
+							maxAmount={props.maxAmount}
+							lstSymbol={props.lstSymbol}
+							onMax={props.onMax}
+						/>
+					) : (
+						<_StakeFormConnectButton onConnect={props.onConnect} />
+					)
+				}
 				rightLabelClassName="hidden md:block"
 				onChange={props.onChange}
 				disabled={props.disabled}
 				placeholder={props.placeholder}
-				lstSymbol={props.lstSymbol}
-			/>
+			/> */}
 
 			<div className="flex flex-row-reverse justify-between mt-2">
 				{props.showBuyButton !== false && (
@@ -167,7 +179,16 @@ const _StakeFormCollateralInput = (props: CrossCollateralInputProps) => {
 					</Link>
 				)}
 				<div className="mb-3 md:hidden">
-					{props.connected ? maxButton : connectButton}
+					{props.connected ? (
+						<_StakeFormMaxButton
+							maxLoading={props.maxLoading}
+							maxAmount={props.maxAmount}
+							lstSymbol={props.lstSymbol}
+							onMax={props.onMax}
+						/>
+					) : (
+						<_StakeFormConnectButton onConnect={props.onConnect} />
+					)}
 				</div>
 			</div>
 		</div>

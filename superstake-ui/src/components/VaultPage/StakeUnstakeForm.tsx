@@ -570,7 +570,7 @@ const StakeUnstakeForm = () => {
 
 				{selectedTab === 'stake' ? (
 					<>
-						{/* <StakeFormCollateralInput
+						<StakeFormCollateralInput
 							maxAmount={lstBalance.balanceBigNum}
 							lstSymbol={activeLst.symbol}
 							onChange={handleChangeStakeAmount}
@@ -581,7 +581,7 @@ const StakeUnstakeForm = () => {
 							connected={connected}
 							placeholder={'0'}
 							maxLoading={!lstBalance.balanceLoaded}
-						/> */}
+						/>
 
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
