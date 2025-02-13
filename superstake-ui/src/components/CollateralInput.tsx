@@ -145,7 +145,7 @@ const _StakeFormMaxButton = (props: {
 const _StakeFormCollateralInput = (props: CrossCollateralInputProps) => {
 	return (
 		<div className="w-full">
-			{/* <CollateralInput
+			<CollateralInput
 				label={props.label}
 				value={props.value}
 				rightLabel={
@@ -164,7 +164,7 @@ const _StakeFormCollateralInput = (props: CrossCollateralInputProps) => {
 				onChange={props.onChange}
 				disabled={props.disabled}
 				placeholder={props.placeholder}
-			/> */}
+			/>
 
 			<div className="flex flex-row-reverse justify-between mt-2">
 				{props.showBuyButton !== false && (
