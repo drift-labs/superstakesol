@@ -126,14 +126,14 @@ StakeFormSummaryProps) => {
 						rightSymbol={` ${activeLst.symbol}/SOL`}
 					/>
 				</SummaryRow>
-				{/* {!hasSuperstakeLstSubaccount && (
+				{!hasSuperstakeLstSubaccount && (
 					<>
 						<SummaryRow>
 							<Text.BODY2 className="font-normal">
 								New account creation cost
 							</Text.BODY2>
 							<div>
-								<Tooltip
+								{/* <Tooltip
 									content={
 										<div className="px-2 font-normal">
 											<div className="mb-1">
@@ -172,7 +172,7 @@ StakeFormSummaryProps) => {
 								>
 									<Text.BODY2>{accountCreationCost.toFixed(3)} SOL</Text.BODY2>
 									<Info size={24} className="relative ml-1 cursor-pointer" />
-								</Tooltip>
+								</Tooltip> */}
 							</div>
 						</SummaryRow>
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
@@ -189,7 +189,7 @@ StakeFormSummaryProps) => {
 							</div>
 						)}
 					</>
-				)} */}
+				)}
 			</div>
 
 			<div
