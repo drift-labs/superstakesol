@@ -546,7 +546,7 @@ const StakeUnstakeForm = () => {
 	return (
 		<div className="flex flex-col justify-between h-full">
 			{/* TABS */}
-			<div>
+			{/* <div>
 				<div className="flex flex-row items-center justify-center mb-8">
 					<Button
 						className="rounded-r-none border-r-[1px]"
@@ -769,7 +769,7 @@ const StakeUnstakeForm = () => {
 						</div>
 					</>
 				)}
-			</div>
+			</div> */}
 
 			{selectedTab === 'stake' ? (
 				<div className="mt-6">
