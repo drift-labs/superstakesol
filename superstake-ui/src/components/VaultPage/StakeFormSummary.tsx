@@ -86,7 +86,7 @@ StakeFormSummaryProps) => {
 
 	return (
 		<>
-			{/* <div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
+			<div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Amount to deposit</Text.BODY2>{' '}
 					<Text.BODY2>
@@ -189,9 +189,9 @@ StakeFormSummaryProps) => {
 						)}
 					</>
 				)}
-			</div> */}
+			</div>
 
-			<div
+			{/* <div
 				className="w-full p-4 mb-2 space-y-4 cursor-pointer bg-container-bg-selected md:space-y-2"
 				onClick={toggleAprExpanded}
 			>
@@ -276,7 +276,7 @@ StakeFormSummaryProps) => {
 							</Text.BODY1>
 						</div>
 					)}
-			</div>
+			</div> */}
 		</>
 	);
 };
