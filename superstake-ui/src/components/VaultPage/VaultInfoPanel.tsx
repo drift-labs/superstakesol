@@ -39,22 +39,18 @@ const TextWithSkeleton = ({
 	loading,
 	value,
 	isAuthorityValue,
-	smaller,
 }: {
 	loading?: boolean;
-	value: string | number | ReactNode;
+	value: ReactNode;
 	isAuthorityValue?: boolean;
-	smaller?: boolean;
 }) => {
 	const authority = useCommonDriftStore((s) => s.authority);
 
-	return loading && (isAuthorityValue ? authority : true) ? (
-		<Skeleton height={38} />
-	) : smaller ? (
-		<Text.BODY1 className="text-[16px]">{value}</Text.BODY1>
-	) : (
-		<Text.H4>{value}</Text.H4>
-	);
+	if (loading && (isAuthorityValue ? authority : true)) {
+		return <Skeleton height={38} />;
+	}
+
+	return <>{value}</>;
 };
 
 const VaultOverviewPanel = () => {
@@ -101,10 +97,10 @@ const VaultOverviewPanel = () => {
 				<div>
 					<TextWithSkeleton
 						value={
-							<div className={`flex flex-row flex-wrap items-center`}>
-								<div className="mr-4 my-1 sm:my-0">
+							<div className="flex flex-row flex-wrap items-center">
+								<Text.H4 className="mr-4 my-1 sm:my-0">
 									{`${maxAprPercentage.toFixed(2)}% APR`}
-								</div>
+								</Text.H4>
 								<Tooltip
 									content={
 										<>
@@ -179,7 +175,7 @@ const VaultOverviewPanel = () => {
 			<div className="mt-8">
 				<Text.BODY3>Max. leverage</Text.BODY3>
 				<TextWithSkeleton
-					value={`${maxLeverageForLst.maxLeverage}x`}
+					value={<Text.H4>{`${maxLeverageForLst.maxLeverage}x`}</Text.H4>}
 					loading={!maxLeverageForLst.loaded}
 				/>
 			</div>
@@ -187,9 +183,11 @@ const VaultOverviewPanel = () => {
 			<div className="mt-8">
 				<Text.BODY3>Total staked</Text.BODY3>
 				<TextWithSkeleton
-					value={`${tvl[activeLst.symbol].prettyPrint(true)} ${
-						activeLst.symbol
-					}`}
+					value={
+						<Text.H4>{`${tvl[activeLst.symbol].prettyPrint(true)} ${
+							activeLst.symbol
+						}`}</Text.H4>
+					}
 					loading={!tvlLoaded}
 				/>
 			</div>
@@ -197,7 +195,11 @@ const VaultOverviewPanel = () => {
 			<div className="mt-8">
 				<Text.BODY3>Remaining borrow capacity</Text.BODY3>
 				<TextWithSkeleton
-					value={`${solBorrowCapacityRemaining.prettyPrint(true)} SOL`}
+					value={
+						<Text.H4>{`${solBorrowCapacityRemaining.prettyPrint(
+							true
+						)} SOL`}</Text.H4>
+					}
 					loading={!isSpotMarketLoaded}
 				/>
 				<div className="relative w-full h-4 mt-2 overflow-hidden border-2 rounded border-container-border">
@@ -250,7 +252,11 @@ const YourStakePanel = () => {
 				<div className="flex-grow w-full md:w-[50%] pr-4">
 					<Text.BODY3>Your stake</Text.BODY3>
 					<TextWithSkeleton
-						value={`${userLstEquity.value?.toFixed(3)} ${activeLst.symbol}`}
+						value={
+							<Text.H4>{`${userLstEquity.value?.toFixed(3)} ${
+								activeLst.symbol
+							}`}</Text.H4>
+						}
 						loading={getLoadingState(!userLstEquity.loaded)}
 						isAuthorityValue
 					/>
@@ -259,7 +265,11 @@ const YourStakePanel = () => {
 				<div className="flex-grow w-full md:w-[50%]">
 					<Text.BODY3>Your position</Text.BODY3>
 					<TextWithSkeleton
-						value={`${userLstDeposits.toFixed(3)} ${activeLst.symbol}`}
+						value={
+							<Text.H4>{`${userLstDeposits.toFixed(3)} ${
+								activeLst.symbol
+							}`}</Text.H4>
+						}
 						loading={getLoadingState(!isPositionLoaded)}
 						isAuthorityValue
 					/>
@@ -271,9 +281,11 @@ const YourStakePanel = () => {
 					<Text.BODY3>Your est. APR</Text.BODY3>
 					<div>
 						<TextWithSkeleton
-							value={`${
-								isNaN(yourAprPercentage) ? 0 : yourAprPercentage.toFixed(2)
-							}% APR`}
+							value={
+								<Text.H4>{`${
+									isNaN(yourAprPercentage) ? 0 : yourAprPercentage.toFixed(2)
+								}% APR`}</Text.H4>
+							}
 							loading={getLoadingState(
 								!isAprLoaded || !isPositionLoaded || !userLstEquity.loaded
 							)}
@@ -312,7 +324,11 @@ const YourStakePanel = () => {
 						</Text.BODY3>
 					</Tooltip>
 					<TextWithSkeleton
-						value={`${yourTotalEarnedValue?.prettyPrint(true)} SOL`}
+						value={
+							<Text.H4>{`${yourTotalEarnedValue?.prettyPrint(
+								true
+							)} SOL`}</Text.H4>
+						}
 						loading={getLoadingState(!isSolEarnedLoaded || !isPositionLoaded)}
 						isAuthorityValue
 					/>
@@ -323,7 +339,7 @@ const YourStakePanel = () => {
 				<div className="flex-grow w-full md:w-[50%] pr-4">
 					<Text.BODY3>Leverage</Text.BODY3>
 					<TextWithSkeleton
-						value={`${yourLeverage.toFixed(4)}`}
+						value={<Text.H4>{`${yourLeverage.toFixed(4)}`}</Text.H4>}
 						loading={getLoadingState(
 							!isPositionLoaded && !userLstEquity.loaded
 						)}
@@ -333,7 +349,9 @@ const YourStakePanel = () => {
 				<div className="flex-grow w-full md:w-[50%]">
 					<Text.BODY3>{activeLst.symbol}/SOL ratio</Text.BODY3>
 					<TextWithSkeleton
-						value={`${lstMetrics?.priceInSol?.toFixed(4) ?? 0}`}
+						value={
+							<Text.H4>{`${lstMetrics?.priceInSol?.toFixed(4) ?? 0}`}</Text.H4>
+						}
 						loading={!lstMetrics.loaded}
 					/>
 				</div>
@@ -341,9 +359,11 @@ const YourStakePanel = () => {
 			<div className="mt-8">
 				<Text.BODY3>Est. liquidation ratio</Text.BODY3>
 				<TextWithSkeleton
-					value={`${
-						isNaN(estLiquidationRatio) ? 0 : estLiquidationRatio.toFixed(4)
-					} ${activeLst.symbol}/SOL`}
+					value={
+						<Text.H4>{`${
+							isNaN(estLiquidationRatio) ? 0 : estLiquidationRatio.toFixed(4)
+						} ${activeLst.symbol}/SOL`}</Text.H4>
+					}
 					loading={getLoadingState(
 						!isAprLoaded || !isPositionLoaded || !userLstEquity.loaded
 					)}
