@@ -4,6 +4,8 @@ import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 const ModalPortal = (props: PropsWithChildren<{ id?: string }>) => {
+	return null;
+
 	const defaultNode = useRef<HTMLElement | null>(null);
 	const [mounted, setMounted] = useState(false);
 
