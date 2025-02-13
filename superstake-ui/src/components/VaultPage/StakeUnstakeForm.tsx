@@ -546,7 +546,9 @@ const StakeUnstakeForm = () => {
 	return (
 		<div className="flex flex-col justify-between h-full">
 			{/* TABS */}
-			{/* <div>
+
+			{/* THE BUG IS SOMEWHERE IN THIS DIV */}
+			<div>
 				<div className="flex flex-row items-center justify-center mb-8">
 					<Button
 						className="rounded-r-none border-r-[1px]"
@@ -568,7 +570,7 @@ const StakeUnstakeForm = () => {
 
 				{selectedTab === 'stake' ? (
 					<>
-						<StakeFormCollateralInput
+						{/* <StakeFormCollateralInput
 							maxAmount={lstBalance.balanceBigNum}
 							lstSymbol={activeLst.symbol}
 							onChange={handleChangeStakeAmount}
@@ -630,7 +632,7 @@ const StakeUnstakeForm = () => {
 							}
 							emissionsTokenSymbol={activeLst.emissionsTokenSymbol}
 							leverageToUse={leverageToUse}
-						/>
+						/> */}
 					</>
 				) : (
 					<>
@@ -769,7 +771,7 @@ const StakeUnstakeForm = () => {
 						</div>
 					</>
 				)}
-			</div> */}
+			</div>
 
 			{selectedTab === 'stake' ? (
 				<div className="mt-6">
