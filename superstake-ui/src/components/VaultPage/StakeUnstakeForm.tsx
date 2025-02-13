@@ -570,7 +570,7 @@ const StakeUnstakeForm = () => {
 
 				{selectedTab === 'stake' ? (
 					<>
-						{/* <StakeFormCollateralInput
+						<StakeFormCollateralInput
 							maxAmount={lstBalance.balanceBigNum}
 							lstSymbol={activeLst.symbol}
 							onChange={handleChangeStakeAmount}
@@ -581,7 +581,7 @@ const StakeUnstakeForm = () => {
 							connected={connected}
 							placeholder={'0'}
 							maxLoading={!lstBalance.balanceLoaded}
-						/> */}
+						/>
 
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
@@ -637,7 +637,7 @@ const StakeUnstakeForm = () => {
 					</>
 				) : (
 					<>
-						{/* <div className="flex flex-row items-start w-full space-between">
+						<div className="flex flex-row items-start w-full space-between">
 							<div className="flex-grow">
 								<Text.BODY2>
 									Amount to unstake:{' '}
@@ -769,7 +769,7 @@ const StakeUnstakeForm = () => {
 									lstSymbol={activeLst.symbol}
 								/>
 							)}
-						</div> */}
+						</div>
 					</>
 				)}
 			</div>
