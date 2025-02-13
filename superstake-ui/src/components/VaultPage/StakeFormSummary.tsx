@@ -10,9 +10,8 @@ import useAppStore from '../../hooks/useAppStore';
 import ExclamationTriangleIcon from '@heroicons/react/24/outline/ExclamationTriangleIcon';
 import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
-import { Info, Share } from '@drift-labs/icons';
-import Tooltip from '../Tooltip';
-import { MIN_LEFTOVER_SOL, NEW_ACCOUNT_DONATION } from '@drift/common';
+import { Info } from '@drift-labs/icons';
+import { MIN_LEFTOVER_SOL } from '@drift/common';
 
 const SummaryRow = ({ children }: PropsWithChildren) => {
 	return (
@@ -81,8 +80,6 @@ StakeFormSummaryProps) => {
 	);
 
 	const hasEmissions = emissionsTokenSymbol && emissionsApr;
-	const creationCostMinusDonation =
-		accountCreationCost.sub(NEW_ACCOUNT_DONATION);
 
 	return (
 		<>
@@ -133,46 +130,10 @@ StakeFormSummaryProps) => {
 								New account creation cost
 							</Text.BODY2>
 							<div>
-								{/* <Tooltip
-									content={
-										<div className="px-2 font-normal">
-											<div className="mb-1">
-												<Text.BODY1 className="font-normal">
-													New Account Fee: {NEW_ACCOUNT_DONATION.toFixed(3)} SOL
-												</Text.BODY1>
-											</div>
-											<div className="mb-3">
-												<Text.BODY1 className="font-normal">
-													Rent: {creationCostMinusDonation.toFixed(3)} SOL
-												</Text.BODY1>
-											</div>
-											<div className="mb-3">
-												<Text.BODY1 className="font-normal">
-													Rent is currently higher due to increased user
-													activity but can be reclaimed after 13 days when you
-													delete your account, or a few hours after you have
-													withdrawn all funds.
-												</Text.BODY1>
-											</div>
-											<a
-												href="https://docs.drift.trade/creating-a-subaccount"
-												target="_blank"
-												rel="noreferrer"
-												className="flex items-center"
-											>
-												<Text.BODY1 className="font-normal">
-													Learn more{' '}
-												</Text.BODY1>
-												<Share className="inline-block w-4 h-4 ml-1" />
-											</a>
-										</div>
-									}
-									className="flex items-center"
-									allowHover
-								>
+								<div className="flex items-center">
 									<Text.BODY2>{accountCreationCost.toFixed(3)} SOL</Text.BODY2>
 									<Info size={24} className="relative ml-1 cursor-pointer" />
-								</Tooltip> */}
+								</div>
 							</div>
 						</SummaryRow>
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
