@@ -8,10 +8,10 @@ import { SOL_SPOT_MARKET_INDEX } from '../../utils/uiUtils';
 import { BigNum, SpotMarkets } from '@drift-labs/sdk';
 import useAppStore from '../../hooks/useAppStore';
 import ExclamationTriangleIcon from '@heroicons/react/24/outline/ExclamationTriangleIcon';
-import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
+import { useCommonDriftStore } from '@drift-labs/react';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
 import { Info } from '@drift-labs/icons';
-import { MIN_LEFTOVER_SOL } from '@drift/common';
+import { MIN_LEFTOVER_SOL, NEW_ACCOUNT_BASE_COST } from '@drift/common';
 
 const SummaryRow = ({ children }: PropsWithChildren) => {
 	return (
@@ -57,13 +57,12 @@ StakeFormSummaryProps) => {
 	const activeLst = useAppStore((s) => s.activeLst);
 	const solSpotMarket = SpotMarkets['mainnet-beta'][SOL_SPOT_MARKET_INDEX];
 	const { userLstDeposits, userSolBorrows } = useCurrentSuperstakePosition();
-	const { accountCreationCost } = useAccountCreationCost();
 	const hasSuperstakeLstSubaccount = useHasSuperstakeLstSubaccount();
 
 	const solBalance = useCommonDriftStore((s) => s.currentSolBalance);
 	const hasEnoughSolToCreateAccount =
 		solBalance.loaded &&
-		solBalance.value.gte(accountCreationCost.add(MIN_LEFTOVER_SOL));
+		solBalance.value.gte(NEW_ACCOUNT_BASE_COST.add(MIN_LEFTOVER_SOL));
 
 	const [aprExpanded, setAprExpanded] = useState(false);
 
@@ -129,13 +128,21 @@ StakeFormSummaryProps) => {
 							<Text.BODY2 className="font-normal">
 								New account creation cost
 							</Text.BODY2>
+							<div>
+								<div className="flex items-center">
+									<Text.BODY2>
+										{NEW_ACCOUNT_BASE_COST.toFixed(3)} SOL
+									</Text.BODY2>
+									<Info size={24} className="relative ml-1 cursor-pointer" />
+								</div>
+							</div>
 						</SummaryRow>
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
 							<div className="w-full">
 								<Text.BODY1 className="font-normal text-text-negative-red">
 									You must have at least{' '}
-									{accountCreationCost.add(MIN_LEFTOVER_SOL).toFixed(3)} SOL to
-									cover account creation and transaction fees.
+									{NEW_ACCOUNT_BASE_COST.add(MIN_LEFTOVER_SOL).toFixed(3)} SOL
+									to cover account creation and transaction fees.
 								</Text.BODY1>
 								<br />
 								<Text.BODY1 className="font-normal text-text-negative-red">
