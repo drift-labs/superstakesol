@@ -546,6 +546,7 @@ const StakeUnstakeForm = () => {
 	return (
 		<div className="flex flex-col justify-between h-full">
 			{/* TABS */}
+
 			<div>
 				<div className="flex flex-row items-center justify-center mb-8">
 					<Button
@@ -580,6 +581,7 @@ const StakeUnstakeForm = () => {
 							placeholder={'0'}
 							maxLoading={!lstBalance.balanceLoaded}
 						/>
+
 						<div className="mt-2">
 							<Text.BODY3 className="text-text-label">
 								Select your leverage:{' '}
@@ -600,6 +602,7 @@ const StakeUnstakeForm = () => {
 							/>
 						</div>
 
+						{/* THE BUG IS IN THIS COMPONENT */}
 						<StakeFormSummary
 							amountToStake={isNaN(amountToStakeNum) ? 0 : amountToStakeNum}
 							amountToBorrow={solBorrowAmount}

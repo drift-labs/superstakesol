@@ -10,9 +10,7 @@ import useAppStore from '../../hooks/useAppStore';
 import ExclamationTriangleIcon from '@heroicons/react/24/outline/ExclamationTriangleIcon';
 import { useAccountCreationCost, useCommonDriftStore } from '@drift-labs/react';
 import { useHasSuperstakeLstSubaccount } from '../../hooks/useHasSuperstakeLstSubaccount';
-import { Info, Share } from '@drift-labs/icons';
-import Tooltip from '../Tooltip';
-import { MIN_LEFTOVER_SOL, NEW_ACCOUNT_DONATION } from '@drift/common';
+import { MIN_LEFTOVER_SOL } from '@drift/common';
 
 const SummaryRow = ({ children }: PropsWithChildren) => {
 	return (
@@ -81,11 +79,10 @@ StakeFormSummaryProps) => {
 	);
 
 	const hasEmissions = emissionsTokenSymbol && emissionsApr;
-	const creationCostMinusDonation =
-		accountCreationCost.sub(NEW_ACCOUNT_DONATION);
 
 	return (
 		<>
+			{/* THE BUG IS SOMEWHERE IN THIS DIV */}
 			<div className="w-full p-4 mb-2 space-y-4 bg-container-bg-selected md:space-y-2">
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Amount to deposit</Text.BODY2>{' '}
@@ -96,19 +93,18 @@ StakeFormSummaryProps) => {
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Amount borrowed</Text.BODY2>{' '}
 					<ValueChangeDisplay
-						previousValue={userSolBorrows.neg()}
-						afterValue={afterSolBorrows}
+						previousValue={userSolBorrows.neg().toNum()}
+						afterValue={afterSolBorrows.toNum()}
 						previousValuePrint={userSolBorrows.neg().toFixed(3)}
 						afterValuePrint={afterSolBorrows.toFixed(3)}
 						rightSymbol={' SOL'}
 					/>
-					{/* <Text.BODY2>{amountToBorrow.toFixed(3)} SOL</Text.BODY2> */}
 				</SummaryRow>
 				<SummaryRow>
 					<Text.BODY2 className="font-normal">Your position</Text.BODY2>{' '}
 					<ValueChangeDisplay
-						previousValue={userLstDeposits}
-						afterValue={afterLstDeposits}
+						previousValue={userLstDeposits.toNum()}
+						afterValue={afterLstDeposits.toNum()}
 						previousValuePrint={userLstDeposits.toFixed(3)}
 						afterValuePrint={afterLstDeposits.toFixed(3)}
 						rightSymbol={activeLst.symbol}
@@ -128,53 +124,6 @@ StakeFormSummaryProps) => {
 				</SummaryRow>
 				{!hasSuperstakeLstSubaccount && (
 					<>
-						<SummaryRow>
-							<Text.BODY2 className="font-normal">
-								New account creation cost
-							</Text.BODY2>
-							<div>
-								<Tooltip
-									content={
-										<div className="px-2 font-normal">
-											<div className="mb-1">
-												<Text.BODY1 className="font-normal">
-													New Account Fee: {NEW_ACCOUNT_DONATION.toFixed(3)} SOL
-												</Text.BODY1>
-											</div>
-											<div className="mb-3">
-												<Text.BODY1 className="font-normal">
-													Rent: {creationCostMinusDonation.toFixed(3)} SOL
-												</Text.BODY1>
-											</div>
-											<div className="mb-3">
-												<Text.BODY1 className="font-normal">
-													Rent is currently higher due to increased user
-													activity but can be reclaimed after 13 days when you
-													delete your account, or a few hours after you have
-													withdrawn all funds.
-												</Text.BODY1>
-											</div>
-											<a
-												href="https://docs.drift.trade/creating-a-subaccount"
-												target="_blank"
-												rel="noreferrer"
-												className="flex items-center"
-											>
-												<Text.BODY1 className="font-normal">
-													Learn more{' '}
-												</Text.BODY1>
-												<Share className="inline-block w-4 h-4 ml-1" />
-											</a>
-										</div>
-									}
-									className="flex items-center"
-									allowHover
-								>
-									<Text.BODY2>{accountCreationCost.toFixed(3)} SOL</Text.BODY2>
-									<Info size={24} className="relative ml-1 cursor-pointer" />
-								</Tooltip>
-							</div>
-						</SummaryRow>
 						{!hasEnoughSolToCreateAccount && solBalance.loaded && (
 							<div className="w-full">
 								<Text.BODY1 className="font-normal text-text-negative-red">
@@ -191,6 +140,7 @@ StakeFormSummaryProps) => {
 					</>
 				)}
 			</div>
+
 			<div
 				className="w-full p-4 mb-2 space-y-4 cursor-pointer bg-container-bg-selected md:space-y-2"
 				onClick={toggleAprExpanded}
@@ -262,6 +212,7 @@ StakeFormSummaryProps) => {
 						</div>
 					</div>
 				</SummaryRow>
+
 				{amountToStake !== 0 &&
 					projectedApr < unleveragedApr &&
 					leverageToUse > 1 && (
@@ -275,14 +226,6 @@ StakeFormSummaryProps) => {
 							</Text.BODY1>
 						</div>
 					)}
-				{/* <SummaryRow>
-					<Text.BODY2 className="font-normal">Projected Yield (30d)</Text.BODY2>{' '}
-					<Text.BODY2
-						className={projectedYield30d > 0 ? 'text-text-positive-green' : ''}
-					>
-						{projectedYield30d} SOL
-					</Text.BODY2>
-				</SummaryRow> */}
 			</div>
 		</>
 	);
