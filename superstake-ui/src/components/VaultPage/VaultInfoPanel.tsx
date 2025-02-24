@@ -102,7 +102,7 @@ const VaultOverviewPanel = () => {
 					<TextWithSkeleton
 						value={
 							<div className={`flex flex-row flex-wrap items-center`}>
-								<div className="mr-4 my-1 sm:my-0">
+								<div className="my-1 mr-4 sm:my-0">
 									{`${maxAprPercentage.toFixed(2)}% APR`}
 								</div>
 								<Tooltip
@@ -558,7 +558,7 @@ const VaultInfoPanel = () => {
 			<div className="mt-2 bg-accent-pink w-20 h-1.5 rounded" />
 
 			{/* Left/Right controls at the top on mobile too */}
-			<div className="md:hidden mt-4">{panelControls}</div>
+			<div className="mt-4 md:hidden">{panelControls}</div>
 
 			{/* Carousel section */}
 			<div className="w-full mb-20">
