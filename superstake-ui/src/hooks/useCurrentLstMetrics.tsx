@@ -24,8 +24,8 @@ export default function useCurrentLstMetrics(): {
 		case M_SOL.symbol:
 		default:
 			return {
-				lstPriceApy30d: mSolMetrics.msol_price_apy_30d ?? 0,
-				priceInSol: mSolMetrics.m_sol_price ?? 0,
+				lstPriceApy30d: (mSolMetrics.value ?? 0) * 100,
+				priceInSol: mSolMetrics.end_price ?? 0,
 				loaded: mSolMetrics.loaded,
 			};
 		case JITO_SOL.symbol:
